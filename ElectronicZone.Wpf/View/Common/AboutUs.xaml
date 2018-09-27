@@ -1,0 +1,41 @@
+﻿<Window x:Class="ElectronicZone.Wpf.View.Common.AboutUs"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Common"
+        mc:Ignorable="d"
+        Title="About Us" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+    <Grid Background="Azure">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <FlowDocumentScrollViewer>
+            <FlowDocument x:Name="FD">
+                <Paragraph>
+                    <Image Source="/MyElectronicZoneWpf;component/Images/logo.png" Width="70" Height="70" Margin="0,0,30,0" />
+                    <Run FontSize="35">See what we're all about</Run>
+                    <!--<Run FontSize="12">to provide reliable solutions</Run>-->
+                </Paragraph>
+                <Paragraph>
+                    <Bold>Electronic Zone - eZone</Bold>
+                </Paragraph>
+                <Paragraph>
+                    Welcome to eZone! My name is Sumit Dash and am the founder of eZone, a place/store to find all your business strategies you crave. I started this product after being told by one of my younger brother's real life problem.
+                </Paragraph>
+
+                <Paragraph>
+                    As a result I suggest to manage with a solution given by me and here it is. I also share ideas and techniques from my personal experience of getting in shape and doing it simple way. 'eZone' is created to inspire you to get track of your business goals.
+                </Paragraph>
+
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
+
+
+
+
+
+    </Grid>
+</Window>

@@ -1,0 +1,137 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Master.PurchaseMaster"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Title="Purchase Master" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <!--<RowDefinition Height="50"></RowDefinition>-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TabControl Grid.Row="0" Grid.Column="0" Height="480" HorizontalAlignment="Left" Name="tabControl1" VerticalAlignment="Top" Width="auto" SelectionChanged="tabControl1_SelectionChanged">
+            <TabItem Header="Add Purchase" Name="tabItem1">
+                <Grid Height="auto">
+                    <Grid.RowDefinitions>
+                        <!--<RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>-->
+                        <RowDefinition Height="auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Product" Height="28" HorizontalAlignment="Left" Margin="10,3,0,0" Name="label1" VerticalAlignment="Top" />
+                    <TextBox Controls:TextBoxHelper.Watermark="Product Code" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Right" Margin="0,63,144,0" Name="txtProdCode" VerticalAlignment="Top" Width="282" ToolTip="Product Code" AutoWordSelection="False" TabIndex="3" />
+                    <Label Content="Brand/Company" Height="28" HorizontalAlignment="Left" Margin="10,36,0,0" Name="label2" VerticalAlignment="Top" />
+                    <Button Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Margin="122,259,0,0" Name="btnSave" VerticalAlignment="Top" Width="60" />
+                    <Button Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Right" Margin="0,259,283,0" Name="btnReset" VerticalAlignment="Top" Width="75" />
+                    <ComboBox Height="23" HorizontalAlignment="Left" Margin="122,3,0,0" Name="cbProduct" VerticalAlignment="Top" Width="120" DisplayMemberPath="Name" SelectedValuePath="Id" ToolTip="Choose Product" TabIndex="1" />
+                    <ComboBox Height="23" HorizontalAlignment="Left" Margin="122,33,0,0" Name="cbBrandCompany" VerticalAlignment="Top" Width="120" DisplayMemberPath="Name" SelectedValuePath="Id" ToolTip="Choose Brand / Company" TabIndex="2" />
+                    <Label Content="Product Code" Height="28" HorizontalAlignment="Left" Margin="10,65,0,0" Name="label3" VerticalAlignment="Top" />
+                    <TextBox Controls:TextBoxHelper.Watermark="Stock Code" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Right" Margin="0,93,144,0" Name="txtStockCode" VerticalAlignment="Top" Width="282" ToolTip="Stock Code" TabIndex="4" />
+                    <Label Content="Stock Code" Height="28" HorizontalAlignment="Left" Margin="10,94,0,0" Name="label4" VerticalAlignment="Top" />
+                    <TextBox Controls:TextBoxHelper.Watermark="Description like Model No. Color etc." Height="42" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,123,144,0" Name="txtItemDesc" VerticalAlignment="Top" Width="282" ToolTip="Description" TabIndex="5" />
+                    <Label Content="Item Description" Height="28" HorizontalAlignment="Left" Margin="10,123,0,0" Name="label5" VerticalAlignment="Top" />
+                    <!--<Controls:NumericUpDown Margin="0,153,142,0" Name="txtQuantity" Minimum = "1" Maximum = "10000" Interval="1" StringFormat="C2" />-->
+                    <Controls:NumericUpDown Height="23" HorizontalAlignment="Right" Margin="0,169,144,0" Name="txtQuantity" VerticalAlignment="Top" Width="120" ToolTip="Quantity" Minimum = "0" Interval = "1" ValueIncremented="txtQuantity_ValueIncremented" ValueDecremented="txtQuantity_ValueDecremented" TabIndex="7" />
+
+                    <!--<TextBox Height="23" HorizontalAlignment="Right" Margin="0,153,142,0" Name="txtQuantity" VerticalAlignment="Top" Width="282" ToolTip="Quantity" TextChanged="txtQuantity_TextChanged" />-->
+                    <Label Content="Price / Quantity" Height="28" HorizontalAlignment="Left" Margin="11,170,0,0" Name="label6" VerticalAlignment="Top" />
+                    <TextBox Height="23" Controls:TextBoxHelper.Watermark="Purchase Price" Controls:TextBoxHelper.ClearTextButton="True" HorizontalAlignment="left" Margin="122,170,270,100" Name="txtPurchasePrice" Width="157" ToolTip="Purchase Price / Qty" TextChanged="txtPurchasePrice_TextChanged" TabIndex="6" />
+                    <!--<Label Content="Price" Height="28" HorizontalAlignment="Right" Margin="0,162,270,0" Name="label7" VerticalAlignment="Top" />-->
+                    <Label Content="Purchase Date" Height="28" HorizontalAlignment="Left" Margin="10,0,0,37" Name="label8" VerticalAlignment="Bottom" />
+                    <DatePicker Height="25" HorizontalAlignment="Left" Margin="122,230,0,0" Name="dpPurchaseDate" VerticalAlignment="Top" Width="115" ToolTip="Purchase Date" SelectedDateFormat="Short" TabIndex="10" />
+                    <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="436,168,0,0" Name="lblTotalPurchaseAmt" VerticalAlignment="Top" ToolTip="Total" />
+                    <Border BorderBrush="Silver" BorderThickness="1" Height="102" HorizontalAlignment="Left" Margin="419,-1,0,0" Name="purchaseBorder" VerticalAlignment="Top" Width="120">
+                        <Image Height="100" HorizontalAlignment="Left" Name="imagePhoto" Stretch="Fill" VerticalAlignment="Top" Width="120" />
+                    </Border>
+                    <Button Content="Upload" Height="23" HorizontalAlignment="Left" Margin="419,108,0,0" Name="btnUploadPhoto" VerticalAlignment="Top" Width="123" Click="btnUploadPhoto_Click" TabIndex="9" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="122,200,0,0" Name="txtSalePrice" TabIndex="8" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sale Price" ToolTip="Sale Price / Qty" VerticalAlignment="Top" Width="157" LostFocus="txtSalePrice_LostFocus" />
+                    <Label Content="Sale Price" Height="28" HorizontalAlignment="Left" Margin="11,200,0,0" Name="label7" VerticalAlignment="Top" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Purchase List" Name="tabItem2">
+                <Grid>
+                    <DataGrid AutoGenerateColumns="False" Height="430" HorizontalAlignment="Left" Name="datagridStocks" VerticalAlignment="Top" Width="1000" IsReadOnly="True" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Product" Binding="{Binding Product}" />
+                            <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" />
+
+                            <DataGridTextColumn Header="Prod Code" Binding="{Binding ProductCode}" Width="50*" />
+                            <DataGridTextColumn Header="Stk Code" Binding="{Binding StockCode}" Width="50*" />
+                            <!--<DataGridTextColumn Header="Description" Binding="{Binding ItemDesc}" />-->
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Purchase Price" Binding="{Binding PurchasePrice, StringFormat={}{0:00.00}}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice, StringFormat={}{0:00.00}}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!--<DataGridTemplateColumn Header="Image" Width="SizeToCells" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Height="50" Source="{Binding Image}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>-->
+                            <DataGridTextColumn Header="Purchased On" Binding="{Binding PurchaseDate, StringFormat={}{0:dd/MM/yy}}" />
+                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yy}}" />
+
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=CartPlusSolid}" ToolTip="Add Item"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Controls:MetroWindow>

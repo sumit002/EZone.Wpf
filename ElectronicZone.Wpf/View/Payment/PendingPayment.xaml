@@ -1,0 +1,53 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Payment.PendingPayment"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Payment"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="Pending Payment" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <!--<RowDefinition Height="50"></RowDefinition>-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <Button Content="Search" Height="23" HorizontalAlignment="left" Margin="410,11,0,0" Name="btnSearch" VerticalAlignment="Top" Width="72" Click="btnSearch_Click" />
+        <Button Content="Reset" Height="23" HorizontalAlignment="left" Margin="488,11,0,0" Name="btnReset" VerticalAlignment="Top" Width="75" Click="btnReset_Click" />
+        <DataGrid AutoGenerateColumns="False" Height="286" HorizontalAlignment="Left" IsReadOnly="True" Margin="10,0,0,1" Name="dataGridPendingPayment" VerticalAlignment="Bottom" Width="556" SelectedCellsChanged="dataGridPendingPayment_SelectedCellsChanged_1">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Sales Person Name" />
+                <DataGridTextColumn Binding="{Binding Contact}" Header="Contact" />
+                <DataGridTextColumn Binding="{Binding PendingAmount}" Header="Pending">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Total}" Header="Total">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AmountPaid}" Header="Paid">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding SaleDate}" Header="Sale On" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <ComboBox DisplayMemberPath="Name" Height="23" HorizontalAlignment="left" Margin="11,10,0,0" Name="cbSalesPerson" SelectedValuePath="Id" ToolTip="Select Person" VerticalAlignment="Top" Width="266" />
+    </Grid>
+</Controls:MetroWindow>

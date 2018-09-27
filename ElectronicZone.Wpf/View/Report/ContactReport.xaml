@@ -1,0 +1,63 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Report.ContactReport"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Report"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Title="Contact Report" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    
+    <Grid Margin="5,5,5,5">
+        <!--<Grid.Resources>
+            <Style TargetType="Border" >
+                <Setter Property="Padding" Value="5,5,5,5" />
+            </Style>
+        </Grid.Resources>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"></ColumnDefinition>
+            <ColumnDefinition Width="130"></ColumnDefinition>
+            <ColumnDefinition Width="130"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBox Grid.Row="0" Grid.Column="0" Name="txtName" ToolTip="Name" Controls:TextBoxHelper.Watermark="Name" VerticalAlignment="Center"  />
+        <TextBox Grid.Row="0" Grid.Column="1" Name="txtContact" ToolTip="Contact" Controls:TextBoxHelper.Watermark="Contact" VerticalAlignment="Center"  />
+        <TextBox Grid.Row="0" Grid.Column="2" Name="txtEmail" ToolTip="Email" Controls:TextBoxHelper.Watermark="Email" VerticalAlignment="Center"  />
+        
+
+        <Button Grid.Row="0" Grid.Column="4" Content="Search" Height="23"  Name="btnSearch" VerticalAlignment="Top" />
+        <Button Grid.Row="0" Grid.Column="5" Content="Reset" Height="23" Name="btnReset" VerticalAlignment="Top" />
+        <Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" 
+                Content="{iconPacks:FontAwesome Kind=DownloadSolid}" Visibility="{Binding Path=DownloadExcelVisibility, Converter={StaticResource BooleanToVisibilityConverter} }">
+            
+        </Button>
+
+        <!--<WrapPanel Grid.Row="0" Grid.Column="0">
+            
+        </WrapPanel>-->
+
+        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Height="450" AutoGenerateColumns="False" HorizontalAlignment="Left" 
+                  IsReadOnly="True" ItemsSource="{Binding ContactList}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Contact" Binding="{Binding PrimaryContact}" />
+                <DataGridTextColumn Header="Alt Contact" Binding="{Binding AlternateContact}" />
+                <DataGridTextColumn Header="Email Address" Binding="{Binding Email}" />
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Controls:MetroWindow>

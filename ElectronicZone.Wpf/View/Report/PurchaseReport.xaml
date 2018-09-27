@@ -1,0 +1,103 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Report.PurchaseReport"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Report"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Title="Purchase Report" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125"></ColumnDefinition>
+            <ColumnDefinition Width="125"></ColumnDefinition>
+            <ColumnDefinition Width="125"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+            <ColumnDefinition Width="75"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <ComboBox Grid.Row="0" Grid.Column="0" DisplayMemberPath="Name" Height="23" HorizontalAlignment="Left" Name="cbProduct" SelectedValuePath="Id" Text="ss" ToolTip="Select Product" VerticalAlignment="Top" Width="126" />
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" AutoWordSelection="False" Height="23" HorizontalAlignment="left" Name="txtProdCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Product Code" ToolTip="Product Code" VerticalAlignment="Top" Width="282" />
+
+        <ComboBox Grid.Row="1" Grid.Column="0" DisplayMemberPath="Name" Height="23" HorizontalAlignment="Left" Name="cbBrandCompany" SelectedValuePath="Id" ToolTip="Choose Brand / Company" VerticalAlignment="Top" Width="126" />
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Height="23" HorizontalAlignment="left" Name="txtStockCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Stock Code" ToolTip="Stock Code" VerticalAlignment="Top" Width="282" />
+
+        <!--<Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Margin="430,10,0,0" Name="txtPriceFrom" ToolTip="Price From" VerticalAlignment="Top" Width="120" />
+        <Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Margin="430,42,0,0" Name="txtPriceTo" ToolTip="Price To" VerticalAlignment="Top" Width="120" />-->
+        <DatePicker Grid.Row="2" Grid.Column="0" Height="25" HorizontalAlignment="Left" Name="fromDate" VerticalAlignment="Top" Width="127" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged" />
+        <DatePicker Grid.Row="2" Grid.Column="1" Height="25" HorizontalAlignment="Left" Name="toDate" VerticalAlignment="Top" Width="120" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
+        <CheckBox Grid.Row="2" Grid.Column="2" x:Name="chkBoxAvailableStock" Content="Available Stock" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <Button Grid.Row="2" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Visibility="Visible" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Click="btnExport_Click">
+            <Rectangle Width="23" Height="23" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Stretch="Fill"  Visual="{StaticResource appbar_download}" />
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Button>
+        <!--<Button Content="Export" Height="23" HorizontalAlignment="Left" Margin="338,74,0,0" Name="btnExport" VerticalAlignment="Top" Width="50" Click="btnExport_Click" Visibility="Hidden" />-->
+        <Button Grid.Row="2" Grid.Column="4" Content="Search" Height="23" HorizontalAlignment="Left" Name="btnSearch" VerticalAlignment="Top" Width="72" Click="btnSearch_Click" />
+        <Button Grid.Row="2" Grid.Column="5" Content="Reset" Height="23" HorizontalAlignment="left" Name="btnReset" VerticalAlignment="Top" Width="75" Click="btnReset_Click" />
+
+        <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" AutoGenerateColumns="False" Height="230" HorizontalAlignment="Left" IsReadOnly="True" Name="dataGridPurchase" VerticalAlignment="Top" Width="748" Margin="0,0,-167,0" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Product}" Header="Product" />
+                <DataGridTextColumn Binding="{Binding Brand}" Header="Brand" />
+                <DataGridTextColumn Binding="{Binding ProductCode}" Header="Product Code" />
+                <DataGridTextColumn Binding="{Binding StockCode}" Header="Stock Code" />
+                <DataGridTextColumn Binding="{Binding Quantity}" Header="Qty">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AvlQuantity}" Header="Avl Qty">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding PurchasePrice}" Header="Purchase Price">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding SalePrice}" Header="Sale Price">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ProfitPrice}" Header="Profit Per Qty">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Total}" Header="Total">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding PurchaseDate}" Header="Purchase On" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Controls:MetroWindow>

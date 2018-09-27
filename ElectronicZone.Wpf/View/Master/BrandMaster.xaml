@@ -1,0 +1,90 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Master.BrandMaster"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Master"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Title="Brand Master" WindowStartupLocation="CenterScreen" 
+        BorderBrush="{DynamicResource AccentColorBrush}">
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <!--<RowDefinition Height="50"></RowDefinition>-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TabControl Grid.Row="1" Grid.Column="1" Height="422" HorizontalAlignment="Left" SelectedIndex="1" Name="tabControl1" VerticalAlignment="Top" Width="auto" SelectionChanged="tabControl1_SelectionChanged">
+            <TabItem Header="Add Brand" Name="tabItem1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"></ColumnDefinition>
+                        <ColumnDefinition Width="65"></ColumnDefinition>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Row="0" Grid.Column="0" Content="Brand Name" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="Brand / Company Name" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Left"  Name="txtBrandName" VerticalAlignment="Top" Width="282" />
+                    <Label Grid.Row="1" Grid.Column="0" Content="Brand Description" Height="28" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="Brand / Company Description" AcceptsReturn="True" Height="56" HorizontalAlignment="Left" Name="txtBrandDesc" TextWrapping="Wrap" VerticalAlignment="Top" Width="282" />
+
+                    <Button Grid.Row="2" Grid.Column="1" Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Top" Width="60" />
+                    <Button Grid.Row="2" Grid.Column="2" Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Left" Name="btnReset" VerticalAlignment="Top" Width="75" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Brand List" Name="tabItem2">
+                <Grid>
+                    <DataGrid Width="auto" Height="414" HorizontalAlignment="Left" Name="datagridBrands" VerticalAlignment="Top" IsReadOnly="True"
+                         AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="auto" MaxWidth="300" />
+                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate}" Width="148" />
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                Path=DataContext.DeleteBrandCmd}"
+                                                CommandParameter="{Binding}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <!--<DataGrid AutoGenerateColumns="False" Height="414" HorizontalAlignment="Left" Margin="4,3,0,0" Name="datagridBrands" VerticalAlignment="Top" Width="708" IsReadOnly="True" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="auto" />
+                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate}" Width="148" />
+
+                            <DataGridTemplateColumn Header="Delete" Width="auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Delete" Command="Delete"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>-->
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Controls:MetroWindow>

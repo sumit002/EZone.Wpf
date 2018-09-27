@@ -1,0 +1,38 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Sale.AddSale"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Sale"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="Add Sale" Height="450" Width="800" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Button Content="Save" Height="23" HorizontalAlignment="Left" Margin="130,260,0,0" Name="btnSave" VerticalAlignment="Top" Width="60" Click="btnSave_Click" />
+        <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="195,260,0,0" Name="btnCancel" VerticalAlignment="Top" Width="75" Click="btnCancel_Click" />
+        <Label Content="Code :" Height="28" HorizontalAlignment="Left" Margin="129,22,0,0" Name="label3" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="130,105,152,0" Name="txtSalesName" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sales Person Name" ToolTip="Sales Person Name" VerticalAlignment="Top" Width="282" TabIndex="1" />
+        <Label Content="Person Name" Height="28" HorizontalAlignment="Left" Margin="10,105,0,0" Name="label4" VerticalAlignment="Top" />
+        <Label Content="Person Contact" Height="28" HorizontalAlignment="Left" Margin="10,134,0,0" Name="label5" VerticalAlignment="Top" />
+        <Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Interval="1" Margin="130,168,0,0" Minimum="1" Name="txtQuantity" ToolTip="Quantity" VerticalAlignment="Top" Width="120" TabIndex="3" ValueDecremented="txtQuantity_ValueDecremented" ValueIncremented="txtQuantity_ValueIncremented" />
+        <Label Content="Quantity" Height="28" HorizontalAlignment="Left" Margin="10,168,0,0" Name="label6" VerticalAlignment="Top" />
+        <Label Content="Sale Date" Height="28" HorizontalAlignment="Left" Margin="9,230,0,0" Name="label8" VerticalAlignment="Top" />
+        <DatePicker Height="25" HorizontalAlignment="Left" Margin="130,230,0,0" Name="dpSaleDate" SelectedDateFormat="Short" ToolTip="Sale Date" VerticalAlignment="Top" Width="115" TabIndex="5" />
+        <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="282,168,0,0" Name="lblTotalPurchaseAmt" ToolTip="Total" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Right" Margin="0,2,47,0" Name="txtStockId" VerticalAlignment="Top" Width="41" IsReadOnly="True" Visibility="Hidden" />
+        <Label Content="_Product" Height="28" HorizontalAlignment="Left" Margin="129,0,0,0" Name="lblProduct" VerticalAlignment="Top" />
+        <Label Content="_PCode" Height="28" HorizontalAlignment="Left" Margin="176,22,0,0" Name="lblProductCode" VerticalAlignment="Top" />
+        <Label Content="Price :" Height="28" HorizontalAlignment="Left" Margin="129,47,0,0" Name="label1" VerticalAlignment="Top" />
+        <Label Content="_Price" Height="28" HorizontalAlignment="Left" Margin="176,47,0,0" Name="lblPrice" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="130,137,152,0" Name="txtSalesContact" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sales Person Contact" ToolTip="Sales Person Contact" VerticalAlignment="Top" Width="282" TabIndex="2" />
+        <Label Content="Available Quantity :" Height="28" HorizontalAlignment="Left" Margin="129,72,0,0" Name="label2" VerticalAlignment="Top" />
+        <Label Content="_Qty" Height="28" HorizontalAlignment="Left" Margin="235,72,0,0" Name="lblAvlQuantity" VerticalAlignment="Top" />
+        <Label Content="Amount Paid" Height="28" HorizontalAlignment="Left" Margin="9,197,0,0" Name="label7" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="130,199,0,0" Name="txtAmtPaid" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Amount Paid" ToolTip="Amount Paid" VerticalAlignment="Top" Width="282" TabIndex="4" />
+        <Border BorderBrush="Silver" BorderThickness="1" Height="97" HorizontalAlignment="Left" Margin="3,2,0,0" Name="border1" VerticalAlignment="Top" Width="120">
+            <Image Height="100" Name="imagePhoto" Stretch="Fill" Width="123" />
+        </Border>
+        <Controls:ToggleSwitch HorizontalAlignment="Right" OnLabel="New" OffLabel="Existing" Margin="0,64,12,186" Name="chkbPersonType" IsCheckedChanged="chkbPersonType_IsCheckedChanged" IsChecked="True" ToolTip="Sale Person Type" />
+        <ComboBox Height="23" HorizontalAlignment="Right" Margin="0,104,4,0" Name="cbSalesPerson" DisplayMemberPath="Name" SelectedValuePath="Id" VerticalAlignment="Top" Width="144" SelectionChanged="cbSalesPerson_SelectionChanged" IsEnabled="False" />
+    </Grid>
+</Controls:MetroWindow>

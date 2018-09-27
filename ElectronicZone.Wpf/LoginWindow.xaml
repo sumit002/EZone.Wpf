@@ -1,0 +1,43 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElectronicZone.Wpf"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Title="Sign In" WindowStartupLocation="CenterScreen">
+    <!--<Window.DataContext>
+        <vmLogin:LoginViewModel></vmLogin:LoginViewModel>
+    </Window.DataContext>-->
+    
+    <Grid x:Name="LoginLayer" Background="#B0000000">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="LightBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Button Content="Login" Height="23" HorizontalAlignment="Left" Margin="157,94,0,0" Name="btnLogin" VerticalAlignment="Top" Width="60" Click="btnLogin_Click" ToolTip="Click to Login" TabIndex="2" />
+            <TextBox Height="23" HorizontalAlignment="Left" Margin="157,12,0,0" Name="txtUsername" VerticalAlignment="Top" Width="150" ToolTip="Type your Username" MaxLength="100" TabIndex="0" />
+            <PasswordBox Height="23" HorizontalAlignment="Left" Margin="157,52,0,0" Name="txtPassword" VerticalAlignment="Top" Width="150" ToolTip="Type Password" PasswordChar="*" MaxLength="100" TabIndex="1" />
+
+            <Label Content="Username" Height="28" HorizontalAlignment="Left" Margin="68,10,0,0" Name="lblUsername" VerticalAlignment="Top" Foreground="Black" />
+            <Label Content="Password" Height="28" HorizontalAlignment="Left" Margin="68,52,0,0" Name="lblPassword" VerticalAlignment="Top" Foreground="Black" />
+            <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="232,94,0,0" Name="btnCancel" VerticalAlignment="Top" Width="60" Click="btnCancel_Click" TabIndex="3" />
+            
+            <!--<TextBlock Text="Log in" Grid.ColumnSpan="2" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
+            <TextBlock Text="Name" Grid.Row="1" Margin="3"/>
+            <TextBox x:Name="txtUserName" Text="{Binding TxtUserName, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Margin="3" MinWidth="100" HorizontalAlignment="Left"/>
+            <TextBlock Text="Password" Grid.Row="2" Margin="3"/>
+            <TextBox x:Name="txtPassword" Text="{Binding TxtPassword, Mode=TwoWay}" Grid.Column="1" Grid.Row="2" Margin="3" MinWidth="100" HorizontalAlignment="Left"/>
+            <Button Command="{Binding MyCommand}" CommandParameter="{Binding ElementName=LoginWindow}" Content="Log in" Grid.Row="3" Grid.Column="1" Margin="3"/>-->
+        </Grid>
+    </Grid>
+</Controls:MetroWindow>

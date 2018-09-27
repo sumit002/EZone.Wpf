@@ -1,0 +1,57 @@
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Master.ProductMaster"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Title="Product Master" WindowStartupLocation="CenterScreen" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1">
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <!--<RowDefinition Height="50"></RowDefinition>-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TabControl Grid.Row="0" Grid.Column="0" Height="480" HorizontalAlignment="Left" SelectedIndex="1" Name="tabControl1" VerticalAlignment="Top" Width="auto" SelectionChanged="tabControl1_SelectionChanged">
+            <TabItem Header="Add Product" Name="tabItem1">
+                <Grid>
+                    <Label Content="Product Name" Height="28" HorizontalAlignment="Left" Margin="10,10,0,0" Name="label1" VerticalAlignment="Top" />
+                    <TextBox Controls:TextBoxHelper.Watermark="Product Name" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Left" Margin="122,10,0,0" Name="txtProdName" VerticalAlignment="Top" Width="282" />
+                    <Label Content="Product Description" Height="28" HorizontalAlignment="Left" Margin="10,44,0,0" Name="label2" VerticalAlignment="Top" />
+                    <TextBox Controls:TextBoxHelper.Watermark="Product Description" AcceptsReturn="True" Height="56" HorizontalAlignment="Left" Margin="122,44,0,0" Name="txtProdDesc" TextWrapping="Wrap" VerticalAlignment="Top" Width="282" />
+                    <Button Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Margin="122,115,0,0" Name="btnSave" VerticalAlignment="Top" Width="60" />
+                    <Button Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Right" Margin="0,115,470,0" Name="btnReset" VerticalAlignment="Top" Width="75" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Product List" Name="tabItem2">
+                <Grid>
+                    <DataGrid AutoGenerateColumns="False" Height="420" HorizontalAlignment="Left" ItemsSource="{Binding}" Name="datagridProducts" IsReadOnly="True" VerticalAlignment="Top" Width="743">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="auto" MaxWidth="300" />
+                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate}" Width="148" />
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Controls:MetroWindow>
