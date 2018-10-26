@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Text;
     using System.Globalization;
+    using System.Configuration;
 
     /// <summary>
     /// Basically this Utility handles the date time object to convert in 
@@ -13,7 +14,7 @@
     public class DateTimeUtility
     {
         public string getUTCFormattedDate(string date) {
-            DateTime dt = DateTime.ParseExact(date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime dt = DateTime.ParseExact(date, ConfigurationManager.AppSettings["DateTimeFormat"], CultureInfo.InvariantCulture);
             return dt.ToString();
         }
 

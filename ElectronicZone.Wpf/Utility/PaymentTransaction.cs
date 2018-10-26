@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ElectronicZone.Wpf.DataAccessLayer;
+using static ElectronicZone.Wpf.Utility.CommonEnum;
+using System.Configuration;
 
 namespace ElectronicZone.Wpf.Utility
 {
     public class PaymentTransaction
     {
-        public enum PaymentStatus
-        {
-            PENDING_PAYMENT,
-            PURCHASE_PAYMENT,
-            SALE_PAYMENT,
-            SUPPORT_PAYMENT,
-            SALEREVERSAL_PAYMENT
-        }
-
         public bool AddPaymentTransaction(int userId, double amount, PaymentStatus paymentStatus, int transactionId)
         {
             Dictionary<string, string> paymentModel = new Dictionary<string, string>();
@@ -27,7 +20,26 @@ namespace ElectronicZone.Wpf.Utility
             paymentModel.Add("Status", paymentStatus.ToString());
             paymentModel.Add("Description", GetPaymentDescription(transactionId, paymentStatus));
             paymentModel.Add("Remarks", "");
-            paymentModel.Add("CreatedDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            paymentModel.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
+            DataAccess dataAccess = new DataAccess();
+            int status = dataAccess.InsertPaymentMaster(paymentModel, "tblPaymentMaster");
+            if (status == 1)
+                return true;
+            else
+                return false;
+        }
+
+        public bool ReversePaymentTransaction(int userId, double amount, PaymentStatus paymentStatus, int transactionId)
+        {
+            Dictionary<string, string> paymentModel = new Dictionary<string, string>();
+            //paymentM.Add("Id", null);
+            paymentModel.Add("UserId", userId.ToString());
+            paymentModel.Add("Cr", (paymentStatus == PaymentStatus.PURCHASEREVERSAL_PAYMENT ? amount.ToString() : "0"));// Credit For Purchase Reversal
+            paymentModel.Add("Dr", (paymentStatus == PaymentStatus.SALEREVERSAL_PAYMENT ? amount.ToString() : "0"));// Debit For Sale Reversal
+            paymentModel.Add("Status", paymentStatus.ToString());
+            paymentModel.Add("Description", GetPaymentDescription(transactionId, paymentStatus));
+            paymentModel.Add("Remarks", "");
+            paymentModel.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
             DataAccess dataAccess = new DataAccess();
             int status = dataAccess.InsertPaymentMaster(paymentModel, "tblPaymentMaster");
             if (status == 1)
@@ -49,7 +61,7 @@ namespace ElectronicZone.Wpf.Utility
             else
                 paymentType = "";
             // construct the description string
-            desc = string.Format("{0} from transactionId : {1}", paymentType, transId.ToString());
+            desc = string.Format($"{paymentType} from transactionId : {transId.ToString()}");
             return desc;
         }
     }

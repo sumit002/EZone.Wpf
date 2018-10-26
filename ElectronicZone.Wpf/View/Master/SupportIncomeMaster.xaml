@@ -5,47 +5,91 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Master"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="Support Income Master" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="5,5,5,5">
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
-            <!--<RowDefinition Height="50"></RowDefinition>-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <TabControl Height="480" HorizontalAlignment="Left" Margin="0,1,0,0" Name="tabControl1" VerticalAlignment="Top" Width="556" SelectionChanged="tabControl1_SelectionChanged">
+        </Grid.ColumnDefinitions>-->
+
+        <TabControl Height="Auto" HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Top" Width="Auto" SelectionChanged="tabControl1_SelectionChanged">
             <TabItem Header="Add Support Payment" Name="tabItem1">
-                <Grid>
-                    <Label Content="Support Date" Height="28" HorizontalAlignment="Left" Margin="10,10,0,0" Name="label1" VerticalAlignment="Top" />
-                    <Label Content="Amount Earned" Height="28" HorizontalAlignment="Left" Margin="10,43,0,0" Name="label2" VerticalAlignment="Top" />
-                    <Button Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Margin="122,134,0,0" Name="btnSave" VerticalAlignment="Top" Width="60" />
-                    <Button Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Right" Margin="0,134,283,0" Name="btnReset" VerticalAlignment="Top" Width="75" />
-                    <TextBox Controls:TextBoxHelper.Watermark="Description" Height="56" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,72,144,0" Name="txtSupportDesc" VerticalAlignment="Top" Width="282" ToolTip="Payment Description" TabIndex="3" />
-                    <Label Content="Item Description" Height="28" HorizontalAlignment="Left" Margin="10,71,0,0" Name="label5" VerticalAlignment="Top" />
+                <Grid Height="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"></ColumnDefinition>
+                        <ColumnDefinition Width="200"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Support Date" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" Content="Amount Earned" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Center" />
+                    <Label Grid.Row="2" Grid.Column="0" Content="Item Description" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Top" />
+
+                    <DatePicker Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Name="dpSupportDate" SelectedDateFormat="Short" TabIndex="1" ToolTip="Date On" VerticalAlignment="Center" Width="201"  />
+                    <Controls:NumericUpDown Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Interval="10" Minimum="1" Name="txtAmountEarned" TabIndex="2" ToolTip="Amount Earned" VerticalAlignment="Center" Width="200" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="Description" Height="50" TextWrapping="Wrap" HorizontalAlignment="Right" Name="txtSupportDesc" VerticalAlignment="Center" Width="280" ToolTip="Payment Description" TabIndex="3" />
+
+
+                    <Button Grid.Row="3" Grid.Column="1" Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Center" Width="60" />
+                    <Button Grid.Row="3" Grid.Column="1" Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Width="75" Margin="0,0,140,0" />
                     <!--<Controls:NumericUpDown Margin="0,153,142,0" Name="txtQuantity" Minimum = "1" Maximum = "10000" Interval="1" StringFormat="C2" />-->
                     <!--<TextBox Height="23" HorizontalAlignment="Right" Margin="0,153,142,0" Name="txtQuantity" VerticalAlignment="Top" Width="282" ToolTip="Quantity" TextChanged="txtQuantity_TextChanged" />-->
                     <!--<Label Content="Price" Height="28" HorizontalAlignment="Right" Margin="0,162,270,0" Name="label7" VerticalAlignment="Top" />-->
 
-                    <DatePicker Height="25" HorizontalAlignment="Left" Margin="122,10,0,0" Name="dpSupportDate" SelectedDateFormat="Short" TabIndex="1" ToolTip="Date On" VerticalAlignment="Top" Width="115" />
-                    <Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Interval="10" Margin="122,41,0,0" Minimum="1" Name="txtAmountEarned" TabIndex="2" ToolTip="Amount Earned" VerticalAlignment="Top" Width="200" />
                 </Grid>
             </TabItem>
             <TabItem Header="Support Payment List" Name="tabItem2">
-                <Grid>
-                    <DataGrid AutoGenerateColumns="False" Height="270" HorizontalAlignment="Left" Margin="10,10,0,0" Name="datagridSupportPayment" VerticalAlignment="Top" Width="527" IsReadOnly="True" CanUserSortColumns="True">
+                <Grid Height="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="61*"/>
+                        <ColumnDefinition Width="444*"/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Name="datagridSupportPayment" VerticalAlignment="Top" Width="Auto" IsReadOnly="True" CanUserSortColumns="True" Grid.ColumnSpan="2">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="225"  />
-                            <DataGridTextColumn Header="Amount Earned" Binding="{Binding Amount}" Width="120" >
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}"  Width="600*" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                        <Setter Property="ToolTip" Value="{Binding Description}" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Received On" Binding="{Binding SupportDate}" Width="165" />
+                            <DataGridTextColumn Header="Amount Earned" Binding="{Binding Amount, StringFormat={}{0:00.00}}" MaxWidth="150" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Received On" Binding="{Binding SupportDate, StringFormat={}{0:dd/MM/yy}}" MaxWidth="250" />
+
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" IsEnabled="False" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" IsEnabled="False" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

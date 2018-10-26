@@ -11,9 +11,9 @@ namespace ElectronicZone.Wpf.Utility
         // private static readonly Global instance = new Global();
 
         private static int _UserId;
-        private static string _UserName;
+        //private static string _UserName;
         private static string _Name;
-        private static string _Password;
+        //private static string _Password;
 
         public static int UserId { get => _UserId; set => _UserId = value; }
         public static string Name { get => _Name; set => _Name = value; }

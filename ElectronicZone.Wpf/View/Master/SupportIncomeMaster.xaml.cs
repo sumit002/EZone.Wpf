@@ -13,9 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Configuration;
 
 namespace ElectronicZone.Wpf.View.Master
 {
@@ -74,7 +72,7 @@ namespace ElectronicZone.Wpf.View.Master
                     folderFields.Add("Id", null);
                     folderFields.Add("Description", txtSupportDesc.Text);
                     folderFields.Add("Amount", txtAmountEarned.Value.ToString());
-                    folderFields.Add("SupportDate", (DateTime.Parse(dpSupportDate.Text).ToString("yyyy-MM-dd HH:mm:ss")));
+                    folderFields.Add("SupportDate", (DateTime.Parse(dpSupportDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])));
                     //folderFields.Add("Remarks", null);
 
                     DataAccess dataAccess = new DataAccess();
@@ -82,7 +80,7 @@ namespace ElectronicZone.Wpf.View.Master
                     if (rslt > 0)
                     {
                         PaymentTransaction paymentTransaction = new PaymentTransaction();
-                        bool paymentStatus = paymentTransaction.AddPaymentTransaction(1, double.Parse(txtAmountEarned.Value.ToString()), PaymentTransaction.PaymentStatus.SUPPORT_PAYMENT, rslt);
+                        bool paymentStatus = paymentTransaction.AddPaymentTransaction(1, double.Parse(txtAmountEarned.Value.ToString()), CommonEnum.PaymentStatus.SUPPORT_PAYMENT, rslt);
                         if (paymentStatus)
                         {
                             MessageBoxResult result = MessageBox.Show("Payment Added Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

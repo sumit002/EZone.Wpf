@@ -9,42 +9,54 @@
         Title="Sale Master" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="5,5,5,5">
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
-            <!--<RowDefinition Height="50"></RowDefinition>-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>-->
 
-        <TabControl Grid.Row="0" Grid.Column="0" Height="480" HorizontalAlignment="Left" Name="tabControl1" VerticalAlignment="Top" Width="auto"  SelectionChanged="tabControl1_SelectionChanged">
+        <TabControl Height="Auto" 
+                    HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Top" Width="Auto"  SelectionChanged="tabControl1_SelectionChanged">
             <TabItem Header="Add Sale" Name="tabItem1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
-                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="155"></ColumnDefinition>
                         <ColumnDefinition Width="210"></ColumnDefinition>
-                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition Width="130"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <ComboBox Grid.Row="0" Grid.Column="0" DisplayMemberPath="Name" Height="23" HorizontalAlignment="Left" Name="cbProduct" SelectedValuePath="Id" ToolTip="Select Product" VerticalAlignment="Center" Width="147" Text="ss" Margin="0,2,0,3" />
-                    <TextBox Grid.Row="0" Grid.Column="1" AutoWordSelection="False" Height="23" HorizontalAlignment="Left" Name="txtProdCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Product Code" ToolTip="Product Code" VerticalAlignment="Center" Margin="0,2,0,3" Width="202" />
+                    <ComboBox Grid.Row="0" Grid.Column="0" DisplayMemberPath="Name" HorizontalAlignment="Left" Name="cbProduct" SelectedValuePath="Id" ToolTip="Select Product" VerticalAlignment="Center" Width="147" />
+                    <TextBox Grid.Row="0" Grid.Column="1" AutoWordSelection="False" Height="23" HorizontalAlignment="Left" Name="txtProdCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Product Code" ToolTip="Product Code" VerticalAlignment="Center" Width="202" />
                     <Controls:NumericUpDown Grid.Row="0" Grid.Column="2" Height="23" HorizontalAlignment="Left" Name="txtPriceFrom" ToolTip="Price From"  VerticalAlignment="Center" Width="120" />
 
-                    <ComboBox Grid.Row="1" Grid.Column="0" DisplayMemberPath="Name" Height="23" HorizontalAlignment="Left" Name="cbBrandCompany" SelectedValuePath="Id" ToolTip="Choose Brand / Company" VerticalAlignment="Center" Width="147" Margin="0,3,0,2" />
-                    <TextBox Grid.Row="1" Grid.Column="1" Height="23" HorizontalAlignment="Left" Name="txtStockCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Stock Code" ToolTip="Stock Code" VerticalAlignment="Center" Margin="0,3,0,2" Width="202" />
+                    <ComboBox Grid.Row="1" Grid.Column="0" DisplayMemberPath="Name" HorizontalAlignment="Left" Name="cbBrandCompany" SelectedValuePath="Id" ToolTip="Choose Brand / Company" VerticalAlignment="Center" Width="147" />
+                    <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Name="txtStockCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Stock Code" ToolTip="Stock Code" VerticalAlignment="Center" Width="202" />
                     <Controls:NumericUpDown Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Name="txtPriceTo" ToolTip="Price To" VerticalAlignment="Center" Width="120" />
 
-                    <Button Grid.Row="2" Grid.Column="1" Content="Search" Height="23" HorizontalAlignment="Left" Name="btnSearch" VerticalAlignment="Center" Width="72" Click="btnSearch_Click" Grid.ColumnSpan="2" />
-                    <Button Grid.Row="2" Grid.Column="1" Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Width="75" />
+                    <Button Grid.Row="1" Grid.Column="3" Content="Search" Height="23" HorizontalAlignment="Left" Name="btnSearch" VerticalAlignment="Center" Width="72" Click="btnSearch_Click" Grid.ColumnSpan="2" />
+                    <Button Grid.Row="1" Grid.Column="3" Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Left" Name="btnReset" VerticalAlignment="Center" Width="75" Margin="82,0,0,2" />
 
-                    <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" AutoGenerateColumns="False" MinHeight="320" HorizontalAlignment="Left" Name="dataGridPurchase" VerticalAlignment="Top" 
-                              Width="800" IsReadOnly="True" SelectedCellsChanged="dataGridPurchase_SelectedCellsChanged" 
+                    <RichTextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
+                             Padding="5"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+                        <FlowDocument>
+                            <Paragraph>
+                                <TextBlock>Note : Select Item from grid to proceed creation of sale.</TextBlock>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+
+                    <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" AutoGenerateColumns="False" HorizontalAlignment="Stretch" Name="dataGridPurchase" VerticalAlignment="Top" 
+                              Width="Auto" IsReadOnly="True" SelectedCellsChanged="dataGridPurchase_SelectedCellsChanged" 
                               ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Product" Binding="{Binding Product}" />
@@ -58,7 +70,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}" >
+                            <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice, StringFormat={}{0:00.00}}" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />
@@ -72,8 +84,9 @@
             </TabItem>
             <TabItem Header="Sale List" Name="tabItem2">
                 <Grid>
-                    <DataGrid AutoGenerateColumns="False" Height="450" HorizontalAlignment="Left" 
-                              Name="datagridSales" VerticalAlignment="Top" Width="1000" IsReadOnly="True" RowStyle="{StaticResource ezDataGridStyle}">
+                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" 
+                              Name="datagridSales" 
+                              VerticalAlignment="Top" Width="Auto" IsReadOnly="True" RowStyle="{StaticResource ezDataGridStyle}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Product Code" Binding="{Binding ProductCode}" Width="50*" />
                             <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="50*" />
@@ -115,24 +128,24 @@
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete"/>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" IsEnabled="False"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit"/>
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" IsEnabled="False"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn>
+                            <!--<DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=TimesCircleSolid}" ToolTip="Cancel"/>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TimesCircleSolid}" ToolTip="Cancel" IsEnabled="False"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            </DataGridTemplateColumn>-->
                         </DataGrid.Columns>
 
                         <!--<DataGrid.RowStyle>
