@@ -17,33 +17,64 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>-->
 
-        <TabControl Height="Auto" HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Top" Width="Auto" SelectionChanged="tabControl1_SelectionChanged">
-            <TabItem Header="Add Support Payment" Name="tabItem1">
-                <Grid Height="Auto">
+        <TabControl Height="Auto" SelectedIndex="{Binding TabSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=Default}"
+                    HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Top" Width="Auto">
+            <TabItem Header="{Binding TabHeaderText}" Name="tabItem1">
+                <Grid Height="Auto" Width="Auto">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="80"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="50"></RowDefinition>
-                        <RowDefinition Height="30"></RowDefinition>
-                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="130"></ColumnDefinition>
-                        <ColumnDefinition Width="200"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition Width="400"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0" Content="Support Date" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Center" />
-                    <Label Grid.Row="1" Grid.Column="0" Content="Amount Earned" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Center" />
-                    <Label Grid.Row="2" Grid.Column="0" Content="Item Description" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Top" />
+                    <Label Grid.Row="0" Grid.Column="0" Content="Support Date *" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" Content="Amount Earned *" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Center" />
+                    <Label Grid.Row="2" Grid.Column="0" Content="Description *" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Top" />
+                    <Label Grid.Row="3" Grid.Column="0" Content="Remarks" HorizontalAlignment="Left" Name="labelRemarks" VerticalAlignment="Top" />
 
-                    <DatePicker Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Name="dpSupportDate" SelectedDateFormat="Short" TabIndex="1" ToolTip="Date On" VerticalAlignment="Center" Width="201"  />
-                    <Controls:NumericUpDown Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Interval="10" Minimum="1" Name="txtAmountEarned" TabIndex="2" ToolTip="Amount Earned" VerticalAlignment="Center" Width="200" />
-                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="Description" Height="50" TextWrapping="Wrap" HorizontalAlignment="Right" Name="txtSupportDesc" VerticalAlignment="Center" Width="280" ToolTip="Payment Description" TabIndex="3" />
+                    <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding SupportIncomeDate}" HorizontalAlignment="Left" Name="dpSupportDate" 
+                                SelectedDateFormat="Short" TabIndex="1" ToolTip="Date On" VerticalAlignment="Center" Width="201" />
+                    <Controls:NumericUpDown Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Value="{Binding AmountEarned}" 
+                                            HorizontalAlignment="Left" Interval="10" Minimum="1" Name="txtAmountEarned" 
+                                            IsEnabled="{Binding IsAddMode}" TabIndex="2" ToolTip="Amount Earned" VerticalAlignment="Center" Width="200" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Description}" Controls:TextBoxHelper.Watermark="Enter Description like contact no., address, problem, items used etc." Height="80" TextWrapping="Wrap" HorizontalAlignment="Left" Name="txtSupportDesc" VerticalAlignment="Center" Width="280" ToolTip="Payment Description" TabIndex="3" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Remarks}" Controls:TextBoxHelper.Watermark="Put remarks for personal use" TextWrapping="Wrap" HorizontalAlignment="Left" Name="txtRemarks" VerticalAlignment="Center" Width="280" ToolTip="Payment Remarks" TabIndex="4" />
 
 
-                    <Button Grid.Row="3" Grid.Column="1" Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Center" Width="60" />
-                    <Button Grid.Row="3" Grid.Column="1" Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Width="75" Margin="0,0,140,0" />
+                    <Button Grid.Row="4" Grid.Column="1" Command="{Binding AddSupportIncomeCmd}" Content="Save" Height="23" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Center" Width="60" />
+                    <Button Grid.Row="4" Grid.Column="1" Command="{Binding SupportIncomeResetCmd}" Content="Reset" Height="23" HorizontalAlignment="Left" Name="btnReset" VerticalAlignment="Center" Width="75" Margin="72,0,0,1" />
+
+                    <RichTextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+                        <FlowDocument>
+                            <Paragraph>
+                                <TextBlock>Notes :</TextBlock>
+                                <LineBreak />
+                                <TextBlock>1. Please enter mandatory fields(marked with *) to create record.</TextBlock>
+                                <LineBreak />
+                                <Run>2. Multiple payments can be added for a single date.</Run>
+                                <LineBreak />
+                                <Run>3. Earned amount can not be edited once created. If want to edit/modify the earned amount please delete the payment and recreate with actual amount.</Run>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+
+                    <Calendar Name="SupportIncomeCalendar" Grid.Row="0" Grid.Column="2" Grid.RowSpan="5" VerticalAlignment="Top"
+                              SelectionMode="MultipleRange" HorizontalAlignment="Center">
+                        <!--<Calendar.SelectedDates>
+                        </Calendar.SelectedDates>-->
+                    </Calendar>
                     <!--<Controls:NumericUpDown Margin="0,153,142,0" Name="txtQuantity" Minimum = "1" Maximum = "10000" Interval="1" StringFormat="C2" />-->
                     <!--<TextBox Height="23" HorizontalAlignment="Right" Margin="0,153,142,0" Name="txtQuantity" VerticalAlignment="Top" Width="282" ToolTip="Quantity" TextChanged="txtQuantity_TextChanged" />-->
                     <!--<Label Content="Price" Height="28" HorizontalAlignment="Right" Margin="0,162,270,0" Name="label7" VerticalAlignment="Top" />-->
@@ -56,12 +87,21 @@
                         <ColumnDefinition Width="61*"/>
                         <ColumnDefinition Width="444*"/>
                     </Grid.ColumnDefinitions>
-                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Name="datagridSupportPayment" VerticalAlignment="Top" Width="Auto" IsReadOnly="True" CanUserSortColumns="True" Grid.ColumnSpan="2">
+                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" 
+                              Name="datagridSupportPayment" ItemsSource="{Binding SupportIncomeList}"
+                              VerticalAlignment="Top" Width="Auto" IsReadOnly="True" CanUserSortColumns="True" Grid.ColumnSpan="2">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}"  Width="600*" >
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}"  Width="300*" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="ToolTip" Value="{Binding Description}" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Remarks" Binding="{Binding Remarks}"  Width="100*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="ToolTip" Value="{Binding Remarks}" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
@@ -78,7 +118,9 @@
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" IsEnabled="False" />
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" Foreground="Blue"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.EditSupportIncomeCmd}"
+                                                CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -86,13 +128,67 @@
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" IsEnabled="False" />
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" Foreground="Red"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.DeleteSupportIncomeCmd}"
+                                                CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
+            </TabItem>
+            <TabItem Header="Support Payment Calendar" Name="tabItem3">
+                <!--<UniformGrid Columns="1" Rows="1" Height="Auto">
+                    <TreeView Margin="2" Grid.Row="1" Grid.Column="0"
+                          BorderThickness="1"
+                          ItemsSource="{Binding SupportIncomeList}"
+                          Style="{StaticResource VirtualisedMetroTreeView}">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding SupportIncomeList}">
+                                <TextBlock Text="{Binding SupportDate, StringFormat={}{0:dd/MM/yy}}" />
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Description}" />
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </UniformGrid>-->
+                <UniformGrid Columns="2" Rows="1" Height="250" Width="Auto">
+                    <RichTextBox Grid.Row="0" Grid.Column="0"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+                        <FlowDocument>
+                            <Paragraph>
+                                <TextBlock>1. Support income added is highlighted on the calendar.</TextBlock>
+                                <LineBreak></LineBreak>
+                                <TextBlock>2. Click on the date to add support income.</TextBlock>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+
+                    <Calendar Grid.Row="1" Grid.Column="0" SelectedDate="{Binding SelectedCalendarDate}"
+                              SelectionMode="MultipleRange"
+                              HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center">
+                        <!--<Calendar.SelectedDates>
+                        </Calendar.SelectedDates>-->
+                    </Calendar>
+                </UniformGrid>
+                <!--<Grid Height="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="300"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    
+                </Grid>-->
             </TabItem>
         </TabControl>
     </Grid>

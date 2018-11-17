@@ -16,49 +16,84 @@
             </Style>
         </Grid.Resources>-->
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition Width="130"></ColumnDefinition>
+            <ColumnDefinition Width="130"></ColumnDefinition>
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition Width="100"></ColumnDefinition>
             <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" Height="23" Name="txtDescription" ToolTip="Description" Controls:TextBoxHelper.Watermark="Description" VerticalAlignment="Top"  />
-        <DatePicker Grid.Row="0" Grid.Column="1" Name="fromDate" ToolTip="From Date" VerticalAlignment="Top" SelectedDateChanged="fromDate_SelectedDateChanged" />
-        <DatePicker Grid.Row="0" Grid.Column="2"  Name="toDate" ToolTip="To Date" VerticalAlignment="Top" SelectedDateChanged="toDate_SelectedDateChanged" />
+        <TextBox Grid.Row="0" Grid.Column="0" Name="txtDescription" ToolTip="Description" Controls:TextBoxHelper.Watermark="Search Description" VerticalAlignment="Center" >
+            <TextBox.Style>
+                <Style BasedOn="{StaticResource SearchMetroTextBox}" TargetType="{x:Type TextBox}">
+                    <Style.Triggers>
+                        <Trigger Property="Controls:TextBoxHelper.HasText" Value="True">
+                            <Setter Property="Controls:TextBoxHelper.ButtonContent" Value="r" />
+                            <Setter Property="Controls:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <!--<TextBox
+                         Controls:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                         Controls:TextBoxHelper.ClearTextButton="True"
+                         Controls:TextBoxHelper.UseFloatingWatermark="True"
+                         Controls:TextBoxHelper.Watermark="Search...">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Return"
+                                    Command="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}, Path=Text, Mode=OneWay}" />
+            </TextBox.InputBindings>
+            <TextBox.Style>
+                <Style BasedOn="{StaticResource SearchMetroTextBox}" TargetType="{x:Type TextBox}">
+                    <Style.Triggers>
+                        <Trigger Property="Controls:TextBoxHelper.HasText" Value="True">
+                            <Setter Property="Controls:TextBoxHelper.ButtonContent" Value="r" />
+                            <Setter Property="Controls:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>-->
+        <DatePicker Grid.Row="0" Grid.Column="1" Name="fromDate" ToolTip="From Date" VerticalAlignment="Center" SelectedDateChanged="fromDate_SelectedDateChanged" Width="120" />
+        <DatePicker Grid.Row="0" Grid.Column="2"  Name="toDate" ToolTip="To Date" VerticalAlignment="Center" SelectedDateChanged="toDate_SelectedDateChanged" Width="120" />
 
-        <Button Grid.Row="0" Grid.Column="4" Content="Search" Height="23"  Name="btnSearch" VerticalAlignment="Top" Click="btnSearch_Click" />
-        <Button Grid.Row="0" Grid.Column="5" Content="Reset" Height="23" Name="btnReset" VerticalAlignment="Top" Click="btnReset_Click" />
-        <Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Visibility="Visible" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Click="btnExport_Click">
-            <Rectangle Width="23" Height="23" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Stretch="Fill"  Visual="{StaticResource appbar_download}" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-        </Button>
+        <Button Grid.Row="0" Grid.Column="4" Content="Search" Height="23"  Name="btnSearch" VerticalAlignment="Center" Click="btnSearch_Click" />
+        <Button Grid.Row="0" Grid.Column="5" Content="Reset" Height="23" Name="btnReset" VerticalAlignment="Center" Click="btnReset_Click" />
+        <!--<Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Visibility="Visible" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Width="30" Click="btnExport_Click"></Button>-->
+        <Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Width="30" 
+                Content="{iconPacks:FontAwesome Kind=DownloadSolid}" Visibility="{Binding Path=DownloadExcelVisibility, Converter={StaticResource BooleanToVisibilityConverter} }"></Button>
 
         <!--<WrapPanel Grid.Row="0" Grid.Column="0">
             
         </WrapPanel>-->
 
-        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Height="325" AutoGenerateColumns="False" HorizontalAlignment="Left" 
+        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Height="Auto" AutoGenerateColumns="False" HorizontalAlignment="Stretch" 
                   IsReadOnly="True" Name="dataGridSupportPayment">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Description}" Header="Payment Description" Width="50*" />
-                <DataGridTextColumn Binding="{Binding Amount}" Header="Amount" Width="25*">
+                <DataGridTextColumn Binding="{Binding Description}" Header="Payment Description" Width="60*" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
-                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                            <Setter Property="ToolTip" Value="{Binding Description}" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding SupportDate}" Header="Date On" Width="25*"/>
+                <DataGridTextColumn Binding="{Binding Amount, StringFormat={}{0:00.00}}" Header="Amount">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding SupportDate, StringFormat={}{0:dd/MM/yy}}" Header="Date On"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

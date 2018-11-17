@@ -2,19 +2,11 @@
 using ElectronicZone.Wpf.Utility;
 using MahApps.Metro.Controls;
 using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ElectronicZone.Wpf.View.Report
 {
@@ -45,8 +37,8 @@ namespace ElectronicZone.Wpf.View.Report
                 DataTable dtSupportPayment = new DataTable();
                 DataAccess da = new DataAccess();
                 dtSupportPayment = da.SearchSupportPayment((int?)null, (int?)null,
-                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString("yyyy-MM-dd HH:mm:ss")),
-                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString("yyyy-MM-dd HH:mm:ss")), this.txtDescription.Text);
+                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])), this.txtDescription.Text);
 
                 if (dtSupportPayment.Rows.Count > 0)
                 {
