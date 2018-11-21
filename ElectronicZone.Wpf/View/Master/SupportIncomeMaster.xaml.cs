@@ -1,19 +1,11 @@
-﻿using ElectronicZone.Wpf.DataAccessLayer;
+﻿using ElectronicZone.Wpf.CustomControls;
 using ElectronicZone.Wpf.Events;
-using ElectronicZone.Wpf.Utility;
 using ElectronicZone.Wpf.ViewModel;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Drawing;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
 
 namespace ElectronicZone.Wpf.View.Master
 {
@@ -23,62 +15,99 @@ namespace ElectronicZone.Wpf.View.Master
     public partial class SupportIncomeMaster : MetroWindow
     {
         SupportIncomeViewModel vm = new SupportIncomeViewModel(DialogCoordinator.Instance);
+        private CalenderBackground background;
+
         //ILogger logger = new Logger(typeof(SupportIncomeMaster));
         //public ICollectionView SupportPayment { get; private set; }
         public SupportIncomeMaster()
         {
             InitializeComponent();
             this.DataContext = vm;
+
             //dpSupportDate.DisplayDateEnd = DateTime.Today;
-            AddSelectedDates();
+            //AddSelectedDates();
             //PostIncomeAdded();
             //// on esc close
             //this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
 
             SupportIncomeCalendar.IsTodayHighlighted = false;
             SupportIncomeCalendar.DisplayDateEnd = DateTime.Now;
-            // Publisher : SupportIncomeViewModel
-            // Subscriber : SupportIncomeMaster
             vm.IncomeAdded += Vm_IncomeAdded;
+
+            InitilizeCalendar();
         }
 
-        private void Vm_IncomeAdded(object source, EventArgs args)
+        private void InitilizeCalendar()
         {
-            AddSelectedDates();
-        }
+            #region CustomCalendar
+            SupportIncomeCalendar.IsTodayHighlighted = false;
+            //Kalender.FirstDayOfWeek = DayOfWeek.Sunday;
+            //background.ClearDates();
+            background = new CalenderBackground(SupportIncomeCalendar);
 
-        private void PostIncomeAdded()
-        {
-            // Code   
-            object resource = Application.Current.FindResource("cdbKey");
-            Style calStyle = (Style)resource;
+            //background.AddOverlay("circle", "Resources/Images/circle.png");
+            background.AddOverlay("tick", "Resources/Images/tick.png");
+            //background.AddOverlay("cross", "Resources/Images/cross.png");
+            //background.AddOverlay("box", "Resources/Images/box.png");
+            //background.AddOverlay("gray", "Resources/Images/gray.png");
 
-            // var incomeList = new List<SupportIncome>((IEnumerable<SupportIncome>)this.SupportIncomeList);
-            //Application.Current.Dispatcher.Invoke(() =>
-            //{
-            //foreach (var income in incomeList) {
-            DateTime holidayDate = DateTime.Parse("12/12/2018");
-            //DateTime holidayDate = DateTime.Parse(income.SupportDate.ToShortDateString());/*"12/12/2018"*/
-            DataTrigger dataTrigger = new DataTrigger() { Binding = new Binding("Date"), Value = holidayDate };
-            dataTrigger.Setters.Add(new Setter(CalendarDayButton.BackgroundProperty, Brushes.LightCoral));
-            //clear the triggers
-            
-            calStyle.Triggers.Clear();
-            calStyle.Triggers.Add(dataTrigger);
-            //calStyle.Triggers.Add(dataTrigger);
-            //}
-            //});
-        }
-
-        private void AddSelectedDates()
-        {
-            SupportIncomeCalendar.ClearValue(Calendar.SelectedDateProperty);
+            //SupportIncomeCalendar.ClearValue(Calendar.SelectedDateProperty);
             System.Data.DataTable dtIncomes = vm.GetSupportIncomes();
-            foreach (DataRow row in dtIncomes.Rows) {
-                SupportIncomeCalendar.SelectedDates.Add(Convert.ToDateTime(row["SupportDate"]));
+            foreach (DataRow row in dtIncomes.Rows)
+            {
+                //SupportIncomeCalendar.SelectedDates.Add(Convert.ToDateTime(row["SupportDate"]));
+                background.AddDate(Convert.ToDateTime(row["SupportDate"]), "tick");
             }
-            //SupportIncomeCalendar.SelectedDates.Add(new DateTime(2018, 11, 25));
+            //background.grayoutweekends = "gray";
+            SupportIncomeCalendar.Background = background.GetBackground();
+
+            // Update background when changing the displayed month
+            //SupportIncomeCalendar.DisplayDateChanged += SupportIncomeCalendarViewOnDisplayDateChanged;
+            #endregion
         }
+
+        private void SupportIncomeCalendarViewOnDisplayDateChanged(object sender, CalendarDateChangedEventArgs e)
+        {
+            SupportIncomeCalendar.Background = background.GetBackground();
+        }
+
+        private void Vm_IncomeAdded(object source, SupportIncomeEventArgs args)
+        {
+            //AddSelectedDates();
+            InitilizeCalendar();
+        }
+
+        //private void PostIncomeAdded()
+        //{
+        //    // Code   
+        //    object resource = Application.Current.FindResource("cdbKey");
+        //    Style calStyle = (Style)resource;
+
+        //    // var incomeList = new List<SupportIncome>((IEnumerable<SupportIncome>)this.SupportIncomeList);
+        //    //Application.Current.Dispatcher.Invoke(() =>
+        //    //{
+        //    //foreach (var income in incomeList) {
+        //    DateTime holidayDate = DateTime.Parse("12/12/2018");
+        //    //DateTime holidayDate = DateTime.Parse(income.SupportDate.ToShortDateString());/*"12/12/2018"*/
+        //    DataTrigger dataTrigger = new DataTrigger() { Binding = new Binding("Date"), Value = holidayDate };
+        //    dataTrigger.Setters.Add(new Setter(CalendarDayButton.BackgroundProperty, Brushes.LightCoral));
+        //    //clear the triggers
+            
+        //    calStyle.Triggers.Clear();
+        //    calStyle.Triggers.Add(dataTrigger);
+        //    //calStyle.Triggers.Add(dataTrigger);
+        //    //}
+        //    //});
+        //}
+
+        //private void AddSelectedDates()
+        //{
+        //    SupportIncomeCalendar.ClearValue(Calendar.SelectedDateProperty);
+        //    System.Data.DataTable dtIncomes = vm.GetSupportIncomes();
+        //    foreach (DataRow row in dtIncomes.Rows) {
+        //        SupportIncomeCalendar.SelectedDates.Add(Convert.ToDateTime(row["SupportDate"]));
+        //    }
+        //}
 
         //private void HandleEsc(object sender, KeyEventArgs e)
         //{

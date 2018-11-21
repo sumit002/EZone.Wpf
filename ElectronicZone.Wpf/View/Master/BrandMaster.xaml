@@ -11,21 +11,16 @@
         BorderBrush="{DynamicResource AccentColorBrush}">
 
     <Grid Margin="5,5,5,5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <!--<RowDefinition Height="50"></RowDefinition>-->
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-
-        <TabControl Grid.Row="1" Grid.Column="1" Height="422" HorizontalAlignment="Left" SelectedIndex="1" Name="tabControl1" VerticalAlignment="Top" Width="auto" SelectionChanged="tabControl1_SelectionChanged">
-            <TabItem Header="Add Brand" Name="tabItem1">
-                <Grid>
+        
+        <TabControl Height="Auto" SelectedIndex="{Binding TabSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=Default}"
+                    HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Top" Width="Auto">
+            <TabItem Header="{Binding TabHeaderText}" Name="tabItem1">
+                <Grid Height="Auto" Width="Auto">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="60"></RowDefinition>
-                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="120"></ColumnDefinition>
@@ -33,56 +28,64 @@
                         <ColumnDefinition Width="300"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     
-                    <Label Grid.Row="0" Grid.Column="0" Content="Brand Name" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" />
-                    <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="Brand / Company Name" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Left"  Name="txtBrandName" VerticalAlignment="Top" Width="282" />
+                    <Label Grid.Row="0" Grid.Column="0" Content="Brand Name *" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Name}" IsEnabled="{Binding IsAddMode}"
+                             Controls:TextBoxHelper.Watermark="Brand / Company Name" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Left"  Name="txtBrandName" VerticalAlignment="Top" Width="282" />
                     <Label Grid.Row="1" Grid.Column="0" Content="Brand Description" Height="28" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" />
-                    <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="Brand / Company Description" AcceptsReturn="True" Height="56" HorizontalAlignment="Left" Name="txtBrandDesc" TextWrapping="Wrap" VerticalAlignment="Top" Width="282" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Description}" Controls:TextBoxHelper.Watermark="Brand / Company Description" AcceptsReturn="True" Height="56" HorizontalAlignment="Left" Name="txtBrandDesc" TextWrapping="Wrap" VerticalAlignment="Top" Width="282" />
 
-                    <Button Grid.Row="2" Grid.Column="1" Click="btnSave_Click" Content="Save" Height="23" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Top" Width="60" />
-                    <Button Grid.Row="2" Grid.Column="2" Click="btnReset_Click" Content="Reset" Height="23" HorizontalAlignment="Left" Name="btnReset" VerticalAlignment="Top" Width="75" />
+                    <Button Grid.Row="2" Grid.Column="1" Command="{Binding AddOrUpdateBrandCmd}" Content="Save" Height="23" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Center" Width="60" />
+                    <Button Grid.Row="2" Grid.Column="2" Command="{Binding ResetBrandCmd}" Content="Reset" Height="23" HorizontalAlignment="Left" Name="btnReset" VerticalAlignment="Center" Width="75" />
+
+                    <RichTextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+                        <FlowDocument>
+                            <Paragraph>
+                                <TextBlock>Notes :</TextBlock>
+                                <LineBreak />
+                                <TextBlock>1. Please enter mandatory fields(marked with *) to create record.</TextBlock>
+                                <LineBreak />
+                                <Run>2. Multiple brand name with same name is not valid.</Run>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Brand List" Name="tabItem2">
                 <Grid>
-                    <DataGrid Width="auto" Height="414" HorizontalAlignment="Left" Name="datagridBrands" VerticalAlignment="Top" IsReadOnly="True"
-                         AutoGenerateColumns="False">
+                    <DataGrid Width="Auto" Height="Auto" HorizontalAlignment="Left" Name="datagridBrands" 
+                              ItemsSource="{Binding BrandList}" VerticalAlignment="Top" IsReadOnly="True" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="auto" MaxWidth="300" />
-                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate}" Width="148" />
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="50*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="50*" />
+                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yy}}" />
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit"/>
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" Foreground="Blue" ToolTip="Edit"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.EditBrandCmd}"
+                                                CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
-                                                Path=DataContext.DeleteBrandCmd}"
-                                                CommandParameter="{Binding}"/>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" Foreground="Red" ToolTip="Delete" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                            Path=DataContext.DeleteBrandCmd}" CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <!--<DataGrid AutoGenerateColumns="False" Height="414" HorizontalAlignment="Left" Margin="4,3,0,0" Name="datagridBrands" VerticalAlignment="Top" Width="708" IsReadOnly="True" >
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="auto" />
-                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate}" Width="148" />
-
-                            <DataGridTemplateColumn Header="Delete" Width="auto">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Delete" Command="Delete"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>-->
                 </Grid>
             </TabItem>
         </TabControl>
