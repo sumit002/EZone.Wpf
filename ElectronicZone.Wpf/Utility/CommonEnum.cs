@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ElectronicZone.Wpf.Utility
 {
@@ -18,6 +16,7 @@ namespace ElectronicZone.Wpf.Utility
             SUPPORT_PAYMENT,
             SALEREVERSAL_PAYMENT,
             PURCHASEREVERSAL_PAYMENT,
+            SUPPORTREVERSAL_PAYMENT
         }
 
         public enum Salutation

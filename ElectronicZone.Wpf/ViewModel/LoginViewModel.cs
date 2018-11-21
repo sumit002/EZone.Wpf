@@ -6,6 +6,9 @@ using ElectronicZone.Wpf.Utility;
 using ElectronicZone.Wpf.DataAccessLayer;
 using ElectronicZone.Wpf.View;
 using System.Windows;
+using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ElectronicZone.Wpf.ViewModel
 {
@@ -14,7 +17,9 @@ namespace ElectronicZone.Wpf.ViewModel
         // public Action DisplayInvalidLoginPrompt;
         ILogger logger = new Logger(typeof(LoginWindow));
 
-        // Commands
+        private IDialogCoordinator dialogCoordinator;
+
+        // Actions... (ICommands for your view)
         public ICommand MyCommand { get; set; }
 
         private string _email;
@@ -39,8 +44,10 @@ namespace ElectronicZone.Wpf.ViewModel
             }
         }
 
-        public LoginViewModel()
+        public LoginViewModel(IDialogCoordinator instance)
         {
+            this.dialogCoordinator = instance;
+
             MyCommand = new CommandHandler(MyAction, CanExecuteLoginClick);
         }
 
@@ -58,6 +65,19 @@ namespace ElectronicZone.Wpf.ViewModel
             }
             else
                 return true;
+        }
+
+        public async Task DefaultButtonTextIsUpperCase(object parameter)
+        {
+            // Show...
+            ProgressDialogController controller = await dialogCoordinator.ShowProgressAsync(this, "HEADER", "MESSAGE");
+            controller.SetIndeterminate();
+
+            // Do your work... 
+            Thread.Sleep(3000);
+
+            // Close...
+            await controller.CloseAsync();
         }
 
         public void MyAction(object parameter)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -73,6 +74,25 @@ namespace ElectronicZone.Wpf.Utility
                 }
             }
             return obj;
+        }
+
+        /// <summary>
+        /// Setting Text To Clipboard
+        /// </summary>
+        /// <param name="text"></param>
+        public static void SetTextToClipboard(string text) {
+            System.Windows.Clipboard.SetText($"{text}");
+        }
+
+        /// <summary>
+        /// Generate Sale/Purchase invoice Number Format
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="_dateTime"></param>
+        /// <returns></returns>
+        public static string GenerateInvoice(int _id, DateTime _dateTime) {
+            string invoice = $"{_dateTime.ToString(ConfigurationManager.AppSettings["InvoiceDatePattern"])}-{_id.ToString(ConfigurationManager.AppSettings["InvoiceIdPattern"])}";
+            return invoice;
         }
     }
 }

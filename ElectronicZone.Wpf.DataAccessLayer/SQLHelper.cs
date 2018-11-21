@@ -1,16 +1,56 @@
-﻿using System.Collections.Generic;
-using System.Data.SQLite;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SQLite;
 
 namespace ElectronicZone.Wpf.DataAccessLayer
 {
-    public class SQLHelper : SqlDataAccess
+    public class SQLHelper : SqlDataAccess, IDisposable
     {
-        public static int InsertOrUpdateTable(string queryToUse, List<SQLiteParameter> dbParameterList)
+        #region Properties
+        SQLiteConnection con = null;
+        IDbTransaction trans = null;
+        #endregion
+        /// <summary>
+        /// SQLHelper Default Constructor
+        /// </summary>
+        public SQLHelper()
         {
-            using (SQLiteConnection con = new SQLiteConnection(SqlDataAccess.m_connectionString))
+            this.con = new SQLiteConnection(m_connectionString);
+            con.Open();
+        }
+
+        private void BeginTransaction()
+        {
+            if (trans == null)
+                trans = con.BeginTransaction();
+        }
+
+        public void CommitTransaction()
+        {
+            trans.Commit();
+            trans = null;
+        }
+
+        public void RollbackTransaction()
+        {
+            trans.Rollback();
+            trans = null;
+        }
+
+        public void Dispose()
+        {
+            if (trans != null) CommitTransaction();
+            con.Close();
+        }
+
+        #region Methods
+        public int InsertOrUpdateTable(string queryToUse, List<SQLiteParameter> dbParameterList)
+        {
+            //using (SQLiteConnection con = new SQLiteConnection(SqlDataAccess.m_connectionString))
             {
-                con.Open();
+                //con.Open();
+                BeginTransaction();
                 using (SQLiteCommand insUpdQuery = new SQLiteCommand(queryToUse, con))
                 {
                     if (dbParameterList != null)
@@ -22,7 +62,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             }
         }
 
-        public static int getLastRowId(string tableName)
+        public int getLastRowId(string tableName)
         {
             int lastID = 0;
             //string queryToUse = "SELECT last_insert_rowid()";
@@ -32,12 +72,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             return lastID;
         }
 
-        public static int InsertOrUpdate(string insertQuery, string updateQuery, string existanceTestQuery, List<SQLiteParameter> dbParameterList)
+        public int InsertOrUpdate(string insertQuery, string updateQuery, string existanceTestQuery, List<SQLiteParameter> dbParameterList)
         {
             string queryToUse = string.Empty;
-            using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
-            {
-                con.Open();
+            //using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
+            //{
+            //con.Open();
+            BeginTransaction();
                 using (SQLiteCommand selCmd = new SQLiteCommand(existanceTestQuery, con))
                 {
                     selCmd.Parameters.AddRange(dbParameterList.ToArray());
@@ -52,15 +93,16 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                     }
                     selCmd.Parameters.Clear();
                 }
-            }
+            //}
             return InsertOrUpdateTable(queryToUse, dbParameterList);
         }
 
-        public static int DeleteFromTable(string queryToUse, List<SQLiteParameter> dbParameterList)
+        public int DeleteFromTable(string queryToUse, List<SQLiteParameter> dbParameterList)
         {
-            using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
+            //using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
             {
-                con.Open();
+                //con.Open();
+                BeginTransaction();
 
                 using (SQLiteCommand deleteQuery = new SQLiteCommand(queryToUse, con))
                 {
@@ -72,11 +114,11 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             }
         }
 
-        public static DataTable GetSelectedValue(string query, List<SQLiteParameter> dbParameterList)
+        public DataTable GetSelectedValue(string query, List<SQLiteParameter> dbParameterList)
         {
-            using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
+            //using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
             {
-                con.Open();
+                //con.Open();
                 using (SQLiteCommand selCmd = new SQLiteCommand(query, con))
                 {
                     if (dbParameterList != null)
@@ -92,12 +134,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             }
         }
 
-        public static int InsertTable(string insertQuery, string existanceQuery, List<SQLiteParameter> dbParameterList)
+        public int InsertTable(string insertQuery, string existanceQuery, List<SQLiteParameter> dbParameterList)
         {
             string queryToUse = string.Empty;
-            using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
+            //using (SQLiteConnection con = new SQLiteConnection(m_connectionString))
+            BeginTransaction();
             {
-                con.Open();
+                //con.Open();
                 using (SQLiteCommand selCmd = new SQLiteCommand(existanceQuery, con))
                 {
                     selCmd.Parameters.AddRange(dbParameterList.ToArray());
@@ -114,5 +157,6 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 }
             }
         }
+        #endregion
     }
 }

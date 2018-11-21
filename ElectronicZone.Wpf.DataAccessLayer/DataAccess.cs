@@ -6,8 +6,32 @@ using System.Data.SQLite;
 
 namespace ElectronicZone.Wpf.DataAccessLayer
 {
-    public class DataAccess
+    public class DataAccess : IDisposable
     {
+        #region Properties
+        SQLHelper sQLHelper = null; 
+        #endregion
+
+        public DataAccess()
+        {
+            this.sQLHelper = new SQLHelper();
+        }
+
+        public void CommitTransaction()
+        {
+            sQLHelper.CommitTransaction();
+        }
+
+        public void RollbackTransaction()
+        {
+            sQLHelper.RollbackTransaction();
+        }
+
+        public void Dispose()
+        {
+            sQLHelper.Dispose();
+        }
+
         #region User Validation
         /// <summary>
         /// Validate User Login by UserName and Password
@@ -22,7 +46,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             dbParameterList.Add(new SQLiteParameter("@USERNAME", userName));
             dbParameterList.Add(new SQLiteParameter("@PASSWORD", password));
             string queryToUse = "SELECT * FROM tblUser WHERE Username=@USERNAME AND Password=@PASSWORD";
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         public bool IfExistsValue(string tableName, string columnName, string value)
@@ -31,13 +55,12 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
             string queryToUse = string.Format("Select * from {1} Where {0}='{2}' COLLATE NOCASE", columnName, tableName, value);
 
-            DataTable dt = SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            DataTable dt = sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
             if (dt.Rows.Count > 0)
                 return true;
             else
                 return false;
         }
-
         #endregion User Validation
 
         #region masters
@@ -59,16 +82,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             string updateQuery = string.Format("UPDATE {0} SET Name=@Name, Description=@Description, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            return SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            return sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
         }
 
         public DataTable GetAllProducts()
         {
-            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
-            //construct parameter
-            //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
-            string queryToUse = string.Format("SELECT Id, Name, Description, CreatedDate FROM tblProductMaster WHERE IsActive = 1");
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            string queryToUse = string.Format("SELECT Id, Name, Description, IsActive, CreatedDate, ModifiedDate FROM tblProductMaster WHERE IsActive = 1");
+            return sQLHelper.GetSelectedValue(queryToUse, null);
         }
 
         public int DeleteProduct(int Id)
@@ -76,7 +96,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
             dbParameterList.Add(new SQLiteParameter("@Id", Id));
             string queryToUse = string.Format("Delete FROM tblProductMaster WHERE Id = @Id");
-            return SQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
         }
         /// <summary>
         /// Insert/Update Brand/Company
@@ -96,13 +116,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             string updateQuery = string.Format("UPDATE {0} SET Name=@Name, Description=@Description, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            return SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            return sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
         }
 
         public DataTable GetAllBrands()
         {
-            string queryToUse = string.Format("SELECT Id, Name, Description, CreatedDate, ModifiedDate FROM tblBrandMaster WHERE IsActive = 1");
-            return SQLHelper.GetSelectedValue(queryToUse, null);
+            string queryToUse = string.Format("SELECT Id, Name, Description, IsActive, CreatedDate, ModifiedDate FROM tblBrandMaster WHERE IsActive = 1");
+            return sQLHelper.GetSelectedValue(queryToUse, null);
         }
 
         public int DeleteBrand(int Id)
@@ -111,7 +131,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             //construct parameter
             dbParameterList.Add(new SQLiteParameter("@Id", Id));
             string queryToUse = string.Format("Delete FROM tblBrandMaster WHERE Id = @Id");
-            return SQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
         }
         /// <summary>
         /// Insert/Update Stock
@@ -130,13 +150,14 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string existanceTestQuery = string.Format("SELECT 1 FROM {0} WHERE Id = @id", tableName);
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
-            string updateQuery = string.Format("UPDATE {0} SET ProductCode=@ProductCode, StockCode=@StockCode, ItemDesc=@ItemDesc, AvlQuantity=@AvlQuantity, PurchasePrice=@PurchasePrice, SalePrice=@SalePrice, ProductImage=@ProductImage, PurchaseDate=@PurchaseDate, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            int result = SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
-            int rowId = SQLHelper.getLastRowId(tableName);
+            //string updateQuery = string.Format("UPDATE {0} SET ProductCode=@ProductCode, StockCode=@StockCode, ItemDesc=@ItemDesc, AvlQuantity=@AvlQuantity, PurchasePrice=@PurchasePrice, SalePrice=@SalePrice, ProductImage=@ProductImage, PurchaseDate=@PurchaseDate, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
+            string updateQuery = string.Format("UPDATE {0} SET ProductCode=@ProductCode, StockCode=@StockCode, ItemDesc=@ItemDesc, PurchasePrice=@PurchasePrice, SalePrice=@SalePrice, PurchaseDate=@PurchaseDate, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
+            int result = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            int rowId = sQLHelper.getLastRowId(tableName);
             return rowId;
         }
 
-        public int UpdateStockQuantity(Dictionary<string, string> columns, string tableName)
+        public int UpdateStockQuantity(Dictionary<string, string> columns, string tableName, bool isAdd = false)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
             //construct parameter
@@ -145,8 +166,8 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 dbParameterList.Add(new SQLiteParameter("@" + col, columns[col]));
             }
             string existanceTestQuery = string.Format("SELECT 1 FROM {0} WHERE Id = @id", tableName);
-            string updateQuery = string.Format("UPDATE {0} SET AvlQuantity=AvlQuantity-@AvlQuantity, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            return SQLHelper.InsertOrUpdate(string.Empty, updateQuery, existanceTestQuery, dbParameterList);
+            string updateQuery = $"UPDATE {tableName} SET AvlQuantity=AvlQuantity{(isAdd==true ? "+" : "-")}@AvlQuantity, ModifiedDate=@ModifiedDate WHERE ID=@ID";
+            return sQLHelper.InsertOrUpdate(string.Empty, updateQuery, existanceTestQuery, dbParameterList);
         }
 
         public int UpdateStockImage(byte[] pImage, int pId, string tableName)
@@ -157,7 +178,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             dbParameterList.Add(new SQLiteParameter("@ProductImage", pImage));
             string existanceTestQuery = string.Format("SELECT 1 FROM {0} WHERE Id = @id", tableName);
             string updateQuery = string.Format("UPDATE {0} SET ProductImage=@ProductImage WHERE ID=@ID", tableName);
-            return SQLHelper.InsertOrUpdate(string.Empty, updateQuery, existanceTestQuery, dbParameterList);
+            return sQLHelper.InsertOrUpdate(string.Empty, updateQuery, existanceTestQuery, dbParameterList);
         }
 
         public DataTable GetAllStocks()
@@ -165,8 +186,17 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
             //construct parameter
             //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
-            string queryToUse = string.Format("SELECT * FROM vw_StockMaster");
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            string queryToUse = string.Format("SELECT * FROM vw_StockMaster_New");
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+        }
+
+        public int DeleteStock(int Id)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            //construct parameter
+            dbParameterList.Add(new SQLiteParameter("@Id", Id));
+            string queryToUse = string.Format("Delete FROM tblStockMaster WHERE Id = @Id");
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
         }
 
         /// <summary>
@@ -179,13 +209,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         /// <param name="priceMin"></param>
         /// <param name="priceMax"></param>
         /// <returns></returns>
-        public DataTable SearchStocks(string productId, string brandId, string productCode, string stockCode, int? priceMin, int? priceMax, string fromDate, string toDate, bool? avlQty = false)
+        public DataTable SearchStocks(string productId, string brandId, string productCode, string stockCode, double? priceMin, double? priceMax, string fromDate, string toDate, bool? avlQty = false)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
             //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
-            string queryToUse = string.Format("SELECT * FROM vw_StockMaster Where Quantity>0 ");
+            string queryToUse = string.Format("SELECT * FROM vw_StockMaster_New WHERE Quantity > 0 ");
             if (!string.IsNullOrEmpty(productId))
-                queryToUse += string.Format(" AND ProductId = {0}", productId);
+                queryToUse += $" AND ProductId = {productId}";
             if (!string.IsNullOrEmpty(brandId))
                 queryToUse += string.Format(" AND BrandId = {0}", brandId);
             if (!string.IsNullOrEmpty(productCode))
@@ -202,7 +232,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 queryToUse += string.Format(" AND PurchaseDate <= '{0}'", toDate);
             if (avlQty.Value)
                 queryToUse += string.Format(" AND AvlQuantity>=1");
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         /// <summary>
@@ -223,10 +253,28 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             //check this update [no necessary]
-            string updateQuery = string.Format("UPDATE {0} SET Name=@Name, Description=@Description, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            int rslt = SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
-            int rowId = SQLHelper.getLastRowId(tableName);
+            string updateQuery = string.Format("UPDATE {0} SET AmountPaid=AmountPaid+@AmountPaid, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
+            int rslt = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            int rowId = sQLHelper.getLastRowId(tableName);
             return rowId;
+        }
+
+        public int InsertOrUpdateInvoiceMaster(Dictionary<string, string> columns, string tableName)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            //construct parameter
+            foreach (string col in columns.Keys)
+            {
+                dbParameterList.Add(new SQLiteParameter("@" + col, columns[col]));
+            }
+            string existanceTestQuery = string.Format("SELECT 1 FROM {0} WHERE Id = @id", tableName);
+            string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
+                dbParameterList.Select(r => r.ParameterName).ToArray()));
+            //check this update [no necessary]
+            string updateQuery = string.Format("UPDATE {0} SET IsActive=@IsActive WHERE ID=@ID", tableName);
+            int rslt = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            // int rowId = sQLHelper.getLastRowId(tableName);
+            return rslt;
         }
 
         public DataTable GetAllSales(string id)
@@ -238,8 +286,18 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 dbParameterList.Add(new SQLiteParameter("@Id", id));
             }
             string queryToUse = string.Format("SELECT * FROM vw_SaleMaster");
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
+
+        public int DeleteSalesOrder(int Id)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            //construct parameter
+            dbParameterList.Add(new SQLiteParameter("@Id", Id));
+            string queryToUse = string.Format("Delete FROM tblSaleMaster WHERE Id = @Id");
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+        }
+        
 
         public DataTable GetSaleInvoice(string SalesId)
         {
@@ -249,7 +307,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 dbParameterList.Add(new SQLiteParameter("@SalesId", SalesId));
             }
             string queryToUse = string.Format("SELECT * FROM vw_SaleMaster Where SalesId=@SalesId");
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         public int InsertPaymentMaster(Dictionary<string, string> columns, string tableName)
@@ -264,7 +322,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             //string updateQuery = string.Format("UPDATE {0} SET Name=@Name, Description=@Description, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            return SQLHelper.InsertOrUpdate(insertQuery, string.Empty, string.Empty, dbParameterList);
+            return sQLHelper.InsertOrUpdate(insertQuery, string.Empty, string.Empty, dbParameterList);
         }
 
         public int InsertOrUpdateSalePerson(Dictionary<string, string> columns, string tableName)
@@ -280,15 +338,15 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             string updateQuery = string.Format("UPDATE {0} SET Title=@Title, Name=@Name, Contact=@Contact, AlternateContact=@AlternateContact, Email=@Email, Address=@Address WHERE ID=@ID", tableName);
 
-            int res = SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
-            int rowId = SQLHelper.getLastRowId(tableName);
+            int res = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            int rowId = sQLHelper.getLastRowId(tableName);
             return rowId;
         }
 
         public DataTable GetAllSalesPerson()
         {
-            string queryToUse = string.Format("SELECT * FROM tblSalePerson WHERE IsActive = 1");
-            return SQLHelper.GetSelectedValue(queryToUse, null);
+            string queryToUse = string.Format("SELECT * FROM vw_SalePerson");
+            return sQLHelper.GetSelectedValue(queryToUse, null);
         }
 
         public int DeleteSalesPerson(int Id)
@@ -297,7 +355,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             //construct parameter
             dbParameterList.Add(new SQLiteParameter("@Id", Id));
             string queryToUse = string.Format("Delete FROM tblSalePerson WHERE Id = @Id");
-            return SQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
         }
 
         //public DataTable SearchSales(string id)
@@ -310,7 +368,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         //    }
 
         //    string queryToUse = string.Format("SELECT Id, Name, Description, CreatedDate FROM tblSaleMaster WHERE IsActive = 1");
-        //    return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+        //    return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         //}
 
         public int InsertOrUpdatePendingPayment(Dictionary<string, string> columns, string tableName)
@@ -326,8 +384,8 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             string updateQuery = string.Format("UPDATE {0} SET IsPaid=@IsPaid, PaidDate=@PaidDate, IsDiscount=@IsDiscount, PaidAmount=@PaidAmount WHERE ID=@ID", tableName);
 
-            int res = SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
-            int rowId = SQLHelper.getLastRowId(tableName);
+            int res = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            int rowId = sQLHelper.getLastRowId(tableName);
             return rowId;
         }
 
@@ -339,25 +397,23 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         //        dbParameterList.Add(new SQLiteParameter("@Id", id));
         //    }
         //    string queryToUse = string.Format("SELECT * FROM vw_PendingPaymentMaster WHERE IsPaid = 0");
-        //    return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+        //    return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         //}
 
         public int InsertOrUpdateSupportPaymentMaster(Dictionary<string, string> columns, string tableName)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
-            //construct parameter
-            foreach (string col in columns.Keys)
-            {
+            foreach (string col in columns.Keys) {
                 dbParameterList.Add(new SQLiteParameter("@" + col, columns[col]));
             }
             string existanceTestQuery = string.Format("SELECT 1 FROM {0} WHERE Id = @id", tableName);
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
-            string updateQuery = string.Format("UPDATE {0} SET Description=@Description, Amount=@Amount, SupportDate=@SupportDate WHERE ID=@ID", tableName);
-
-            int res = SQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
-            //int rowId = SQLHelper.getLastRowId(tableName);
-            return res;
+            //string updateQuery = string.Format("UPDATE {0} SET Description=@Description, Amount=@Amount, SupportDate=@SupportDate, Remarks=@Remarks WHERE ID=@ID", tableName);
+            string updateQuery = string.Format("UPDATE {0} SET Description=@Description, SupportDate=@SupportDate, Remarks=@Remarks WHERE ID=@ID", tableName);
+            int res = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
+            int rowId = sQLHelper.getLastRowId(tableName);
+            return rowId;
         }
 
         public DataTable GetAllSupportPayment(string id)
@@ -369,10 +425,18 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 dbParameterList.Add(new SQLiteParameter("@Id", id));
             }
 
-            string queryToUse = string.Format("SELECT Id, Description, Amount, SupportDate FROM tblSupportPaymentMaster WHERE IsActive=1");
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            string queryToUse = string.Format("SELECT Id, Description, Amount, SupportDate, Remarks FROM tblSupportPaymentMaster WHERE IsActive=1");
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
+        public int DeleteSupportPayment(int Id)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            //construct parameter
+            dbParameterList.Add(new SQLiteParameter("@Id", Id));
+            string queryToUse = string.Format("Delete FROM tblSupportPaymentMaster WHERE Id = @Id");
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+        }
 
         // dashboard
         public DataTable getCredirDebitByDate(string startDate, string endDate)
@@ -385,7 +449,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             if (!string.IsNullOrEmpty(endDate))
                 queryToUse += string.Format(" AND pm.CreatedDate <= {0}", endDate);
 
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         #endregion masters
@@ -424,7 +488,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 queryToUse += string.Format(" AND SaleDate <= '{0}'", toDate);
             if (!string.IsNullOrEmpty(salesPersonId))
                 queryToUse += string.Format(" AND SalesPersonId = {0}", salesPersonId);
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         public DataTable SearchSupportPayment(int? priceMin, int? priceMax, string fromDate, string toDate, string description)
@@ -442,7 +506,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 queryToUse += string.Format(" AND SupportDate <= '{0}'", toDate);
             if (!string.IsNullOrEmpty(description))
                 queryToUse += string.Format(" AND Description like '%{0}%'", description);
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         public DataTable SearchPendingPayment(int? priceMin, int? priceMax, string fromDate, string toDate, string salesPersonId, int? isPaid)
@@ -462,7 +526,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 queryToUse += string.Format(" AND SalesPersonId = {0}", salesPersonId);
             if (isPaid.HasValue)
                 queryToUse += string.Format(" AND IsPaid = {0}", isPaid.Value);
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         public DataTable SearchPaymentIncome(string fromDate, string toDate, string paymentType)
@@ -476,7 +540,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 queryToUse += string.Format(" AND TransactionDate <= '{0}'", toDate);
             if (!string.IsNullOrEmpty(paymentType))
                 queryToUse += string.Format(" AND PaymentType = '{0}'", paymentType);
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
         public DataTable SearchPaymentInvest(string fromDate, string toDate, string paymentType)
@@ -490,7 +554,23 @@ namespace ElectronicZone.Wpf.DataAccessLayer
                 queryToUse += string.Format(" AND TransactionDate <= '{0}'", toDate);
             if (!string.IsNullOrEmpty(paymentType))
                 queryToUse += string.Format(" AND PaymentType = '{0}'", paymentType);
-            return SQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+        }
+
+        public DataTable SearchSalesPerson(string name, string contact, string email, string address)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
+            string queryToUse = string.Format("SELECT * FROM vw_SalePerson Where IsActive=1");
+            if (!string.IsNullOrEmpty(name))
+                queryToUse += string.Format(" AND Name like '%{0}%'", name);
+            if (!string.IsNullOrEmpty(contact))
+                queryToUse += string.Format(" AND Contact like '%{0}%'", contact);
+            if (!string.IsNullOrEmpty(email))
+                queryToUse += string.Format(" AND Email like '%{0}%'", email);
+            if (!string.IsNullOrEmpty(address))
+                queryToUse += string.Format(" AND Address like '%{0}%'", address);
+            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
         #endregion
     }

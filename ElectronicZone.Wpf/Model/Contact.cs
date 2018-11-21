@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ElectronicZone.Wpf.Utility.CommonEnum;
 
 namespace ElectronicZone.Wpf.Model
 {
@@ -16,6 +17,7 @@ namespace ElectronicZone.Wpf.Model
         private string _contact;
         private string _altContact;
         private string _email;
+        private Uri _emailUri;
         private string _address;
         private bool _isActive;
         //private DateTime _createdDate;
@@ -29,16 +31,18 @@ namespace ElectronicZone.Wpf.Model
         public string Email { get => _email; set => _email = value; }
         public string Address { get => _address; set => _address = value; }
         public bool IsActive { get => _isActive; set => _isActive = value; }
+
+        public Uri EmailUri { get => _emailUri; set => _emailUri = value; }
         //public DateTime CreatedDate { get => _createdDate; set => _createdDate = value; }
         //public DateTime ModifiedDate { get => _modifiedDate; set => _modifiedDate = value; }
 
-        public enum Salutation
-        {
-            // [Description("Mr")]
-            Mr,
-            Miss,
-            Mrs,
-        }
+        //public enum Salutation
+        //{
+        //    // [Description("Mr")]
+        //    Mr,
+        //    Miss,
+        //    Mrs,
+        //}
 
         //public List<string> GetSalutationList()
         //{
@@ -47,7 +51,7 @@ namespace ElectronicZone.Wpf.Model
 
         public static ObservableCollection<string> GetSalutationObservableCollection()
         {
-            return new ObservableCollection<string>(Enum.GetNames(typeof(Contact.Salutation)));
+            return new ObservableCollection<string>(Enum.GetNames(typeof(Salutation)));
         }
 
     }

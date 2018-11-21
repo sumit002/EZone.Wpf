@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ElectronicZone.Wpf.DataAccessLayer
 {
@@ -12,6 +13,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         static SqlDataAccess()
         {
             m_connectionString = GetConnString();
+            
         }
 
         private static string GetConnString()
@@ -30,10 +32,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             //Directory.SetCurrentDirectory(exeDir);
 
             string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
             string path = (System.IO.Path.GetDirectoryName(executable));
             AppDomain.CurrentDomain.SetData("DataDirectory", path);
-
-            string connString = @"Data Source=|DataDirectory|\JackDB.db;Version=3;New=False;Compress=True;";// @"Data Source=database.db; Version=3;";
+            // MessageBox.Show($"Connection String: {path}");
+            // string connString = @"Data Source=|DataDirectory|\eZone.db;Version=3;New=False;Compress=True;";// @"Data Source=database.db; Version=3;";
+            string connString = @"Data Source=|DataDirectory|\JackDB.db;Version=3;New=False;Compress=True;";
+            
             return connString;
         }
     }

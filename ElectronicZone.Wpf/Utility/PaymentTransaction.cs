@@ -8,10 +8,23 @@ using System.Configuration;
 
 namespace ElectronicZone.Wpf.Utility
 {
+    /// <summary>
+    /// Payment Transaction Handler Class
+    /// </summary>
     public class PaymentTransaction
     {
-        public bool AddPaymentTransaction(int userId, double amount, PaymentStatus paymentStatus, int transactionId)
+        /// <summary>
+        /// Adds Payment Transaction
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="amount"></param>
+        /// <param name="paymentStatus"></param>
+        /// <param name="transactionId"></param>
+        /// <param name="da"></param>
+        /// <returns></returns>
+        public bool AddPaymentTransaction(int userId, double amount, PaymentStatus paymentStatus, int transactionId, DataAccess da)
         {
+            // using (DataAccess da = new DataAccess()) {
             Dictionary<string, string> paymentModel = new Dictionary<string, string>();
             //paymentM.Add("Id", null);
             paymentModel.Add("UserId", userId.ToString());
@@ -20,34 +33,51 @@ namespace ElectronicZone.Wpf.Utility
             paymentModel.Add("Status", paymentStatus.ToString());
             paymentModel.Add("Description", GetPaymentDescription(transactionId, paymentStatus));
             paymentModel.Add("Remarks", "");
+            // ToDo : Check Created date for Purchase order create shd be Purchase Date instead of today's date
             paymentModel.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
-            DataAccess dataAccess = new DataAccess();
-            int status = dataAccess.InsertPaymentMaster(paymentModel, "tblPaymentMaster");
+            int status = da.InsertPaymentMaster(paymentModel, "tblPaymentMaster");
             if (status == 1)
                 return true;
             else
                 return false;
+            // }
         }
 
-        public bool ReversePaymentTransaction(int userId, double amount, PaymentStatus paymentStatus, int transactionId)
+        /// <summary>
+        /// Reverses Payment Transaction
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="amount"></param>
+        /// <param name="paymentStatus"></param>
+        /// <param name="transactionId"></param>
+        /// <param name="da"></param>
+        /// <returns></returns>
+        public bool ReversePaymentTransaction(int userId, double amount, PaymentStatus paymentStatus, int transactionId, DataAccess da)
         {
+            //using (DataAccess da = new DataAccess()) {
             Dictionary<string, string> paymentModel = new Dictionary<string, string>();
             //paymentM.Add("Id", null);
             paymentModel.Add("UserId", userId.ToString());
-            paymentModel.Add("Cr", (paymentStatus == PaymentStatus.PURCHASEREVERSAL_PAYMENT ? amount.ToString() : "0"));// Credit For Purchase Reversal
-            paymentModel.Add("Dr", (paymentStatus == PaymentStatus.SALEREVERSAL_PAYMENT ? amount.ToString() : "0"));// Debit For Sale Reversal
+            paymentModel.Add("Cr", (paymentStatus == PaymentStatus.PURCHASEREVERSAL_PAYMENT ? amount.ToString() : "0"));// Credit For Purchase
+            paymentModel.Add("Dr", (paymentStatus != PaymentStatus.PURCHASEREVERSAL_PAYMENT ? amount.ToString() : "0"));// Debit For Sale,Support payment Reversal
             paymentModel.Add("Status", paymentStatus.ToString());
             paymentModel.Add("Description", GetPaymentDescription(transactionId, paymentStatus));
             paymentModel.Add("Remarks", "");
             paymentModel.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
-            DataAccess dataAccess = new DataAccess();
-            int status = dataAccess.InsertPaymentMaster(paymentModel, "tblPaymentMaster");
+            int status = da.InsertPaymentMaster(paymentModel, "tblPaymentMaster");
             if (status == 1)
                 return true;
             else
                 return false;
+            //}
         }
 
+        /// <summary>
+        /// Constructs Payment Description
+        /// </summary>
+        /// <param name="transId"></param>
+        /// <param name="ps"></param>
+        /// <returns></returns>
         private string GetPaymentDescription(int transId, PaymentStatus ps)
         {
             string desc = string.Empty;
@@ -61,7 +91,7 @@ namespace ElectronicZone.Wpf.Utility
             else
                 paymentType = "";
             // construct the description string
-            desc = string.Format($"{paymentType} from transactionId : {transId.ToString()}");
+            desc = string.Format($"{paymentType} from transId : {transId.ToString()}");
             return desc;
         }
     }

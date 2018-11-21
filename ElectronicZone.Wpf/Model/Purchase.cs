@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ElectronicZone.Wpf.Model
 {
@@ -24,12 +20,17 @@ namespace ElectronicZone.Wpf.Model
         private DateTime _createdDate;
         private DateTime _modifiedDate;
 
+        private string _product;
+        private string _brand;
+        private double _totalPurchasePrice;
+
+
         public int Id { get => _id; set => _id = value; }
         public int ProductId { get => _productId; set => _productId = value; }
         public int BrandId { get => _brandId; set => _brandId = value; }
         public string ProductCode { get => _productCode; set => _productCode = value; }
         public string StockCode { get => _stockCode; set => _stockCode = value; }
-        public string ItemDescription { get => _itemDescription; set => _itemDescription = value; }
+        public string ItemDesc { get => _itemDescription; set => _itemDescription = value; }
         public int Quantity { get => _quantity; set => _quantity = value; }
         public int AvlQuantity { get => _avlQuantity; set => _avlQuantity = value; }
         public double PurchasePrice { get => _purchasePrice; set => _purchasePrice = value; }
@@ -39,5 +40,8 @@ namespace ElectronicZone.Wpf.Model
         public DateTime PurchaseDate { get => _purchaseDate; set => _purchaseDate = value; }
         public DateTime CreatedDate { get => _createdDate; set => _createdDate = value; }
         public DateTime ModifiedDate { get => _modifiedDate; set => _modifiedDate = value; }
+        public string Product { get => _product; set => _product = value; }
+        public string Brand { get => _brand; set => _brand = value; }
+        public double TotalPurchasePrice { get => _totalPurchasePrice; set => _totalPurchasePrice = value; }
     }
 }

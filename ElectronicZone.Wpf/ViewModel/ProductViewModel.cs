@@ -8,17 +8,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace ElectronicZone.Wpf.ViewModel
 {
-    public class BrandViewModel : ViewModelBase
+    public class ProductViewModel : ViewModelBase
     {
         #region Properties
-        ILogger logger = new Logger(typeof(BrandViewModel));
-        private IDialogCoordinator dialogCoordinator;
-        public ObservableCollection<Brand> BrandList { get; set; }
+        ILogger logger = new Logger(typeof(ProductViewModel));
+        private IDialogCoordinator _dialogCoordinator;
+        public ObservableCollection<Product> ProductList { get; set; }
         #endregion
 
         #region UI Models
@@ -42,7 +45,7 @@ namespace ElectronicZone.Wpf.ViewModel
             {
                 _selectedIndex = value;
                 OnPropertyChanged();
-                if (_selectedIndex == 1) { GetAllBrands(); };
+                if (_selectedIndex == 1) { GetAllProducts(); };
             }
         }
 
@@ -59,56 +62,51 @@ namespace ElectronicZone.Wpf.ViewModel
         #endregion
 
         #region Commands
-        public ICommand AddOrUpdateBrandCmd { get; set; }
-        public ICommand ResetBrandCmd { get; set; }
+        public ICommand AddOrUpdateProductCmd { get; set; }
+        public ICommand ResetProductCmd { get; set; }
 
-        public ICommand EditBrandCmd { get; set; }
-        public ICommand DeleteBrandCmd { get; set; }
+        public ICommand EditProductCmd { get; set; }
+        public ICommand DeleteProductCmd { get; set; }
         #endregion
 
-        public BrandViewModel(IDialogCoordinator instance)
+        public ProductViewModel(IDialogCoordinator instance)
         {
             this.TabHeaderText = "Add Brand";
-            this.BrandList = new ObservableCollection<Brand>();
-            this.dialogCoordinator = instance;
+            this.ProductList = new ObservableCollection<Product>();
+            this._dialogCoordinator = instance;
             this.IsAddMode = true;
 
-            EditBrandCmd = new CommandHandler(EditBrand, CanExecuteEditBrand);
-            DeleteBrandCmd = new CommandHandler(DeleteBrand, CanExecuteDeleteBrandCmd);
-            AddOrUpdateBrandCmd = new CommandHandler(AddOrUpdateBrand, CanExecuteAddOrUpdateBrand);
-            ResetBrandCmd = new CommandHandler(ResetBrand, CanExecuteResetBrand);
-            //GetAllBrands();
+            AddOrUpdateProductCmd = new CommandHandler(AddOrUpdateProduct, CanExecuteAddOrUpdateProduct);
+            ResetProductCmd = new CommandHandler(ResetProduct, CanExecuteAddOrUpdateProduct);
+            EditProductCmd = new CommandHandler(EditProduct, CanExecuteAddOrUpdateProduct);
+            DeleteProductCmd = new CommandHandler(DeleteProduct, CanExecuteAddOrUpdateProduct);
         }
 
-        private bool CanExecuteEditBrand(object arg)
+        private void DeleteProduct(object obj)
         {
-            return true;
+            var item = (Product)obj;
+            if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+            {
+                using (DataAccess da = new DataAccess()) {
+                    da.DeleteProduct(item.Id);
+                }
+                this.ProductList.Remove(item);
+            }
         }
-        private void EditBrand(object obj)
+
+        private void EditProduct(object obj)
         {
-            var item = (Brand)obj;
+            var item = (Product)obj;
             this.Id = item.Id;
             this.Name = item.Name;
             this.Description = item.Description;
 
-            this.TabHeaderText = "Edit Brand";
+            //this.TabHeaderText = "Edit Brand";
             this.IsAddMode = false;
             this.TabSelectedIndex = 0;
         }
 
-        private bool CanExecuteResetBrand(object arg)
-        {
-            return true;
-        }
-        private void ResetBrand(object obj)
-        {
-            ResetBrand();
-        }
-
-        /// <summary>
-        /// Reset Brand
-        /// </summary>
-        private void ResetBrand()
+        private void ResetProduct(object obj)
         {
             try
             {
@@ -116,7 +114,7 @@ namespace ElectronicZone.Wpf.ViewModel
                 this.Name = "";
                 this.Description = "";
                 this.IsAddMode = true;
-                this.TabHeaderText = "Add Brand";
+                this.TabHeaderText = "Add Product";
             }
             catch (Exception ex)
             {
@@ -124,19 +122,14 @@ namespace ElectronicZone.Wpf.ViewModel
             }
         }
 
-        private bool CanExecuteAddOrUpdateBrand(object arg)
-        {
-            return true;
-        }
-        private void AddOrUpdateBrand(object obj)
+        private void AddOrUpdateProduct(object obj)
         {
             //var item = (Brand)obj;
-            using (DataAccess da = new DataAccess()) {
+            using (DataAccess da = new DataAccess())
+            {
                 try
                 {
-                    if (ValidateBrand(da))
-                    {
-                        //create record
+                    if (ValidateProduct(da)) {
                         Dictionary<string, string> folderFields = new Dictionary<string, string>();
                         folderFields.Add("Id", this.Id == 0 ? null : this.Id.ToString());
                         folderFields.Add("Name", this.Name);
@@ -144,15 +137,14 @@ namespace ElectronicZone.Wpf.ViewModel
                         folderFields.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
                         folderFields.Add("ModifiedDate", this.Id == 0 ? null : DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
 
-                        int status = da.InsertOrUpdateBrandMaster(folderFields, "tblBrandMaster");
-                        //check if it is insert/updated
+                        int status = da.InsertOrUpdateProductMaster(folderFields, "tblProductMaster");
                         if (status == 1) {
-                            MessageBoxResult result = MessageBox.Show("Brand Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                            ResetBrand();
+                            MessageBoxResult result = MessageBox.Show("Product Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            ResetProduct(new object());
                         }
                         else
                         {
-                            MessageBoxResult result = MessageBox.Show("Error While Adding Brand!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBoxResult result = MessageBox.Show("Error While Adding Product!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else
@@ -168,13 +160,13 @@ namespace ElectronicZone.Wpf.ViewModel
             }
         }
 
-        private bool ValidateBrand(DataAccess da)
+        private bool ValidateProduct(DataAccess da)
         {
             if (string.IsNullOrEmpty(this.Name))
             {
                 return false;
             }
-            else if (da.IfExistsValue("tblBrandMaster", "Name", this.Name) && this.IsAddMode)
+            else if (da.IfExistsValue("tblProductMaster", "Name", this.Name) && this.IsAddMode)
             {
                 MessageBoxResult result = MessageBox.Show("Name already exists!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
@@ -183,34 +175,26 @@ namespace ElectronicZone.Wpf.ViewModel
                 return true;
         }
 
-        private void DeleteBrand(object param)
+        private bool CanExecuteAddOrUpdateProduct(object arg)
         {
-            var item = (Brand)param;
-            if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+            return true;
+        }
+
+        /// <summary>
+        /// Get All Products
+        /// </summary>
+        private void GetAllProducts()
+        {
+            DataTable dtProducts = new DataTable();
+            using (DataAccess da = new DataAccess())
             {
-                using (DataAccess da = new DataAccess()) {
-                    da.DeleteBrand(item.Id);
-                }
-                BrandList.Remove((Brand)param);
-            }  
-        }
-
-        private bool CanExecuteDeleteBrandCmd(object parameter)
-        {
-            return SelectedResult != null;
-        }
-
-        private void GetAllBrands() {
-            DataTable dtBrands = new DataTable();
-            using (DataAccess da = new DataAccess()) {
-                dtBrands = da.GetAllBrands();
+                dtProducts = da.GetAllProducts();
             }
-            //List<BrandModel> Brands = new List<BrandModel>();
-            //Brands = CommonMethods.ConvertDataTable<BrandModel>(dtBrands);
-            this.BrandList.Clear();
-            foreach (DataRow row in dtBrands.Rows)
+
+            this.ProductList.Clear();
+            foreach (DataRow row in dtProducts.Rows)
             {
-                this.BrandList.Add(new Brand()
+                this.ProductList.Add(new Product()
                 {
                     Id = int.Parse(row["Id"].ToString()),
                     Name = (string)row["Name"],
