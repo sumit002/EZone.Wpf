@@ -105,9 +105,9 @@ namespace ElectronicZone.Wpf.View.Report
         private void btnExport_Click(object sender, RoutedEventArgs e)
         {
             goExcelOut goExcelOut = new goExcelOut();
-            bool result = goExcelOut.generateExcel(dataGridSupportPayment, "SupportPaymentReport");
-            if (result)
-                MessageBox.Show("File exported successfully.");
+            bool result = goExcelOut.GenerateExcelOutput(dataGridSupportPayment, "SupportPaymentReport");
+            //if (result)
+            //    MessageBox.Show("File exported successfully.");
         }
     }
 }

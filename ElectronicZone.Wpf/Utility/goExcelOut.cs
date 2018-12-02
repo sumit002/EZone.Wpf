@@ -14,14 +14,14 @@ namespace ElectronicZone.Wpf.Utility
     public class goExcelOut 
     {
         /// <summary>
-        /// 
+        /// Generate Excel Output Report
         /// </summary>
         /// <param name="dg"></param>
         /// <param name="reportName"></param>
         /// <returns></returns>
-        public bool generateExcel(DataGrid dg, string reportName) 
+        public bool GenerateExcelOutput(DataGrid dg, string reportName) 
         {
-            string fileName = string.Format("{1}-{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now, reportName);
+            string _fileName = $"{reportName}-{DateTime.Now:yyyy-MM-dd_hh-mm-ss-tt}";
             dg.SelectAllCells();
             dg.ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
             ApplicationCommands.Copy.Execute(null, dg);
@@ -30,12 +30,13 @@ namespace ElectronicZone.Wpf.Utility
             dg.UnselectAllCells();
             string strPath = Environment.GetFolderPath(
                          System.Environment.SpecialFolder.Desktop);
-            string filePath = Path.Combine(strPath, string.Format("{0}.xls", fileName));
+            string filePath = Path.Combine(strPath, string.Format("{0}.xls", _fileName));
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(filePath))
             {
                 file.WriteLine(result.Replace(",", " "));
                 file.Close();
             }
+            MessageBox.Show($"File Exported to {System.Environment.SpecialFolder.Desktop.ToString()} Successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.None);
             return true;
         }
     }

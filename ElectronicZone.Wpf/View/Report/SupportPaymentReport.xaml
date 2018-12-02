@@ -52,7 +52,7 @@
             <StackPanel Orientation="Horizontal">
                 <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=FileExcelSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
                     ToolTip="Download Result" x:Name="btnExport" HorizontalAlignment="Left" VerticalAlignment="Center"
-                        Visibility="Hidden"></Button>
+                        Visibility="Hidden" Click="btnExport_Click"></Button>
                 <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SearchSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
                     Name="btnSearch" VerticalAlignment="Center" Click="btnSearch_Click" />
                 <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SyncAltSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
@@ -102,6 +102,13 @@
         <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="7" Height="Auto" AutoGenerateColumns="False" HorizontalAlignment="Stretch" 
                   IsReadOnly="True" Name="dataGridSupportPayment">
             <DataGrid.Columns>
+                <!--<DataGridTemplateColumn Header="Description" Width="10*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
                 <DataGridTextColumn Binding="{Binding Description}" Header="Payment Description" Width="60*" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
