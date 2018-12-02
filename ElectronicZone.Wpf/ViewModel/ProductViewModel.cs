@@ -8,9 +8,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -183,11 +180,13 @@ namespace ElectronicZone.Wpf.ViewModel
         /// <summary>
         /// Get All Products
         /// </summary>
-        private void GetAllProducts()
+        private async void GetAllProducts()
         {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
             DataTable dtProducts = new DataTable();
-            using (DataAccess da = new DataAccess())
-            {
+            using (DataAccess da = new DataAccess()) {
                 dtProducts = da.GetAllProducts();
             }
 
@@ -203,6 +202,8 @@ namespace ElectronicZone.Wpf.ViewModel
                     ModifiedDate = string.IsNullOrEmpty(row["ModifiedDate"].ToString()) ? (DateTime?)null : DateTime.Parse(row["ModifiedDate"].ToString())// Convert.ToDateTime(row["ModifiedDate"])
                 });
             }
+
+            await controller.CloseAsync();
         }
     }
 }

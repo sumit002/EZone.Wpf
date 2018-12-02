@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using MahApps.Metro.Controls;
 using ElectronicZone.Wpf.Utility;
 using ElectronicZone.Wpf.DataAccessLayer;
+using System.Configuration;
 
 namespace ElectronicZone.Wpf.View.Report
 {
@@ -18,7 +19,7 @@ namespace ElectronicZone.Wpf.View.Report
         public PendingPaymentReport()
         {
             InitializeComponent();
-            loadSalesPerson();
+            LoadSalesPerson();
 
             // on esc close
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
@@ -35,14 +36,16 @@ namespace ElectronicZone.Wpf.View.Report
             try
             {
                 DataTable dtPendingPayment = new DataTable();
-                DataAccess da = new DataAccess();
-                dtPendingPayment = da.SearchPendingPayment((int?)this.txtPriceFrom.Value, (int?)this.txtPriceTo.Value,
-                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString("yyyy-MM-dd HH:mm:ss")),
-                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString("yyyy-MM-dd HH:mm:ss")),
-                    (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()),
-                    (this.chkbPaid.IsChecked == null ? 0 : this.chkbPaid.IsChecked == true ? 1 : 0));
-                if (dtPendingPayment.Rows.Count > 0)
+                using (DataAccess da = new DataAccess())
                 {
+                    dtPendingPayment = da.SearchPendingPayment((int?)this.txtPriceFrom.Value, (int?)this.txtPriceTo.Value,
+                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()),
+                        (this.chkbPaid.IsChecked == null ? 0 : this.chkbPaid.IsChecked == true ? 1 : 0));
+                }
+
+                if (dtPendingPayment.Rows.Count > 0) {
                     btnExport.Visibility = System.Windows.Visibility.Visible;
                     dataGridPendingPayment.ItemsSource = dtPendingPayment.DefaultView;
                 }
@@ -50,6 +53,7 @@ namespace ElectronicZone.Wpf.View.Report
                 {
                     btnExport.Visibility = System.Windows.Visibility.Hidden;
                     dataGridPendingPayment.ItemsSource = null;
+                    MessageBoxResult result = MessageBox.Show("No results found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
@@ -84,7 +88,7 @@ namespace ElectronicZone.Wpf.View.Report
             // hide export button
             btnExport.Visibility = System.Windows.Visibility.Hidden;
         }
-        private void loadSalesPerson()
+        private void LoadSalesPerson()
         {
             DataTable dtPerson = new DataTable();
             DataAccess da = new DataAccess();
@@ -97,15 +101,15 @@ namespace ElectronicZone.Wpf.View.Report
 
         private void fromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
         }
 
         private void toDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
         }
 
-        private void validateCalendarMinMaxDate()
+        private void ValidateCalendarMinMaxDate()
         {
             try
             {

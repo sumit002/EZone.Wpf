@@ -5,49 +5,86 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Payment"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
         mc:Ignorable="d"
         Title="Pending Payment" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="5,5,5,5">
+    <Grid Margin="5,5,5,5" Width="Auto" Height="Auto">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
             <!--<RowDefinition Height="50"></RowDefinition>-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="250"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <Button Content="Search" Height="23" HorizontalAlignment="left" Margin="410,11,0,0" Name="btnSearch" VerticalAlignment="Top" Width="72" Click="btnSearch_Click" />
-        <Button Content="Reset" Height="23" HorizontalAlignment="left" Margin="488,11,0,0" Name="btnReset" VerticalAlignment="Top" Width="75" Click="btnReset_Click" />
-        <DataGrid AutoGenerateColumns="False" Height="286" HorizontalAlignment="Left" IsReadOnly="True" Margin="10,0,0,1" Name="dataGridPendingPayment" VerticalAlignment="Bottom" Width="556" SelectedCellsChanged="dataGridPendingPayment_SelectedCellsChanged_1">
 
+        <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding ContactList}" SelectedItem="{Binding Path=SContact}"
+                  DisplayMemberPath="Name" Height="23" HorizontalAlignment="left" Name="cbSalesPerson" SelectedValuePath="Id" ToolTip="Select Person" VerticalAlignment="Center" Width="240" />
+        <Button Grid.Row="0" Grid.Column="1" Command="{Binding SearchPendingPaymentCmd}" Content="Search" Height="23" HorizontalAlignment="left" Name="btnSearch" VerticalAlignment="Center" Width="72" />
+        <Button Grid.Row="0" Grid.Column="1" Command="{Binding ResetSearchPendingPaymentCmd}" Content="Reset" Height="23" HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Width="75" Margin="0,0,45,1" />
+
+
+        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding PendingPaymentList}"
+                  AutoGenerateColumns="False" Height="Auto" 
+                  HorizontalAlignment="Stretch" IsReadOnly="True" Name="dataGridPendingPayment" 
+                  VerticalAlignment="Top" Width="Auto" >
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Header="Sales Person Name" />
-                <DataGridTextColumn Binding="{Binding Contact}" Header="Contact" />
-                <DataGridTextColumn Binding="{Binding PendingAmount}" Header="Pending">
+                <DataGridTextColumn Binding="{Binding Name}" Header="Sales Person Name" Width="20*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding PrimaryContact}" Header="Contact" Width="20*"/>
+                <DataGridTextColumn Binding="{Binding ProductToDisplay}" Header="Product" Width="20*"/>
+                <DataGridTextColumn Binding="{Binding ProductCodeToDisplay}" Header="ProductCode" Width="20*"/>
+
+                <DataGridTextColumn Binding="{Binding Total, StringFormat={}{0:00.00}}" Header="Total" Width="10*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Total}" Header="Total">
+                <DataGridTextColumn Binding="{Binding PaidAmount, StringFormat={}{0:00.00}}" Header="Paid" Width="10*" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AmountPaid}" Header="Paid">
+                <DataGridTextColumn Binding="{Binding PendingAmount, StringFormat={}{0:00.00}}" Header="Pending" Width="10*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                            <Setter Property="FontWeight" Value="Bold" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding SaleDate}" Header="Sale On" />
+                <DataGridTextColumn Binding="{Binding SaleDate, StringFormat={}{0:dd/MM/yy}}" Header="Sale On" Width="10*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTemplateColumn Width="5*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{iconPacks:FontAwesome Kind=ShippingFastSolid}" Foreground="BlueViolet" ToolTip="Sale This Item"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.ClearPendingPaymentCmd}"
+                                                CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <ComboBox DisplayMemberPath="Name" Height="23" HorizontalAlignment="left" Margin="11,10,0,0" Name="cbSalesPerson" SelectedValuePath="Id" ToolTip="Select Person" VerticalAlignment="Top" Width="266" />
     </Grid>
 </Controls:MetroWindow>

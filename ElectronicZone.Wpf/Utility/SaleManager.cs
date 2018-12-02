@@ -1,11 +1,9 @@
 ﻿using ElectronicZone.Wpf.DataAccessLayer;
 using ElectronicZone.Wpf.Model;
+using ElectronicZone.Wpf.Utility.EMail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ElectronicZone.Wpf.Utility
@@ -13,7 +11,6 @@ namespace ElectronicZone.Wpf.Utility
     public class SaleManager
     {
         ILogger logger = new Logger(typeof(SaleManager));
-        private int salePersonId = 0;
         public SaleManager()
         {
 
@@ -36,42 +33,42 @@ namespace ElectronicZone.Wpf.Utility
                 try
                 {
                     // add Sale Contact
-                    if (salePersonId == 0)
-                        salePersonId = CreateSalePersonForSale(da, _sale.Contact);
-                    if (salePersonId > 0) {
+                    if (_sale.Contact.Id == 0)
+                        _sale.Contact.Id = CreateSalePersonForSale(da, _sale.Contact);
+                    if (_sale.Contact.Id > 0) {
                         double total = _sale.Quantity * _sale.Price;
                         bool isPending = (total > _sale.AmountPaid ? true : false);
                         double pendingAmt = total - _sale.AmountPaid;
                         #region Create Sales Master Object
                         //Add SaleMaster
-                        Dictionary<string, string> saleMasterModel = new Dictionary<string, string>();
-                        saleMasterModel.Add("Id", _sale.Id == 0 ? null : _sale.Id.ToString());
-                        saleMasterModel.Add("StockId", _sale.StockId.ToString());
-                        saleMasterModel.Add("SalePersonId", salePersonId.ToString());
-                        saleMasterModel.Add("Quantity", _sale.Quantity.ToString());
-                        saleMasterModel.Add("Price", _sale.Price.ToString());
-                        saleMasterModel.Add("Total", _sale.Total.ToString());
-                        saleMasterModel.Add("AmountPaid", _sale.AmountPaid.ToString());
+                        Dictionary<string, string> saleMaster = new Dictionary<string, string>();
+                        saleMaster.Add("Id", _sale.Id == 0 ? null : _sale.Id.ToString());
+                        saleMaster.Add("StockId", _sale.StockId.ToString());
+                        saleMaster.Add("SalePersonId", _sale.Contact.Id.ToString());
+                        saleMaster.Add("Quantity", _sale.Quantity.ToString());
+                        saleMaster.Add("Price", _sale.Price.ToString());
+                        saleMaster.Add("Total", _sale.Total.ToString());
+                        saleMaster.Add("AmountPaid", _sale.AmountPaid.ToString());
                         //saleMasterModel.Add("Pending", pendingAmt.ToString());
-                        saleMasterModel.Add("SaleDate", _sale.SaleDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
-                        saleMasterModel.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"])); 
+                        saleMaster.Add("SaleDate", _sale.SaleDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
+                        saleMaster.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"])); 
                         #endregion
-                        int rslt = salesOrderId = da.InsertOrUpdateSaleMaster(saleMasterModel, "tblSaleMaster");
-                        if (rslt > 0)
-                        {
+                        _sale.Id = salesOrderId = da.InsertOrUpdateSaleMaster(saleMaster, "tblSaleMaster");
+                        if (_sale.Id > 0) {
                             #region Add Sales Invoice
                             // Adding Sales Invoice
-                            Dictionary<string, string> saleInvoiceMasterModel = new Dictionary<string, string>();
-                            saleInvoiceMasterModel.Add("Id", null);
-                            saleInvoiceMasterModel.Add("SalesId", salesOrderId.ToString());
-                            saleInvoiceMasterModel.Add("InvoiceNumber", CommonMethods.GenerateInvoice(salesOrderId, _sale.SaleDate));
-                            da.InsertOrUpdateInvoiceMaster(saleMasterModel, "tblInvoiceMaster"); 
+                            Dictionary<string, string> invoice = new Dictionary<string, string>();
+                            invoice.Add("Id", null);
+                            invoice.Add("SalesId", salesOrderId.ToString());
+                            invoice.Add("InvoiceNumber", CommonMethods.GenerateInvoice(salesOrderId, _sale.SaleDate));
+                            da.InsertOrUpdateInvoiceMaster(invoice, "tblInvoiceMaster"); 
                             #endregion
 
                             #region Add Pending Payment
                             if (isPending) {
                                 PendingPayment pendingPayment = new PendingPayment() {
-                                    SaleId = salesOrderId, SalePersonId = salePersonId, PendingAmount = pendingAmt
+                                    SaleId = salesOrderId, SalePersonId = _sale.Contact.Id, PendingAmount = pendingAmt
+                                    , IsDiscount = _sale.IsDiscounted
                                 };
                                 CreatePendingPayment(pendingPayment, da);
                             }
@@ -80,7 +77,7 @@ namespace ElectronicZone.Wpf.Utility
                             #region Add Payment Transaction
                             // add payment transaction
                             PaymentTransaction paymentTransaction = new PaymentTransaction();
-                            bool paymentStatus = paymentTransaction.AddPaymentTransaction(Global.UserId, _sale.AmountPaid, CommonEnum.PaymentStatus.SALE_PAYMENT, rslt, da);
+                            bool paymentStatus = paymentTransaction.AddPaymentTransaction(Global.UserId, _sale.AmountPaid, CommonEnum.PaymentStatus.SALE_PAYMENT, _sale.Id, da);
                             if (paymentStatus)
                             {
                                 #region Update Stock Quantity
@@ -93,7 +90,6 @@ namespace ElectronicZone.Wpf.Utility
                                 if (isUpdated == 1)
                                 {
                                     MessageBoxResult result = MessageBox.Show("Sale Added Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    //this.Close();
                                 }
                                 else
                                 {
@@ -103,14 +99,15 @@ namespace ElectronicZone.Wpf.Utility
                             else
                             {
                                 MessageBoxResult result = MessageBox.Show("Error While Adding Payment Transaction!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            } 
+                            }
                             #endregion
+                            SendMailService ms = new SendMailService();
+                            ms.SendSalesOrderCreateMail(_sale);
                         }
                         else
                         {
                             MessageBoxResult result = MessageBox.Show("Error While Adding Sale!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                        //return rslt;
                     }
                 }
                 catch (Exception ex)
@@ -121,18 +118,17 @@ namespace ElectronicZone.Wpf.Utility
             }
             return salesOrderId;
         }
+
         private int CreateSalePersonForSale(DataAccess da, Contact contact)
         {
-            //create record
             Dictionary<string, string> spModel = new Dictionary<string, string>();
             spModel.Add("Id", null);
             spModel.Add("Title", "");
             spModel.Add("Name", contact.Name);
             spModel.Add("Contact", contact.PrimaryContact);
             spModel.Add("AlternateContact", "");
-            spModel.Add("Email", "");
+            spModel.Add("Email", contact.Email);
             spModel.Add("Address", "");
-            //using (DataAccess dataAccess = new DataAccess())
             int personId = da.InsertOrUpdateSalePerson(spModel, "tblSalePerson");
             if (personId > 0)
                 return personId;
@@ -182,13 +178,19 @@ namespace ElectronicZone.Wpf.Utility
         /// <returns></returns>
         private int CreatePendingPayment(PendingPayment pendingPayment, DataAccess da)
         {
-            Dictionary<string, string> pendingPaymentModel = new Dictionary<string, string>();
-            pendingPaymentModel.Add("Id", null);
-            pendingPaymentModel.Add("SaleId", pendingPayment.SaleId.ToString());
-            pendingPaymentModel.Add("SalePersonId", pendingPayment.SalePersonId.ToString());
-            pendingPaymentModel.Add("PendingAmount", pendingPayment.PendingAmount.ToString());
-            //pendingPaymentModel.Add("IsPaid", "0");
-            int pendingPaymentId = da.InsertOrUpdatePendingPayment(pendingPaymentModel, "tblPendingPayment");
+            Dictionary<string, string> pendingPmt = new Dictionary<string, string>();
+            pendingPmt.Add("Id", null);
+            pendingPmt.Add("SaleId", pendingPayment.SaleId.ToString());
+            pendingPmt.Add("SalePersonId", pendingPayment.SalePersonId.ToString());
+            pendingPmt.Add("PendingAmount", pendingPayment.PendingAmount.ToString());
+            // If Discounted Payment Then Paid the amt with IsDiscount=true, PaidAmt
+            if (pendingPayment.IsDiscount) {
+                pendingPmt.Add("IsPaid", "1"); pendingPmt.Add("IsDiscount", pendingPayment.IsDiscount.ToString());
+                pendingPmt.Add("PaidAmount", "0"/*pendingPayment.PaidAmount.ToString()*/);
+                pendingPmt.Add("PaidDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateOnly"]));
+                //ConfigurationManager.AppSettings["DateOnly"]
+            }
+            int pendingPaymentId = da.InsertOrUpdatePendingPayment(pendingPmt, "tblPendingPayment");
             return pendingPaymentId;
         }
 
@@ -199,7 +201,7 @@ namespace ElectronicZone.Wpf.Utility
         /// 3. Add Payment Transaction
         /// </summary>
         /// <param name="payment"></param>
-        private void ClearPendingPayment(PendingPayment payment)
+        public void ClearPendingPayment(PendingPayment payment)
         {
             using (DataAccess da = new DataAccess())
             {
@@ -221,7 +223,7 @@ namespace ElectronicZone.Wpf.Utility
                     // update Sale
                     Dictionary<string, string> smModel = new Dictionary<string, string>();
                     smModel.Add("Id", payment.SaleId.ToString());
-                    smModel.Add("AmountPaid", payment.PendingAmount.ToString());
+                    smModel.Add("AmountPaid", payment.PaidAmount.ToString());
                     smModel.Add("ModifiedDate", payment.PaidDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
                     da.InsertOrUpdateSaleMaster(smModel, "tblSaleMaster");
                     #endregion

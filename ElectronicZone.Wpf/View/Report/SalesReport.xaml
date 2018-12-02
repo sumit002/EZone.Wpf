@@ -6,48 +6,85 @@
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Report"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
         mc:Ignorable="d"
         Title="Sales Report" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="5,5,5,5">
+    <Grid Margin="5,5,5,5" FocusManager.FocusedElement="{Binding ElementName=txtProdCode}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <!--<RowDefinition Height="50"></RowDefinition>-->
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="130"></ColumnDefinition>
+            <!--<ColumnDefinition Width="130"></ColumnDefinition>
             <ColumnDefinition Width="165"></ColumnDefinition>
             <ColumnDefinition Width="160"></ColumnDefinition>
             <ColumnDefinition Width="160"></ColumnDefinition>
-            <ColumnDefinition Width="120"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="120"></ColumnDefinition>-->
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <ComboBox Grid.Row="0" Grid.Column="0" DisplayMemberPath="Name"  HorizontalAlignment="Left" Name="cbProduct" SelectedValuePath="Id" Text="ss" ToolTip="Select Product" VerticalAlignment="Center" Width="120" />
-        <TextBox Grid.Row="0" Grid.Column="1" AutoWordSelection="False" HorizontalAlignment="left" Name="txtProdCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Product Code" ToolTip="Product Code" VerticalAlignment="Center" Width="155" />
-        <Controls:NumericUpDown Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" Name="txtPriceFrom" ToolTip="Price From" VerticalAlignment="Center" Width="120" />
-        <Controls:NumericUpDown Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" Name="txtPriceTo" ToolTip="Price To" VerticalAlignment="Center" Width="120" />
-        
-        <ComboBox Grid.Row="1" Grid.Column="0" DisplayMemberPath="Name"  HorizontalAlignment="Left" Name="cbBrandCompany" SelectedValuePath="Id" ToolTip="Choose Brand / Company" VerticalAlignment="Center" Width="120" />
-        <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="left" Name="txtStockCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Stock Code" ToolTip="Stock Code" VerticalAlignment="Center" Width="155" />
-        <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" DisplayMemberPath="Name"  HorizontalAlignment="left" Name="cbSalesPerson" SelectedValuePath="Id" VerticalAlignment="Center" Width="246" ToolTip="Select Person" />
-        
-        <DatePicker Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Left" Name="fromDate" VerticalAlignment="Center" Width="120" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged"  />
-        <DatePicker Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Left" Name="toDate" VerticalAlignment="Center" Width="120" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
-        
-        <Button Grid.Row="2" Grid.Column="2" Content="Search" HorizontalAlignment="Left" Name="btnSearch" VerticalAlignment="Center" Width="72" Click="btnSearch_Click" />
-        <Button Grid.Row="2" Grid.Column="2" Content="Reset" HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Width="75" Click="btnReset_Click" />
-        <Button Grid.Row="2" Grid.Column="3" Content="{iconPacks:FontAwesome Kind=DownloadSolid}" HorizontalAlignment="Left" Name="btnExport" VerticalAlignment="Center" Width="50" Click="btnExport_Click" Visibility="Hidden" />
+        <UniformGrid Grid.Row="0" Grid.Column="0" Columns="5" Rows="1">
+            <ComboBox DisplayMemberPath="Name"  HorizontalAlignment="Left" Name="cbProduct" SelectedValuePath="Id" Text="ss" ToolTip="Select Product" VerticalAlignment="Center" Width="145" />
+            <TextBox AutoWordSelection="False" HorizontalAlignment="left" Name="txtProdCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Product Code" ToolTip="Product Code" VerticalAlignment="Center" Width="145" />
+            <Controls:NumericUpDown HorizontalAlignment="Left" Name="txtPriceFrom" ToolTip="Price From" VerticalAlignment="Center" Width="145" />
+            <Controls:NumericUpDown HorizontalAlignment="Left" Name="txtPriceTo" ToolTip="Price To" VerticalAlignment="Center" Width="145" />
+            <ComboBox DisplayMemberPath="Name"  HorizontalAlignment="left" Name="cbSalesPerson" SelectedValuePath="Id" 
+                      VerticalAlignment="Center" Width="150" ToolTip="Select Person" />
+        </UniformGrid>
+        <!--<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+        </StackPanel>-->
+        <UniformGrid Grid.Row="1" Grid.Column="0" Columns="5" Rows="1">
+            <ComboBox DisplayMemberPath="Name"  HorizontalAlignment="Left" Name="cbBrandCompany" SelectedValuePath="Id" ToolTip="Choose Brand / Company" VerticalAlignment="Center" Width="145" />
+            <TextBox HorizontalAlignment="left" Name="txtStockCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Stock Code" ToolTip="Stock Code" VerticalAlignment="Center" Width="145" />
+            <DatePicker HorizontalAlignment="Left" Name="fromDate" VerticalAlignment="Center" Width="145" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged"  />
+            <DatePicker HorizontalAlignment="Left" Name="toDate" VerticalAlignment="Center" Width="145" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
-        <DataGrid Grid.Row="3" Grid.ColumnSpan="5" AutoGenerateColumns="False" Height="388" HorizontalAlignment="Left" IsReadOnly="True" Name="dataGridSales" 
-                  VerticalAlignment="Center" Width="auto">
+                <!--<Button Width="30" Height="30" Margin="4" Style="{StaticResource AccentCircleButtonStyle}">
+                    <iconPacks:FontAwesome Width="20"
+                                              Height="20"
+                                              Kind="FileExcelSolid" />
+                </Button>-->
+
+                <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=FileExcelSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                        HorizontalAlignment="Left" Name="btnExport" VerticalAlignment="Center" Click="btnExport_Click" Visibility="Hidden" />
+                <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SearchSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                        HorizontalAlignment="Left" Name="btnSearch" VerticalAlignment="Center" Click="btnSearch_Click" />
+                <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SyncAltSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                        HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Click="btnReset_Click" />
+            </StackPanel>
+        </UniformGrid>
+
+        <!--<StackPanel Grid.Row="2" Grid.Column="0">
+            <StackPanel.Resources>
+                
+            </StackPanel.Resources>
+            
+        </StackPanel>-->
+
+        <DataGrid Grid.Row="3" Grid.ColumnSpan="6" AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Left" IsReadOnly="True" Name="dataGridSales" 
+                  VerticalAlignment="Top" Width="Auto">
+            <!--<DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="State1">
+                            <Setter Property="Background" Value="Red"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="State2">
+                            <Setter Property="Background" Value="Green"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>-->
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Product}" Header="Product" />
-                <DataGridTextColumn Binding="{Binding Brand}" Header="Brand" />
-                <DataGridTextColumn Binding="{Binding ProductCode}" Header="Product Code" />
-                <DataGridTextColumn Binding="{Binding StockCode}" Header="Stock Code" />
+                <DataGridTextColumn Binding="{Binding Product}" Header="Product" Width="100*" />
+                <DataGridTextColumn Binding="{Binding Brand}" Header="Brand" Width="100*"/>
+                <DataGridTextColumn Binding="{Binding ProductCode}" Header="Product Code" Width="100*"/>
+                <DataGridTextColumn Binding="{Binding StockCode}" Header="Stock Code" Width="100*"/>
                 <DataGridTextColumn Binding="{Binding Quantity}" Header="Qty">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -55,36 +92,37 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding PurchasePrice}" Header="Purchase Price">
+                <!--<DataGridTextColumn Binding="{Binding PurchasePrice, StringFormat={}{0:00.00}}" Header="Purchase Price">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                </DataGridTextColumn>-->
 
-                <DataGridTextColumn Binding="{Binding SalePrice}" Header="Sale Price">
+                <DataGridTextColumn Binding="{Binding SalePrice, StringFormat={}{0:00.00}}" Header="Sale Price">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Total}" Header="Total">
+                <DataGridTextColumn Binding="{Binding Total, StringFormat={}{0:00.00}}" Header="Total">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AmountPaid, StringFormat={}{0:00.00}}" Header="Amount Paid">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AmountPaid}" Header="Amount Paid">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Pending}" Header="Pending">
+                <DataGridTextColumn Binding="{Binding Pending, StringFormat={}{0:00.00}}" Header="Pending">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right" />
@@ -93,7 +131,7 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding SaleTo}" Header="Sale Person" />
                 <DataGridTextColumn Binding="{Binding SaleContact}" Header="Sale Contact" />
-                <DataGridTextColumn Binding="{Binding SaleDate}" Header="Sale On" />
+                <DataGridTextColumn Binding="{Binding SaleDate, StringFormat={}{0:dd/MM/yy}}" Header="Sale On" />
             </DataGrid.Columns>
         </DataGrid>
         

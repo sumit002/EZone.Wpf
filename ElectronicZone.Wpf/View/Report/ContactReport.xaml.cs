@@ -1,5 +1,6 @@
 ﻿using ElectronicZone.Wpf.ViewModel;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace ElectronicZone.Wpf.View.Report
 {
@@ -8,7 +9,7 @@ namespace ElectronicZone.Wpf.View.Report
     /// </summary>
     public partial class ContactReport : MetroWindow
     {
-        ContactViewModel vm = new ContactViewModel();
+        ContactViewModel vm = new ContactViewModel(DialogCoordinator.Instance);
         public ContactReport()
         {
             InitializeComponent();

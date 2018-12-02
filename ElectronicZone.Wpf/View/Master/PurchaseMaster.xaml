@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:converter="clr-namespace:ElectronicZone.Wpf.Converter"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
         mc:Ignorable="d"
-        Title="Purchase Master" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+        Title="Purchase" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
     
     <Grid Margin="5,5,5,5">
         <!--<Grid.RowDefinitions>
@@ -18,52 +21,97 @@
 
         <TabControl Height="Auto" SelectedIndex="{Binding TabSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=Default}"
                     HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Top" Width="Auto">
-            <TabItem Header="Add Purchase" Name="tabItem1">
+            <TabItem Header="{Binding TabHeaderText}" Name="tabItem1">
                 <Grid Height="Auto">
                     <Grid.RowDefinitions>
-                        <!--<RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
                         <RowDefinition Height="30"></RowDefinition>
-                        <RowDefinition Height="30"></RowDefinition>-->
-                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition Width="160"></ColumnDefinition>
+                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition Width="180"></ColumnDefinition>
+                        <ColumnDefinition Width="180"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <Label Content="Product" Height="28" HorizontalAlignment="Left" Margin="10,3,0,0" Name="label1" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding ProductCode}" Controls:TextBoxHelper.Watermark="Product Code" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Right" Margin="0,63,144,0" Name="txtProdCode" VerticalAlignment="Top" Width="282" ToolTip="Product Code" AutoWordSelection="False" TabIndex="3" />
-                    <Label Content="Brand/Company" Height="28" HorizontalAlignment="Left" Margin="10,36,0,0" Name="label2" VerticalAlignment="Top" />
-                    <Button Command="{Binding AddPurchaseCommand}" Content="Save" Height="23" HorizontalAlignment="Left" Margin="122,259,0,0" Name="btnSave" VerticalAlignment="Top" Width="60" />
-                    <Button Command="{Binding PurchaseResetCommand}" Content="Reset" Height="23" HorizontalAlignment="Right" Margin="0,259,283,0" Name="btnReset" VerticalAlignment="Top" Width="75" />
-                    <ComboBox Height="23" HorizontalAlignment="Left" Margin="122,3,0,0" Name="cbProduct" VerticalAlignment="Top" Width="120" DisplayMemberPath="Name" SelectedValuePath="Id" ToolTip="Choose Product" TabIndex="1" />
-                    <ComboBox Height="23" HorizontalAlignment="Left" Margin="122,33,0,0" Name="cbBrandCompany" VerticalAlignment="Top" Width="120" DisplayMemberPath="Name" SelectedValuePath="Id" ToolTip="Choose Brand / Company" TabIndex="2" />
-                    <Label Content="Product Code" Height="28" HorizontalAlignment="Left" Margin="10,65,0,0" Name="label3" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding StockCode}" Controls:TextBoxHelper.Watermark="Stock Code" Controls:TextBoxHelper.ClearTextButton="True" Height="23" HorizontalAlignment="Right" Margin="0,93,144,0" Name="txtStockCode" VerticalAlignment="Top" Width="282" ToolTip="Stock Code" TabIndex="4" />
-                    <Label Content="Stock Code" Height="28" HorizontalAlignment="Left" Margin="10,94,0,0" Name="label4" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding ItemDescription}" Controls:TextBoxHelper.Watermark="Description like Model No. Color etc." Height="42" TextWrapping="Wrap" HorizontalAlignment="Right" Margin="0,123,144,0" Name="txtItemDesc" VerticalAlignment="Top" Width="282" ToolTip="Description" TabIndex="5" />
-                    <Label Content="Item Description" Height="28" HorizontalAlignment="Left" Margin="10,123,0,0" Name="label5" VerticalAlignment="Top" />
+                    <Label Grid.Row="0" Grid.Column="0" Content="Product *" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" />
+                    <Label Grid.Row="1" Grid.Column="0" Content="Brand/Company *" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" />
+                    <Label Grid.Row="2" Grid.Column="0" Content="Product Code *" HorizontalAlignment="Left" Name="label3" VerticalAlignment="Top" />
+                    <Label Grid.Row="3" Grid.Column="0" Content="Stock Code" HorizontalAlignment="Left" Name="label4" VerticalAlignment="Top" />
+                    <Label Grid.Row="4" Grid.Column="0" Content="Item Description" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Top" />
+                    <Label Grid.Row="5" Grid.Column="0" Content="Purchase Price / Quantity *" HorizontalAlignment="Left" Name="label6" VerticalAlignment="Top" />
+                    <Label Grid.Row="6" Grid.Column="0" Content="Sale Price *" HorizontalAlignment="Left" Name="label7" VerticalAlignment="Top" />
+                    <Label Grid.Row="7" Grid.Column="0" Content="Purchase Date *" HorizontalAlignment="Left" Name="label8" VerticalAlignment="Bottom" />
+                    <Label Grid.Row="5" Grid.Column="3" HorizontalAlignment="Left" Content="Total Purchase Price"
+                           Name="lblTotalPurchaseAmtLabel" VerticalAlignment="Center" ToolTip="Total Purchase Price : " />
+                    
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=ProductList}" SelectedItem="{Binding Path=SProduct}" IsEnabled="{Binding IsAddMode}"
+                              HorizontalAlignment="Left" Name="cbProduct" VerticalAlignment="Center" Width="120" 
+                              DisplayMemberPath="Name" SelectedValuePath="Id" ToolTip="Choose Product" TabIndex="1" />
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=BrandList}" SelectedItem="{Binding Path=SBrand}" IsEnabled="{Binding IsAddMode}"
+                              HorizontalAlignment="Left" Name="cbBrandCompany" VerticalAlignment="Center" Width="120" 
+                              DisplayMemberPath="Name" SelectedValuePath="Id" ToolTip="Choose Brand / Company" TabIndex="2" />
+                    <Button Grid.Row="8" Grid.Column="1" Command="{Binding AddPurchaseCommand}" Content="Save" HorizontalAlignment="Left" Name="btnSave" VerticalAlignment="Center" Width="75" />
+                    <Button Grid.Row="8" Grid.Column="1" Command="{Binding PurchaseResetCommand}" Content="Reset" HorizontalAlignment="Right" Name="btnReset" VerticalAlignment="Center" Width="75" />
+                    
+                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding ProductCode}" Controls:TextBoxHelper.Watermark="Product Code" 
+                             Controls:TextBoxHelper.ClearTextButton="True" HorizontalAlignment="Left" Name="txtProdCode" VerticalAlignment="Center" Width="282" ToolTip="Product Code" AutoWordSelection="False" TabIndex="3" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding StockCode}" Controls:TextBoxHelper.Watermark="Stock Code" Controls:TextBoxHelper.ClearTextButton="True" HorizontalAlignment="Left" Name="txtStockCode" VerticalAlignment="Center" Width="282" ToolTip="Stock Code" TabIndex="4" />
+                    <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding ItemDesc}" Controls:TextBoxHelper.Watermark="Description like Model No. Color etc." Height="46" TextWrapping="Wrap" HorizontalAlignment="Left" Name="txtItemDesc" VerticalAlignment="Top" Width="282" ToolTip="Description" TabIndex="5" />
                     <!--<Controls:NumericUpDown Margin="0,153,142,0" Name="txtQuantity" Minimum = "1" Maximum = "10000" Interval="1" StringFormat="C2" />-->
-                    <Controls:NumericUpDown Value="{Binding AvlQuantity}" Height="23" HorizontalAlignment="Right" Margin="0,169,144,0" Name="txtQuantity" VerticalAlignment="Top" Width="120" ToolTip="Quantity" Minimum = "0" Interval = "1" TabIndex="7" />
-
+                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding PurchasePrice}" IsEnabled="{Binding IsAddMode}"
+                             Controls:TextBoxHelper.Watermark="Purchase Price" Controls:TextBoxHelper.ClearTextButton="True" HorizontalAlignment="Left" Name="txtPurchasePrice" Width="157" ToolTip="Purchase Price / Qty" VerticalAlignment="Center" TabIndex="6" />
+                    <Controls:NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding Quantity}" IsEnabled="{Binding IsAddMode}" HorizontalAlignment="Left"
+                                            Name="txtQuantity" VerticalAlignment="Center" Width="90" ToolTip="Quantity" Minimum = "0" Interval = "1" TabIndex="7" />
+                    <Label Grid.Row="5" Grid.Column="3" Content="{Binding TotalPurchasePrice, StringFormat=' {0:00.00}'}" HorizontalAlignment="Right" FontWeight="Bold"
+                           Name="lblTotalPurchaseAmt" VerticalAlignment="Center" ToolTip="Total" />
+                    <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SalePrice}" IsEnabled="{Binding IsSalePriceEnabled}"
+                             HorizontalAlignment="Left" Name="txtSalePrice" TabIndex="8" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sale Price" ToolTip="Sale Price / Qty" VerticalAlignment="Center" Width="157"  />
+                    <Controls:NumericUpDown Grid.Row="6" Grid.Column="2" Value="{Binding PurchaseProfitPercent}" IsEnabled="{Binding ProfitByPercent}" HorizontalAlignment="Left"
+                                            Name="txtPercentage" VerticalAlignment="Center" Width="90" ToolTip="Profit Percentage" Minimum = "10" Maximum="100" Interval = "5" TabIndex="7" />
+                    <Controls:ToggleSwitch Grid.Row="6" Grid.Column="3" HorizontalAlignment="Right" OnLabel="By Percent" OffLabel="Fixed Amount" VerticalAlignment="Center"
+                                           Name="chkbPersonType" IsChecked="{Binding ProfitByPercent}" ToolTip="Profit Type" />
+                    <DatePicker Grid.Row="7" Grid.Column="1" SelectedDate="{Binding PurchaseDate}" DisplayDateEnd="{Binding TodayDate}" 
+                                IsEnabled="{Binding IsAddMode}"
+                                HorizontalAlignment="Left" Name="dpPurchaseDate" VerticalAlignment="Center" Width="115" ToolTip="Purchase Date" SelectedDateFormat="Short" TabIndex="10" />
+                    
                     <!--<TextBox Height="23" HorizontalAlignment="Right" Margin="0,153,142,0" Name="txtQuantity" VerticalAlignment="Top" Width="282" ToolTip="Quantity" TextChanged="txtQuantity_TextChanged" />-->
-                    <Label Content="Price / Quantity" Height="28" HorizontalAlignment="Left" Margin="11,170,0,0" Name="label6" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding PurchasePrice}" Height="23" Controls:TextBoxHelper.Watermark="Purchase Price" Controls:TextBoxHelper.ClearTextButton="True" HorizontalAlignment="left" Margin="122,170,270,100" Name="txtPurchasePrice" Width="157" ToolTip="Purchase Price / Qty"  TabIndex="6" />
                     <!--<Label Content="Price" Height="28" HorizontalAlignment="Right" Margin="0,162,270,0" Name="label7" VerticalAlignment="Top" />-->
-                    <Label Content="Purchase Date" Height="28" HorizontalAlignment="Left" Margin="10,0,0,37" Name="label8" VerticalAlignment="Bottom" />
-                    <DatePicker Text="{Binding PurchaseDate}" Height="25" HorizontalAlignment="Left" Margin="122,230,0,0" Name="dpPurchaseDate" VerticalAlignment="Top" Width="115" ToolTip="Purchase Date" SelectedDateFormat="Short" TabIndex="10" />
-                    <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="436,168,0,0" Name="lblTotalPurchaseAmt" VerticalAlignment="Top" ToolTip="Total" />
-                    <Border BorderBrush="Silver" BorderThickness="1" Height="102" HorizontalAlignment="Left" Margin="419,-1,0,0" Name="purchaseBorder" VerticalAlignment="Top" Width="120">
+                    
+                    <!--<Border BorderBrush="Silver" BorderThickness="1" Height="102" HorizontalAlignment="Left" Margin="419,-1,0,0" Name="purchaseBorder" VerticalAlignment="Top" Width="120">
                         <Image Height="100" HorizontalAlignment="Left" Name="imagePhoto" Stretch="Fill" VerticalAlignment="Top" Width="120" />
-                    </Border>
-                    <Button Content="Upload" Height="23" HorizontalAlignment="Left" Margin="419,108,0,0" Name="btnUploadPhoto" VerticalAlignment="Top" Width="123" TabIndex="9" />
-                    <TextBox Text="{Binding SalePrice}" Height="23" HorizontalAlignment="Left" Margin="122,200,0,0" Name="txtSalePrice" TabIndex="8" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sale Price" ToolTip="Sale Price / Qty" VerticalAlignment="Top" Width="157"  />
-                    <Label Content="Sale Price" Height="28" HorizontalAlignment="Left" Margin="11,200,0,0" Name="label7" VerticalAlignment="Top" />
+                    </Border>-->
+                    <!--<Button Content="Upload" Height="23" HorizontalAlignment="Left" Margin="419,108,0,0" Name="btnUploadPhoto" VerticalAlignment="Top" Width="123" TabIndex="9" />-->
+                    <RichTextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="5"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+                        <FlowDocument>
+                            <Paragraph>
+                                <TextBlock>Notes :</TextBlock>
+                                <LineBreak />
+                                <TextBlock>1. Please enter mandatory fields(marked with *) to create record.</TextBlock>
+                                <LineBreak />
+                                <Run>2. Sale Price always gratter than Purchase Price.</Run>
+                                <LineBreak />
+                                <Run>3. Purchase on future dates are now allowed.</Run>
+                                <LineBreak />
+                                <Run>4. Purchase Price and Date can not be edited once created. If want to edit/modify it please delete the purchase order and recreate with actual details.</Run>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+
+                    
                 </Grid>
             </TabItem>
             <TabItem Header="Purchase List" Name="tabItem2">
@@ -71,18 +119,48 @@
                     <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" 
                               Name="datagridStocks" ItemsSource="{Binding PurchaseList}"
                               VerticalAlignment="Top" Width="Auto" IsReadOnly="True">
+                        <DataGrid.Resources>
+                            <converter:QuantityToColorConverter x:Key="colorConverter" />
+                        </DataGrid.Resources>
+                        
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AvlQuantity}" Value="0">
+                                        <Setter Property="Foreground" Value="LightGray"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=., Converter={StaticResource colorConverter}}" Value="true">
+                                        <Setter Property="Foreground" Value="DarkBlue"></Setter>
+                                    </DataTrigger>
+                                    <!--<DataTrigger Binding="{Binding AvlQuantity}" Value=">0">
+                                        <Setter Property="Foreground" >
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding AvlQuantity, Converter={StaticResource QuantityToColorConverter}}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>-->
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Product" Binding="{Binding Product}" Width="50*" />
-                            <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="50*" />
-
-                            <DataGridTextColumn Header="Prod Code" Binding="{Binding ProductCode}" Width="50*" >
+                            <DataGridTextColumn Header="Product" Binding="{Binding Product}" Width="30*" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="ToolTip" Value="{Binding ItemDesc}" />
+                                        <Setter Property="ToolTip" Value="{Binding Product}" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Stk Code" Binding="{Binding StockCode}" Width="50*"/>
+                            <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="30*" />
+
+                            <DataGridTextColumn Header="Prod Code" Binding="{Binding ProductCode}" Width="25*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="ToolTip" Value="{Binding ItemDesc}" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Stk Code" Binding="{Binding StockCode}" Width="25*"/>
                             <!--<DataGridTextColumn Header="Description" Binding="{Binding ItemDesc}" />-->
                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" >
                                 <DataGridTextColumn.ElementStyle>
@@ -91,14 +169,30 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Purchase Price" Binding="{Binding PurchasePrice, StringFormat={}{0:00.00}}" >
+                            <DataGridTextColumn Header="Avl Qty" Binding="{Binding AvlQuantity}" Width="20*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Purchase Price" Binding="{Binding PurchasePrice, StringFormat={}{0:00.00}}" Width="20*">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
+
                             <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice, StringFormat={}{0:00.00}}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Total" Binding="{Binding TotalPurchasePrice, StringFormat={}{0:00.00}}" Width="20*" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />
@@ -113,34 +207,34 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>-->
-                            <DataGridTextColumn Header="Purchased On" Binding="{Binding PurchaseDate, StringFormat={}{0:dd/MM/yy}}" />
-                            <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yy}}" />
+                            <DataGridTextColumn Header="Date" Binding="{Binding PurchaseDate, StringFormat={}{0:dd/MM/yy}}" Width="25*" />
+                            <!--<DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yy}}" />-->
 
-                            <DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="10*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit"
+                                        <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" Foreground="Blue"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.EditPurchaseCmd}"
                                                 CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="10*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete"
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" Foreground="Red"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.DeletePurchaseCmd}"
                                                 CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            
-                            <DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Width="10*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=CartPlusSolid}" ToolTip="Add Item of this" 
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.AddPurchaseTypeCmd}"
+                                        <Button Content="{iconPacks:FontAwesome Kind=CartPlusSolid}" ToolTip="Add More Quantity" 
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.AddMorePurchaseQuantityCmd}"
                                                 CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

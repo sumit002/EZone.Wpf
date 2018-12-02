@@ -2,6 +2,7 @@
 using ElectronicZone.Wpf.Utility;
 using MahApps.Metro.Controls;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,8 +65,8 @@ namespace ElectronicZone.Wpf.View.Report
                 DataTable dtSales = new DataTable();
                 DataAccess da = new DataAccess();
                 dtSales = da.SearchSales((this.cbProduct.SelectedValue == null ? "" : this.cbProduct.SelectedValue.ToString()), (this.cbBrandCompany.SelectedValue == null ? "" : this.cbBrandCompany.SelectedValue.ToString()), this.txtProdCode.Text, this.txtStockCode.Text, (int?)this.txtPriceFrom.Value, (int?)this.txtPriceTo.Value,
-                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString("yyyy-MM-dd HH:mm:ss")),
-                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString("yyyy-MM-dd HH:mm:ss")),
+                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
                     (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()));
 
                 if (dtSales.Rows.Count > 0)

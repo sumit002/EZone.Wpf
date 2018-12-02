@@ -2,6 +2,7 @@
 using ElectronicZone.Wpf.Helper;
 using ElectronicZone.Wpf.Model;
 using ElectronicZone.Wpf.Utility;
+using ElectronicZone.Wpf.Utility.EMail;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,11 @@ namespace ElectronicZone.Wpf.ViewModel
     {
         #region Properties
         ILogger logger = new Logger(typeof(PurchaseViewModel));
-        private IDialogCoordinator dialogCoordinator;
+        private IDialogCoordinator _dialogCoordinator;
         public ObservableCollection<Purchase> PurchaseList { get; set; }
         public ObservableCollection<Product> ProductList { get; set; }
         public ObservableCollection<Brand> BrandList { get; set; }
+        public PurchaseManager _pm;
         string imageName = ""; 
         #endregion
 
@@ -48,6 +50,10 @@ namespace ElectronicZone.Wpf.ViewModel
         private double purchaseProfitPercent;
         private bool _profitByPercent;
         private DateTime _todayDate;
+        //private bool _isAddMoreQtyMode;
+        //private bool _isQuantityEnabled;
+        private bool _isSalePriceEnabled;
+        //private int _oldQuantity;
 
         public int Id { get => _id; set { _id = value; } }
         public int ProductId { get => _productId; set { _productId = value; OnPropertyChanged(); } }
@@ -66,10 +72,16 @@ namespace ElectronicZone.Wpf.ViewModel
         public DateTime ModifiedDate { get => _modifiedDate; set => _modifiedDate = value; }
         public double TotalPurchasePrice { get => _totalPurchasePrice; set { _totalPurchasePrice = value; OnPropertyChanged(); } }
         public string TabHeaderText { get => _tabHeaderText; set { _tabHeaderText = value; OnPropertyChanged(); } }
-        public bool IsAddMode { get => _isAddMode; set { _isAddMode = value; OnPropertyChanged(); } }
+        public bool IsAddMode { get => _isAddMode; set { _isAddMode = value;
+                //if(_isAddMode)
+                OnPropertyChanged(); } }
         public double PurchaseProfitPercent { get => purchaseProfitPercent; set { purchaseProfitPercent = value; OnPropertyChanged(); CalculateTotalSellingPrice(); } }
         public bool ProfitByPercent { get => _profitByPercent; set { _profitByPercent = value; OnPropertyChanged(); } }
         public DateTime TodayDate { get => _todayDate; set => _todayDate = value; }
+        //public bool IsAddMoreQtyMode { get => _isAddMoreQtyMode; set { _isAddMoreQtyMode = value; OnPropertyChanged(); } }
+        //public bool IsQuantityEnabled { get => _isQuantityEnabled; set { _isQuantityEnabled = value; OnPropertyChanged(); } }
+        public bool IsSalePriceEnabled { get => _isSalePriceEnabled; set { _isSalePriceEnabled = value; OnPropertyChanged(); } }
+        //public int OldQuantity { get => _oldQuantity; set { _oldQuantity = value; OnPropertyChanged(); } }
 
 
         private Product _sProduct;
@@ -104,7 +116,7 @@ namespace ElectronicZone.Wpf.ViewModel
 
         public ICommand EditPurchaseCmd { get; set; }
         public ICommand DeletePurchaseCmd { get; set; }
-        public ICommand AddPurchaseTypeCmd { get; set; }
+        public ICommand AddMorePurchaseQuantityCmd { get; set; }
         #endregion
 
         /// <summary>
@@ -114,13 +126,15 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             try {
                 this.TabSelectedIndex = 0;
-                this.dialogCoordinator = instance;
+                this._dialogCoordinator = instance;
                 this.PurchaseDate = DateTime.Now;
                 this.TabHeaderText = "Add Purchase";
-                this.IsAddMode = this.ProfitByPercent = true;
+                this.IsAddMode = this.ProfitByPercent /*= IsQuantityEnabled */= IsSalePriceEnabled = true;
+                //this.IsAddMoreQtyMode = false;
                 this.TodayDate = DateTime.Today;
                 this.PurchaseProfitPercent = Convert.ToDouble(ConfigurationManager.AppSettings["PurchaseProfitPercent"]);
 
+                this._pm = new PurchaseManager();
                 this.PurchaseList = new ObservableCollection<Purchase>();
                 this.ProductList = new ObservableCollection<Product>();
                 this.BrandList = new ObservableCollection<Brand>();
@@ -130,7 +144,7 @@ namespace ElectronicZone.Wpf.ViewModel
 
                 this.EditPurchaseCmd = new CommandHandler(EditPurchase, CanExecuteEditPurchase);
                 this.DeletePurchaseCmd = new CommandHandler(DeletePurchase, CanExecuteDeletePurchase);
-                this.AddPurchaseTypeCmd = new CommandHandler(AddPurchaseType, CanExecuteAddPurchaseType);
+                this.AddMorePurchaseQuantityCmd = new CommandHandler(AddMorePurchaseQuantity, CanExecuteAddPurchaseType);
 
                 LoadProduct(); LoadBrands();
             }
@@ -163,10 +177,16 @@ namespace ElectronicZone.Wpf.ViewModel
 
                 this.TabHeaderText = "Add Purchase";
                 this.IsAddMode = true;
+                /*this.IsQuantityEnabled =*/ IsSalePriceEnabled = true;
+                //this.IsAddMoreQtyMode = false;
             }
             catch (Exception ex) { logger.LogException(ex); }
         }
 
+        /// <summary>
+        /// Validate Purchase Order
+        /// </summary>
+        /// <returns></returns>
         private bool ValidatePurchaseForm()
         {
             if ((this.ProductId <= 0))
@@ -191,63 +211,37 @@ namespace ElectronicZone.Wpf.ViewModel
         /// Add Purchase/Stock Order
         /// </summary>
         /// <param name="obj"></param>
-        private void AddPurchaseStock(object obj)
-        {
-            byte[] imgByteArr = null;
+        private async void AddPurchaseStock(object obj)
+        { // byte[] imgByteArr = null;
             if (ValidatePurchaseForm()) {
-                using (DataAccess da = new DataAccess())
-                {
-                    try
-                    {
-                        //create stock record
-                        System.Collections.Generic.Dictionary<string, string> folderFields = new System.Collections.Generic.Dictionary<string, string>();
-                        folderFields.Add("Id", this.Id == 0 ? null : this.Id.ToString());
-                        folderFields.Add("ProductId", this.ProductId.ToString());
-                        folderFields.Add("BrandId", this.BrandId.ToString());
-                        folderFields.Add("ProductCode", this.ProductCode);
-                        folderFields.Add("StockCode", this.StockCode);
-                        folderFields.Add("ItemDesc", this.ItemDesc);
-                        folderFields.Add("Quantity", this.Quantity.ToString());
-                        folderFields.Add("AvlQuantity", this.Quantity.ToString());
-                        folderFields.Add("PurchasePrice", this.PurchasePrice.ToString());
-                        folderFields.Add("SalePrice", this.SalePrice.ToString());//PurchaseProfitPercent
-                        //folderFields.Add("ProductImage", System.Text.Encoding.UTF8.GetString(imgByteArr));
-                        folderFields.Add("PurchaseDate", this.PurchaseDate.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
-                        folderFields.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
-                        folderFields.Add("ModifiedDate", this.Id == 0 ? null : DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
+                using (DataAccess da = new DataAccess()) {
+                    try {
+                        var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+                        controller.SetIndeterminate();
 
-                        int rslt = da.InsertOrUpdateStockMaster(folderFields, "tblStockMaster");
-                        if (rslt > 0)
-                        {
-                            // adding Product Image
-                            if (!string.IsNullOrEmpty(imageName))
-                            {
-                                //Initialize a file stream to read the image file
-                                using (FileStream fs = new FileStream(@imageName, FileMode.Open, FileAccess.Read))
-                                {
-                                    //Initialize a byte array with size of stream
-                                    imgByteArr = new byte[fs.Length];
-                                    //Read data from the file stream and put into the byte array
-                                    fs.Read(imgByteArr, 0, Convert.ToInt32(fs.Length));
-                                }
-                                da.UpdateStockImage(imgByteArr, rslt, "tblStockMaster");
-                            }
-                            // add payment transaction
-                            PaymentTransaction paymentTransaction = new PaymentTransaction();
-                            bool paymentStatus = paymentTransaction.AddPaymentTransaction(Global.UserId, (double.Parse(this.PurchasePrice.ToString()) * double.Parse(this.Quantity.ToString())), PaymentStatus.PURCHASE_PAYMENT, rslt, da);
-                            if (paymentStatus)
-                            {
-                                MessageBoxResult result = MessageBox.Show("Stock Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                                PurchaseReset(new object());
-                            }
-                        }
-                        else
-                        {
-                            MessageBoxResult result = MessageBox.Show("Error While Adding Stock!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+                        Purchase order = new Purchase() {
+                            Id = this.Id,
+                            ProductId = this.ProductId,
+                            BrandId = this.BrandId,
+                            ProductCode = this.ProductCode,
+                            StockCode = this.StockCode,
+                            ItemDesc = this.ItemDesc,
+                            Quantity = this.Quantity,
+                            AvlQuantity = (IsAddMode == true ? this.Quantity : this.AvlQuantity),
+                            PurchasePrice = this.PurchasePrice,
+                            SalePrice = this.SalePrice,
+                            PurchaseDate = this.PurchaseDate,
+                            //IsAddMoreQtyMode = this.IsAddMoreQtyMode,
+                            //OldQuantity = this.OldQuantity,//Old Qty to Update
+                        };
+
+                        //PurchaseManager pm = new PurchaseManager();
+                        int id = _pm.CreateOrUpdatePurchaseOrder(order);
+                        if(id > 0)
+                            PurchaseReset(new object());
+                        await controller.CloseAsync();
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         logger.LogException(ex);
                         da.RollbackTransaction();
                     }
@@ -262,16 +256,14 @@ namespace ElectronicZone.Wpf.ViewModel
         private void EditPurchase(object obj)
         {
             var item = (Purchase)obj;
-            bool IsFewItemsSold = false;
-            // ToDo : if some Items sold dont allow to Change Selling Price
-            if (item.Quantity != item.AvlQuantity) {
-                IsFewItemsSold = true;
-                MessageBoxResult result = MessageBox.Show("Some Items sold Already. So dont change the sale price!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            // Code Price Qty Date
+            //if (item.Quantity != item.AvlQuantity)
+            //    MessageBoxResult result = MessageBox.Show("Since Some of the Items are sold, So dont change the sale price!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            // Code Price Qty
             AssignPurchaseModelProperties(item);
             this.TabHeaderText = "Edit Purchase";
-            this.IsAddMode = false;
+            this.IsAddMode /*= this.IsAddMoreQtyMode = IsQuantityEnabled*/ = ProfitByPercent = false;
+            // Edit Sale Price if not sold any of the item [i.e. AvlQty=Qty]
+            this.IsSalePriceEnabled = (item.Quantity == item.AvlQuantity ? true : false);
             this.TabSelectedIndex = 0;
         }
 
@@ -289,6 +281,7 @@ namespace ElectronicZone.Wpf.ViewModel
             this.ItemDesc = purchase.ItemDesc;
             this.PurchasePrice = purchase.PurchasePrice;
             this.Quantity = purchase.Quantity;
+            this.AvlQuantity = purchase.AvlQuantity;
             this.SalePrice = purchase.SalePrice;
             this.PurchaseDate = purchase.PurchaseDate;
 
@@ -306,35 +299,31 @@ namespace ElectronicZone.Wpf.ViewModel
         /// Add More Quantity to Purchase Order
         /// </summary>
         /// <param name="obj"></param>
-        private void AddPurchaseType(object obj)
+        private void AddMorePurchaseQuantity(object obj)
         {
             var item = (Purchase)obj;
-            bool IsFewItemsSold = false;
-            // ToDo : if some Items sold dont allow to Change Selling Price
-            if (item.Quantity != item.AvlQuantity)
-            {
-                IsFewItemsSold = true;
-                MessageBoxResult result = MessageBox.Show("Some Items sold Already. So dont change the sale price!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-
             Application.Current.Dispatcher.Invoke(() =>
             {
-                this.Id = item.Id;
                 this.ProductCode = item.ProductCode;
                 this.StockCode = item.StockCode;
                 this.ItemDesc = item.ItemDesc;
                 this.PurchasePrice = item.PurchasePrice;
-                this.Quantity = item.Quantity;
+                //this.OldQuantity = item.Quantity;
+                //this.AvlQuantity = item.AvlQuantity;
+                this.Quantity = 0;
                 this.SalePrice = item.SalePrice;
                 this.PurchaseDate = DateTime.Now;
 
                 var bList = new List<Brand>((IEnumerable<Brand>)BrandList);
                 var pList = new List<Product>((IEnumerable<Product>)ProductList);
-                SBrand = bList.Find(x => x.Id == item.BrandId);
-                SProduct = pList.Find(x => x.Id == item.ProductId);
+                this.SBrand = bList.Find(x => x.Id == item.BrandId);
+                this.SProduct = pList.Find(x => x.Id == item.ProductId);
+
+                this.IsAddMode = ProfitByPercent = true;
             });
             this.TabHeaderText = "Add Purchase";
-            this.IsAddMode = false;
+            // this.IsAddMoreQtyMode = IsQuantityEnabled = true;
+            this.IsSalePriceEnabled = true;
             this.TabSelectedIndex = 0;
         }
 
@@ -346,23 +335,12 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             var item = (Purchase)obj;
             // Checking if any of the item has not sell 
-            if (item.Quantity == item.AvlQuantity)
-            {
+            if (item.Quantity == item.AvlQuantity) {
                 if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
                 {
-                    using (DataAccess da = new DataAccess())
-                    {
-                        int stockId = da.DeleteStock(item.Id);
-                        // Reverse Payment Transaction
-                        PaymentTransaction paymentTransaction = new PaymentTransaction();
-                        bool isReversed = paymentTransaction.ReversePaymentTransaction(Global.UserId, item.TotalPurchasePrice, CommonEnum.PaymentStatus.PURCHASEREVERSAL_PAYMENT, item.Id, da);
-                        if (isReversed)
-                        {
-                            MessageBoxResult result = MessageBox.Show("Stock Deleted Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                            // ResetForm();
-                        }
-                        PurchaseList.Remove(item);
-                    }
+                    //PurchaseManager pm = new PurchaseManager();
+                    _pm.DeletePurchaseOrder(item);
+                    PurchaseList.Remove(item);
                 }
             }
             else { MessageBoxResult result = MessageBox.Show("Stock Cannot be deleted!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
@@ -399,17 +377,15 @@ namespace ElectronicZone.Wpf.ViewModel
         }
 
         /// <summary>
-        /// Get All Purchases/Stocks
+        /// Get All Purchases/Stocks Async
         /// </summary>
-        private void GetAllPurchases()
+        private async void GetAllPurchases()
         {
-            DataTable dt = new DataTable();
-            using (DataAccess da = new DataAccess()) {
-                dt = da.GetAllStocks();
-            }
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
 
             this.PurchaseList.Clear();
-            foreach (DataRow row in dt.Rows)
+            foreach (DataRow row in _pm.GetAllStocks().Rows)
             {
                 PurchaseList.Add(new Purchase()
                 {
@@ -433,6 +409,8 @@ namespace ElectronicZone.Wpf.ViewModel
                     CreatedDate = Convert.ToDateTime(row["CreatedDate"])
                 });
             }
+
+            await controller.CloseAsync();
         }
 
         /// <summary>

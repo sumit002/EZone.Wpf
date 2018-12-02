@@ -10,11 +10,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ElectronicZone.Wpf.ViewModel
@@ -22,11 +19,9 @@ namespace ElectronicZone.Wpf.ViewModel
     public class SupportIncomeViewModel : ViewModelBase
     {
         #region Properties
-        ILogger logger = new Logger(typeof(PurchaseViewModel));
-        private IDialogCoordinator dialogCoordinator;
+        ILogger logger = new Logger(typeof(SupportIncomeViewModel));
+        private IDialogCoordinator _dialogCoordinator;
         public ObservableCollection<SupportIncome> SupportIncomeList { get; set; }
-
-
         #endregion
 
         #region Events
@@ -52,6 +47,7 @@ namespace ElectronicZone.Wpf.ViewModel
         private string _tabHeaderText;
         private bool _isAddMode;
         private DateTime _selectedCalendarDate;
+        private bool _isSendEmail;
 
         public int Id { get => _id; set => _id = value; }
         public DateTime SupportIncomeDate { get => _supportIncomeDate; set { _supportIncomeDate = value; OnPropertyChanged(); } }
@@ -64,6 +60,7 @@ namespace ElectronicZone.Wpf.ViewModel
             } }
         public DateTime SelectedCalendarDate { get => _selectedCalendarDate; set { _selectedCalendarDate = value;
                 OnPropertyChanged(); IncomeCalendarDateChanged(); } }
+        public bool IsSendEmail { get => _isSendEmail; set { _isSendEmail = value; OnPropertyChanged(); } }
 
 
         private int _selectedIndex;
@@ -96,7 +93,7 @@ namespace ElectronicZone.Wpf.ViewModel
         public SupportIncomeViewModel(IDialogCoordinator instance)
         {
             this.TabSelectedIndex = 0;
-            this.dialogCoordinator = instance;
+            this._dialogCoordinator = instance;
             this.SupportIncomeDate = DateTime.Now;
             //dpSupportDate.DisplayDateEnd = DateTime.Today;
             //this.TabHeaderText = "Add Support Income";
@@ -203,14 +200,15 @@ namespace ElectronicZone.Wpf.ViewModel
             return true;
         }
 
-        private void AddSupportIncome(object obj)
+        private async void AddSupportIncome(object obj)
         {
-            if (ValidateSupportIncome())
-            {
+            if (ValidateSupportIncome()) {
                 using (DataAccess da = new DataAccess()) {
                     try
-                    { 
-                        //create record
+                    {
+                        var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+                        controller.SetIndeterminate();
+
                         Dictionary<string, string> folderFields = new Dictionary<string, string>();
                         folderFields.Add("Id", this.Id == 0 ? null : this.Id.ToString());
                         folderFields.Add("Description", this.Description);
@@ -223,14 +221,13 @@ namespace ElectronicZone.Wpf.ViewModel
                             {
                                 PaymentTransaction payTrans = new PaymentTransaction();
                                 bool paymentStatus = payTrans.AddPaymentTransaction(Global.UserId, this.AmountEarned, CommonEnum.PaymentStatus.SUPPORT_PAYMENT, rslt, da);
-                                if (paymentStatus)
-                                {
+                                if (paymentStatus) {
+                                    SendMailService ms = new SendMailService();
+                                    ms.SendSupportIncomeMail(new SupportIncome() { Amount = this.AmountEarned, SupportDate = this.SupportIncomeDate, Description = this.Description });
                                     MessageBoxResult result = MessageBox.Show("Support Income Added Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    //ResetFeilds();
                                 }
                                 // Notify Calendar to Update
                                 OnIncomeAdded(new SupportIncome() { Amount = this.AmountEarned, SupportDate = this.SupportIncomeDate });
-                                SendIncomeEmail();
                                 ResetFeilds();
                             }
                             else { MessageBoxResult result = MessageBox.Show("Support Income Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);  }
@@ -238,34 +235,18 @@ namespace ElectronicZone.Wpf.ViewModel
                         else {
                             MessageBoxResult result = MessageBox.Show("Error While Adding Support Income!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
+                        await controller.CloseAsync();
                     }
                     catch (Exception ex)
                     {
                         logger.LogException(ex);
-                        // da.RollbackTransaction();
+                        da.RollbackTransaction();
                     }
                 }
             }
             else
             {
                 MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void SendIncomeEmail()
-        {
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["SendEmailOnSupportIncome"]))
-            {
-                //Place holder for sending emails
-                Dictionary<string, string> placeHolders = new Dictionary<string, string>();
-                placeHolders.Add("{AmountEarned}", this.AmountEarned.ToString("00.00", CultureInfo.InvariantCulture));
-                placeHolders.Add("{SupportIncomeDate}", this.SupportIncomeDate.ToString(ConfigurationManager.AppSettings["DateDisplay"]));
-                placeHolders.Add("{Description}", this.Description);
-
-                EmailParams emailParams = new EmailParams(ConfigurationManager.AppSettings["AdminEmail"], SendEmailType.SupportIncomeMail, placeHolders, ccMail: string.Empty, mailAttachments: string.Empty);
-                EmailUtility.SendMail(emailParams);
-                //MailService mailService = new MailService();
-                //mailService.SendMail(ConfigurationManager.AppSettings["AdminEmail"]);
             }
         }
 
@@ -284,10 +265,13 @@ namespace ElectronicZone.Wpf.ViewModel
         /// <summary>
         /// Get All Support Incomes
         /// </summary>
-        private void GetAllSupportIncomes()
+        private async void GetAllSupportIncomes()
         {
             try
             {
+                var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+                controller.SetIndeterminate();
+
                 DataTable dtSupportPayment = new DataTable();
                 using (DataAccess da = new DataAccess()) {
                     dtSupportPayment = da.GetAllSupportPayment(String.Empty);
@@ -309,6 +293,7 @@ namespace ElectronicZone.Wpf.ViewModel
                         });
                     }
                 });
+                await controller.CloseAsync();
             }
             catch (Exception ex)
             {

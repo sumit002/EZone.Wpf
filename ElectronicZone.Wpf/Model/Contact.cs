@@ -20,6 +20,7 @@ namespace ElectronicZone.Wpf.Model
         private Uri _emailUri;
         private string _address;
         private bool _isActive;
+        private bool _isUsed;
         //private DateTime _createdDate;
         //private DateTime _modifiedDate;
 
@@ -31,8 +32,10 @@ namespace ElectronicZone.Wpf.Model
         public string Email { get => _email; set => _email = value; }
         public string Address { get => _address; set => _address = value; }
         public bool IsActive { get => _isActive; set => _isActive = value; }
+        public bool CanDelete { get => _isUsed; set => _isUsed = value; }
 
         public Uri EmailUri { get => _emailUri; set => _emailUri = value; }
+
         //public DateTime CreatedDate { get => _createdDate; set => _createdDate = value; }
         //public DateTime ModifiedDate { get => _modifiedDate; set => _modifiedDate = value; }
 

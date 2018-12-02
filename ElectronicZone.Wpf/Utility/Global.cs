@@ -18,6 +18,10 @@ namespace ElectronicZone.Wpf.Utility
         public static int UserId { get => _UserId; set => _UserId = value; }
         public static string Name { get => _Name; set => _Name = value; }
 
+        public static bool VerifyUser() {
+            return (UserId > 0) ? true : false;
+        }
+
         //public Global(string userName, int id)
         //{
         //    _UserName = userName;

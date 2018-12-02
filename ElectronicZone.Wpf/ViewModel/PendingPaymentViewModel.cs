@@ -14,9 +14,9 @@ namespace ElectronicZone.Wpf.ViewModel
     public class PendingPaymentViewModel : ViewModelBase
     {
         #region Properties
-        ILogger logger = new Logger(typeof(PurchaseViewModel));
+        ILogger logger = new Logger(typeof(PendingPaymentViewModel));
         private IDialogCoordinator _dialogCoordinator;
-        public ObservableCollection<PendingPayment> PendingPaymentList { get; set; }
+        public ObservableCollection<Model.PendingPayment> PendingPaymentList { get; set; }
         public ObservableCollection<Contact> ContactList { get; set; }
         #endregion
 
@@ -88,7 +88,13 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             try
             {
+                var item = (Model.PendingPayment)obj;
 
+                //open modal for sale Item
+                View.Payment.ClearPending saleScreen = new View.Payment.ClearPending(item);
+                saleScreen.ShowDialog();
+                //refresh Pending Payment data
+                LoadPendingPayments();
             }
             catch (Exception ex)
             {
@@ -132,24 +138,36 @@ namespace ElectronicZone.Wpf.ViewModel
                         , (this.SContact == null ? string.Empty : this.SContact.Id.ToString()), 0);
                 }
                 this.PendingPaymentList.Clear();
-                Application.Current.Dispatcher.Invoke(() =>
+                if (dtPendingPayment.Rows.Count > 0)
                 {
-                    foreach (DataRow row in dtPendingPayment.Rows)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        this.PendingPaymentList.Add(new PendingPayment()
+                        foreach (DataRow row in dtPendingPayment.Rows)
                         {
-                            Id = int.Parse(row["PendingPaymentId"].ToString()),
-                            Name = Convert.ToString(row["Name"]),
-                            PrimaryContact = Convert.ToString(row["Contact"]),
-                            Total = Convert.ToDouble(row["Total"]),
-                            AmountPaid = Convert.ToDouble(row["AmountPaid"]),
-                            PendingAmount = Convert.ToDouble(row["PendingAmount"]),
-                            SaleDate = Convert.ToDateTime(row["SaleDate"]),
+                            this.PendingPaymentList.Add(new PendingPayment()
+                            {
+                                Id = int.Parse(row["PendingPaymentId"].ToString()),
+                                Name = Convert.ToString(row["Name"]),
+                                PrimaryContact = Convert.ToString(row["Contact"]),
+                                Total = Convert.ToDouble(row["Total"]),
+                                PaidAmount = Convert.ToDouble(row["AmountPaid"]),
+                                PendingAmount = Convert.ToDouble(row["PendingAmount"]),
+                                SaleDate = Convert.ToDateTime(row["SaleDate"]),
 
-                            SaleId = int.Parse(row["SaleId"].ToString())
-                        });
-                    }
-                });
+                                SaleId = int.Parse(row["SaleId"].ToString()),
+
+                                MinAmountForDiscount = Convert.ToDouble(row["MinAmtToAvailDiscount"]),
+                                SalePersonId = int.Parse(row["PendingPaymentId"].ToString()),
+                                SalePersonToDisplay = Convert.ToString(row["Name"]),
+                                ProductToDisplay = Convert.ToString(row["Product"]),
+                                ProductCodeToDisplay = Convert.ToString(row["ProductCode"]),
+                            });
+                        }
+                    });
+                }
+                else {
+                    MessageBoxResult result = MessageBox.Show("No Data Found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {

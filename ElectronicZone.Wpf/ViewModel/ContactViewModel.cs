@@ -9,18 +9,20 @@ using System.Collections.Generic;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using System.Threading.Tasks;
+using ElectronicZone.Wpf.Utility;
 
 namespace ElectronicZone.Wpf.ViewModel
 {
     public class ContactViewModel : ViewModelBase
     {
         #region Properties
+        ILogger logger = new Logger(typeof(ContactViewModel));
         public ObservableCollection<Contact> ContactList { get; set; }
         public ObservableCollection<String> SalutationList { get; set; }
-        private bool downloadExcelVisibility;
         private int _selectedIndex;
         private Contact _selectedResult;
-        private IDialogCoordinator dialogCoordinator; 
+        private IDialogCoordinator _dialogCoordinator;
+        private readonly string _tableToUse = "tblSalePerson";
         #endregion
 
         #region  UI Models
@@ -31,6 +33,7 @@ namespace ElectronicZone.Wpf.ViewModel
         private string _altContact;
         private string _email;
         private string _address;
+        private bool _downloadExcelVisibility;
 
         public int Id { get => _id; set => _id = value; }
         public string Name { get => _name; set { _name = value; OnPropertyChanged(); } }
@@ -39,6 +42,7 @@ namespace ElectronicZone.Wpf.ViewModel
         public string Email { get => _email; set { _email = value; OnPropertyChanged(); } }
         public string Address { get => _address; set { _address = value; OnPropertyChanged(); } }
         public Contact SelectedResult { get => _selectedResult; set => _selectedResult = value; }
+        public bool DownloadExcelVisibility { get => _downloadExcelVisibility; set { _downloadExcelVisibility = value; OnPropertyChanged(); } }
 
         private string _sSalutation;
         public string SSalutation
@@ -55,11 +59,10 @@ namespace ElectronicZone.Wpf.ViewModel
             {
                 _selectedIndex = value;
                 OnPropertyChanged();
-                GetAllContacts(null, null, null, null);
+                if (_selectedIndex == 1)  GetAllContacts(null, null, null, null);
             }
         }
 
-        public bool DownloadExcelVisibility { get => downloadExcelVisibility; set => downloadExcelVisibility = value; }
         #endregion
 
         #region Commands
@@ -70,7 +73,6 @@ namespace ElectronicZone.Wpf.ViewModel
         public ICommand SearchContactCmd { get; set; }
         public ICommand CopyToClipboardCmd { get; set; }
         public ICommand ContactAddUpdateCmd { get; set; }
-
         #endregion
 
         /// <summary>
@@ -79,11 +81,11 @@ namespace ElectronicZone.Wpf.ViewModel
         /// <param name="instance"></param>
         public ContactViewModel(IDialogCoordinator instance)
         {
-            this.dialogCoordinator = instance;
+            this._dialogCoordinator = instance;
             this.ContactList = new ObservableCollection<Contact>();
             this.SalutationList = new ObservableCollection<string>();
             this.TabSelectedIndex = 0;
-            this.downloadExcelVisibility = false;
+            this.DownloadExcelVisibility = false;
 
             DeleteContactCmd = new CommandHandler(DeleteContact, CanExecuteDeleteContactCmd);
             EditContactCmd = new CommandHandler(EditContact, CanExecuteEditContactCmd);
@@ -133,7 +135,7 @@ namespace ElectronicZone.Wpf.ViewModel
         private void SearchContact(object obj)
         {
             GetAllContacts(this.Name, this.PrimaryContact, this.Email, this.Address);
-            this.downloadExcelVisibility = true;
+            this.DownloadExcelVisibility = true;
         }
 
         private bool CanExecuteSearchContactCmd(object arg)
@@ -161,29 +163,65 @@ namespace ElectronicZone.Wpf.ViewModel
                 return true;
         }
 
+        /// <summary>
+        /// Validate Contact
+        /// </summary>
+        /// <returns></returns>
+        private bool ValidateForm(DataAccess da)
+        {
+            if (string.IsNullOrEmpty(this.Name)) {
+                return false;
+            }
+            else if (string.IsNullOrEmpty(this.PrimaryContact))
+            {
+                return false;
+            }
+            else if (!string.IsNullOrEmpty(this.Name) && !string.IsNullOrEmpty(this.PrimaryContact) 
+                && da.IfContactExists(_tableToUse, "Name", "Contact", this.Name, this.PrimaryContact))
+            {
+                MessageBoxResult result = MessageBox.Show("Contact Already Exists!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            else
+                return true;
+        }
+
         private void AddOrUpdateContact(object obj)
         {
-            // MessageBoxResult testResult = MessageBox.Show("AddContact clicked", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            using (DataAccess da = new DataAccess())
+            {
+                try
+                {
+                    if (ValidateForm(da))
+                    {
+                        Dictionary<string, string> folderFields = new Dictionary<string, string>();
+                        folderFields.Add("Id", this.Id == 0 ? null : this.Id.ToString());
+                        folderFields.Add("Title", (SSalutation == null ? string.Empty : SSalutation));
+                        folderFields.Add("Name", this.Name);
+                        folderFields.Add("Contact", this.PrimaryContact);
+                        folderFields.Add("AlternateContact", this.AltContact);
+                        folderFields.Add("Email", this.Email);
+                        folderFields.Add("Address", this.Address);
 
-            using (DataAccess da = new DataAccess()) {
-                //create record
-                Dictionary<string, string> folderFields = new Dictionary<string, string>();
-                folderFields.Add("Id", this.Id == 0 ? null : this.Id.ToString());
-                folderFields.Add("Title", (SSalutation == null ? string.Empty : SSalutation));
-                folderFields.Add("Name", this.Name);
-                folderFields.Add("Contact", this.PrimaryContact);
-                folderFields.Add("AlternateContact", this.AltContact);
-                folderFields.Add("Email", this.Email);
-                folderFields.Add("Address", this.Address);
-
-                int status = da.InsertOrUpdateSalePerson(folderFields, "tblSalePerson");
-                //check if it is insert/updated
-                if (status > 0) {
-                    MessageBoxResult result = MessageBox.Show("Contact Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    ResetForm(new object());
+                        int status = da.InsertOrUpdateSalePerson(folderFields, _tableToUse);
+                        //check if it is insert/updated
+                        if (status > 0) {
+                            MessageBoxResult result = MessageBox.Show("Contact Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            ResetForm(new object());
+                        }
+                        else
+                        {
+                            MessageBoxResult result = MessageBox.Show("Error While Adding Contact!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-                else {
-                    MessageBoxResult result = MessageBox.Show("Error While Adding Contact!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                catch (Exception ex) {
+                    logger.LogException(ex);
+                    da.RollbackTransaction();
                 }
             }
         }
@@ -200,6 +238,9 @@ namespace ElectronicZone.Wpf.ViewModel
             this.Email = "";
             this.Address = "";
             this.SSalutation = null;
+
+            this.DownloadExcelVisibility = false;
+            this.ContactList.Clear();
         }
         /// <summary>
         /// Load Salutation/Title
@@ -236,8 +277,11 @@ namespace ElectronicZone.Wpf.ViewModel
         /// <summary>
         /// Get All Contacts
         /// </summary>
-        private void GetAllContacts(string name, string contact, string email, string address)
+        private async void GetAllContacts(string name, string contact, string email, string address)
         {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
             DataTable dt = new DataTable();
             using (DataAccess da = new DataAccess()) {
                 dt = da.SearchSalesPerson(name, contact, email, address);
@@ -254,13 +298,16 @@ namespace ElectronicZone.Wpf.ViewModel
                         Name = (string)row["Name"],
                         PrimaryContact = Convert.ToString(row["Contact"]),
                         AltContact = Convert.ToString(row["AlternateContact"]),
-                        Email = (string)row["Email"],
+                        Email = Convert.ToString(row["Email"]),
                         // EmailUri = new Uri(row["Email"].ToString()),
-                        Address = (string)row["Address"],
-                        IsActive = (bool)row["IsActive"]
+                        Address = Convert.ToString(row["Address"]),
+                        IsActive = (bool)row["IsActive"],
+                        CanDelete = !Convert.ToBoolean(row["IsUsed"])
                     });
                 }
             });
+            
+            await controller.CloseAsync();
         }
     }
 }

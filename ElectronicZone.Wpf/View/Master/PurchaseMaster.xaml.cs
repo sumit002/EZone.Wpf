@@ -12,9 +12,8 @@ namespace ElectronicZone.Wpf.View.Master
         //string imageName = "";
         public PurchaseMaster()
         {
-            this.DataContext = vm;
             InitializeComponent();
-
+            this.DataContext = vm;
 
             //this.cbProduct.Focus();
             //this.txtQuantity.Value = 1;

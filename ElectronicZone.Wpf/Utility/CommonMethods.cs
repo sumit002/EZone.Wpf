@@ -39,13 +39,13 @@ namespace ElectronicZone.Wpf.Utility
             return dataTable.Rows.Cast<System.Data.DataRow>().Take(topRow).CopyToDataTable();
         }
 
-        public static decimal GetSum(DataTable dataTable, string columnName)
+        public static double GetSum(DataTable dataTable, string columnName)
         {
             if (dataTable.Rows.Count == 0)
                 return 0;
             var d = dataTable.Compute("Sum(" + columnName + ")", "");
             //return (decimal) d.ToString("C2");
-            return decimal.Parse(d.ToString());
+            return double.Parse(d.ToString());
         }
 
         public static List<T> ConvertDataTable<T>(DataTable dt) {

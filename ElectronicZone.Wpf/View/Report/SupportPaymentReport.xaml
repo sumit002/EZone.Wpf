@@ -6,10 +6,12 @@
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Report"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
         mc:Ignorable="d"
         Title="Support Payment Report" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="5,5,5,5">
+    <Grid Margin="5,5,5,5" FocusManager.FocusedElement="{Binding ElementName=txtDescription}">
         <!--<Grid.Resources>
             <Style TargetType="Border" >
                 <Setter Property="Padding" Value="5,5,5,5" />
@@ -17,30 +19,50 @@
         </Grid.Resources>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"></ColumnDefinition>
+            <!--<ColumnDefinition Width="200"></ColumnDefinition>
             <ColumnDefinition Width="130"></ColumnDefinition>
             <ColumnDefinition Width="130"></ColumnDefinition>
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>-->
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" Name="txtDescription" ToolTip="Description" Controls:TextBoxHelper.Watermark="Search Description" VerticalAlignment="Center" >
-            <TextBox.Style>
-                <Style BasedOn="{StaticResource SearchMetroTextBox}" TargetType="{x:Type TextBox}">
-                    <Style.Triggers>
-                        <Trigger Property="Controls:TextBoxHelper.HasText" Value="True">
-                            <Setter Property="Controls:TextBoxHelper.ButtonContent" Value="r" />
-                            <Setter Property="Controls:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBox.Style>
-        </TextBox>
+        <UniformGrid Grid.Row="0" Columns="4" Rows="1">
+            <TextBox Name="txtDescription" ToolTip="Description" Controls:TextBoxHelper.Watermark="Search Description" 
+                     MinWidth="200" VerticalAlignment="Center" >
+                <TextBox.Style>
+                    <Style BasedOn="{StaticResource SearchMetroTextBox}" TargetType="{x:Type TextBox}">
+                        <Style.Triggers>
+                            <Trigger Property="Controls:TextBoxHelper.HasText" Value="True">
+                                <Setter Property="Controls:TextBoxHelper.ButtonContent" Value="r" />
+                                <Setter Property="Controls:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <DatePicker Name="fromDate" ToolTip="From Date" VerticalAlignment="Center" SelectedDateChanged="fromDate_SelectedDateChanged" Width="120" />
+            <DatePicker Name="toDate" ToolTip="To Date" VerticalAlignment="Center" SelectedDateChanged="toDate_SelectedDateChanged" Width="120" />
+            <StackPanel Orientation="Horizontal">
+                <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=FileExcelSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                    ToolTip="Download Result" x:Name="btnExport" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Visibility="Hidden"></Button>
+                <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SearchSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                    Name="btnSearch" VerticalAlignment="Center" Click="btnSearch_Click" />
+                <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SyncAltSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                    Name="btnReset" VerticalAlignment="Center" Click="btnReset_Click" />
+                <!--<Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Visibility="Visible" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Width="30" Click="btnExport_Click"></Button>-->
+                
+
+            </StackPanel>
+        </UniformGrid>
+        
         <!--<TextBox
                          Controls:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
                          Controls:TextBoxHelper.ClearTextButton="True"
@@ -62,20 +84,22 @@
                 </Style>
             </TextBox.Style>
         </TextBox>-->
-        <DatePicker Grid.Row="0" Grid.Column="1" Name="fromDate" ToolTip="From Date" VerticalAlignment="Center" SelectedDateChanged="fromDate_SelectedDateChanged" Width="120" />
-        <DatePicker Grid.Row="0" Grid.Column="2"  Name="toDate" ToolTip="To Date" VerticalAlignment="Center" SelectedDateChanged="toDate_SelectedDateChanged" Width="120" />
-
-        <Button Grid.Row="0" Grid.Column="4" Content="Search" Height="23"  Name="btnSearch" VerticalAlignment="Center" Click="btnSearch_Click" />
-        <Button Grid.Row="0" Grid.Column="5" Content="Reset" Height="23" Name="btnReset" VerticalAlignment="Center" Click="btnReset_Click" />
-        <!--<Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Visibility="Visible" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Width="30" Click="btnExport_Click"></Button>-->
-        <Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Height="30" HorizontalAlignment="Right" VerticalAlignment="Center" Width="30" 
-                Content="{iconPacks:FontAwesome Kind=DownloadSolid}" Visibility="{Binding Path=DownloadExcelVisibility, Converter={StaticResource BooleanToVisibilityConverter} }"></Button>
-
+        
+        
         <!--<WrapPanel Grid.Row="0" Grid.Column="0">
             
         </WrapPanel>-->
-
-        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Height="Auto" AutoGenerateColumns="False" HorizontalAlignment="Stretch" 
+        <RichTextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+            <FlowDocument>
+                <Paragraph>
+                    <TextBlock>Note : Search anything on description like Mobile, Amount, Date etc.</TextBlock>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="7" Height="Auto" AutoGenerateColumns="False" HorizontalAlignment="Stretch" 
                   IsReadOnly="True" Name="dataGridSupportPayment">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Description}" Header="Payment Description" Width="60*" >

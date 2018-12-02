@@ -6,33 +6,90 @@
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Payment"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="Clear Pending" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+        Title="Clear Pending" Height="300" Width="580" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="5,5,5,5">
+    <Grid Margin="5,5,5,5" FocusManager.FocusedElement="{Binding ElementName=txtPaidAmount}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <!--<RowDefinition Height="50"></RowDefinition>-->
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="160"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="2" Grid.RowSpan="5"  VerticalAlignment="Top"
+                Height="120" Width="250" BorderBrush="Gray" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2">
+            <DockPanel Background="Gray" >
+                 
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" >
+                    <StackPanel Margin="10">
+                        <DockPanel>
+                            <!--<Label Content="Sale Person" Height="28" HorizontalAlignment="Left" Name="label9" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />-->
+                            <Label Content="Mr X" Height="28" HorizontalAlignment="Left" Name="lblSalesPerson" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />
+                            <!--<Controls:Badged Grid.Row="3" Grid.Column="1" Name="badgedItem"
+                             Badge="3" ToolTip="Available Quantity">
+                                <Button Name="btnBadge" Content="Product" Style="{StaticResource ButtonStyleMD}" />
+                            </Controls:Badged>-->
+                        </DockPanel>
+                        <DockPanel>
+                            <!--<Label Content="Total/Paid" Height="28" HorizontalAlignment="Left" Name="label3" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />-->
+                            <Label Content="0" ContentStringFormat="Total amount : {0}." 
+                                   Height="28" HorizontalAlignment="Left" Name="lblTotal" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <Label Content="0" ContentStringFormat="Payment of {0} is received." 
+                                   Height="28" HorizontalAlignment="Left" Name="lblPaidAmount" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />
+                            <!--<Label Grid.Row="2" Grid.Column="0" Content="Price Per Item:" Height="28" HorizontalAlignment="Left" Name="labelgfchj1" VerticalAlignment="Top" />
+                            <Label Grid.Row="2" Grid.Column="1" Height="28" HorizontalAlignment="Left" Name="lblPrice" VerticalAlignment="Top" />-->
+                        </DockPanel>
+                        <!--<DockPanel>
+                            <Label Content="Product" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />
+                            <Label Content="0" Height="28" HorizontalAlignment="Left" Name="lblBrandProduct" VerticalAlignment="Top" Style="{StaticResource LabelStyle}" />
+                        </DockPanel>-->
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
+        </Border>
+
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Pending Amount" Height="28" HorizontalAlignment="Left" Name="label4" VerticalAlignment="Top" />
+        <Label Grid.Row="1" Grid.Column="0" Content="Paid Amount *" Height="28" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Top" />
+        <Label Grid.Row="3" Grid.Column="0" Content="On Date *" Height="28" HorizontalAlignment="Left" Name="label8" VerticalAlignment="Top" />
+
+        <Controls:NumericUpDown Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Interval="1" Minimum="1" Name="txtPaidAmount" ToolTip="Quantity" 
+                                VerticalAlignment="Center" Width="120" />
+        <!--<TextBox Height="23" HorizontalAlignment="Left" Name="txtPaidAmount" TabIndex="2" Controls:TextBoxHelper.Watermark="Paid Amount" ToolTip="Amount Paid" VerticalAlignment="Top" Width="115" />-->
+        <CheckBox Grid.Row="2" Grid.Column="1" Content="Discount Payment" Height="25" HorizontalAlignment="Left" Name="chkbDiscount" VerticalAlignment="Top" Checked="chkbDiscount_Checked" Unchecked="chkbDiscount_Unchecked" />
+        <DatePicker Grid.Row="3" Grid.Column="1" Height="25" HorizontalAlignment="Left" Name="dpPaymentDate" SelectedDateFormat="Short" TabIndex="5" ToolTip="Payment Date" VerticalAlignment="Top" Width="115" />
+        <Label Grid.Row="0" Grid.Column="1" Content="0" Height="28" FontWeight="Bold" Foreground="Red" HorizontalAlignment="Left" Name="lblPendingAmount" VerticalAlignment="Top" />
         
-        <Button Content="Save" Height="23" HorizontalAlignment="left" Margin="130,213,0,0" Name="btnSave" VerticalAlignment="Top" Width="72" Click="btnSave_Click" />
-        <Button Content="Close" Height="23" HorizontalAlignment="left" Margin="208,213,0,0" Name="btnClose" VerticalAlignment="Top" Width="75" Click="btnClose_Click" />
-        <Label Content="Pending Amount" Height="28" HorizontalAlignment="Left" Margin="10,110,0,0" Name="label4" VerticalAlignment="Top" />
-        <Label Content="Paid Amount" Height="28" HorizontalAlignment="Left" Margin="12,143,0,0" Name="label5" VerticalAlignment="Top" />
-        <Label Content="On Date" Height="28" HorizontalAlignment="Left" Margin="11,173,0,0" Name="label8" VerticalAlignment="Top" />
-        <DatePicker Height="25" HorizontalAlignment="Left" Margin="132,173,0,0" Name="dpPaymentDate" SelectedDateFormat="Short" TabIndex="5" ToolTip="Payment Date" VerticalAlignment="Top" Width="115" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="132,141,0,0" Name="txtPaidAmount" TabIndex="2" Controls:TextBoxHelper.Watermark="Paid Amount" ToolTip="Amount Paid" VerticalAlignment="Top" Width="115" />
-        <CheckBox Content="Discount Payment" Height="25" HorizontalAlignment="Left" Margin="253,142,0,0" Name="chkbDiscount" VerticalAlignment="Top" Checked="chkbDiscount_Checked" Unchecked="chkbDiscount_Unchecked" />
-        <Label Content="0" Height="28" FontWeight="Bold" Foreground="Red" HorizontalAlignment="Left" Margin="132,110,0,0" Name="lblPendingAmount" VerticalAlignment="Top" />
-        <Label Content="Product" Height="28" HorizontalAlignment="Left" Margin="10,10,0,0" Name="label1" VerticalAlignment="Top" />
-        <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="130,10,0,0" Name="lblBrandProduct" VerticalAlignment="Top" />
-        <Label Content="Total/Paid" Height="28" HorizontalAlignment="Left" Margin="10,35,0,0" Name="label3" VerticalAlignment="Top" />
-        <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="130,35,0,0" Name="lblTotalAndPaid" VerticalAlignment="Top" />
-        <Label Content="Sale Person" Height="28" HorizontalAlignment="Left" Margin="10,61,0,0" Name="label9" VerticalAlignment="Top" />
-        <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="130,61,0,0" Name="lblSalesPerson" VerticalAlignment="Top" />
-        <Label Content="0" Height="28" HorizontalAlignment="Left" Visibility="Hidden" Margin="406,12,0,0" Name="lblSaleId" VerticalAlignment="Top" />
-        <Label Content="0" Height="28" HorizontalAlignment="Left" Visibility="Hidden" Margin="450,12,0,0" Name="lblSalePersonId" VerticalAlignment="Top" />
+        <!--<Label Content="0" Height="28" HorizontalAlignment="Left" Visibility="Hidden" Margin="406,12,0,0" Name="lblSaleId" VerticalAlignment="Top" />
+        <Label Content="0" Height="28" HorizontalAlignment="Left" Visibility="Hidden" Margin="450,12,0,0" Name="lblSalePersonId" VerticalAlignment="Top" />-->
+
+        <Button Content="Save" Height="23" HorizontalAlignment="left" 
+                 Grid.Row="4" Grid.Column="1" Name="btnSave" VerticalAlignment="Center" Width="75" Click="btnSave_Click" />
+        <Button Content="Close" Height="23" HorizontalAlignment="Right" 
+                 Grid.Row="4" Grid.Column="1" Name="btnClose" VerticalAlignment="Center" Width="75" Click="btnClose_Click" />
+
+        <RichTextBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+            <FlowDocument>
+                <Paragraph>
+                    <TextBlock>Note : To provice discount please check Discount payment.</TextBlock>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
     </Grid>
 </Controls:MetroWindow>

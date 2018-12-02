@@ -61,6 +61,17 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             else
                 return false;
         }
+
+        public bool IfContactExists(string tableName, string column1, string column2, string value1, string value2)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            string queryToUse = string.Format("Select * from {0} Where {1}='{3}' COLLATE NOCASE and {2}='{4}'", tableName, column1, column2, value1, value2);
+            DataTable dt = sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            if (dt.Rows.Count > 0)
+                return true;
+            else
+                return false;
+        }
         #endregion User Validation
 
         #region masters
@@ -151,7 +162,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string insertQuery = string.Format("INSERT INTO {0} ({1}) values ({2})", tableName, String.Join(",", columns.Keys), String.Join(",",
                 dbParameterList.Select(r => r.ParameterName).ToArray()));
             //string updateQuery = string.Format("UPDATE {0} SET ProductCode=@ProductCode, StockCode=@StockCode, ItemDesc=@ItemDesc, AvlQuantity=@AvlQuantity, PurchasePrice=@PurchasePrice, SalePrice=@SalePrice, ProductImage=@ProductImage, PurchaseDate=@PurchaseDate, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
-            string updateQuery = string.Format("UPDATE {0} SET ProductCode=@ProductCode, StockCode=@StockCode, ItemDesc=@ItemDesc, PurchasePrice=@PurchasePrice, SalePrice=@SalePrice, PurchaseDate=@PurchaseDate, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
+            string updateQuery = string.Format("UPDATE {0} SET ProductCode=@ProductCode, StockCode=@StockCode, ItemDesc=@ItemDesc, Quantity=@Quantity, AvlQuantity=@AvlQuantity, PurchasePrice=@PurchasePrice, SalePrice=@SalePrice, PurchaseDate=@PurchaseDate, ModifiedDate=@ModifiedDate WHERE ID=@ID", tableName);
             int result = sQLHelper.InsertOrUpdate(insertQuery, updateQuery, existanceTestQuery, dbParameterList);
             int rowId = sQLHelper.getLastRowId(tableName);
             return rowId;

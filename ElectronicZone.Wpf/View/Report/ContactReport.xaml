@@ -6,57 +6,66 @@
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Report"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
         mc:Ignorable="d"
         Title="Contact Report" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
-    
-    <Grid Margin="5,5,5,5">
-        <!--<Grid.Resources>
-            <Style TargetType="Border" >
-                <Setter Property="Padding" Value="5,5,5,5" />
-            </Style>
-        </Grid.Resources>-->
+
+    <Grid Margin="5,5,5,5" FocusManager.FocusedElement="{Binding ElementName=txtName}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="130"></ColumnDefinition>
-            <ColumnDefinition Width="130"></ColumnDefinition>
-            <ColumnDefinition Width="130"></ColumnDefinition>
-            <ColumnDefinition Width="50"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="150*"></ColumnDefinition>
+            <ColumnDefinition Width="150*"></ColumnDefinition>
+            <ColumnDefinition Width="150*"></ColumnDefinition>
+            <ColumnDefinition Width="120*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" Name="txtName" ToolTip="Name" Controls:TextBoxHelper.Watermark="Name" VerticalAlignment="Center"  />
-        <TextBox Grid.Row="0" Grid.Column="1" Name="txtContact" ToolTip="Contact" Controls:TextBoxHelper.Watermark="Contact" VerticalAlignment="Center"  />
-        <TextBox Grid.Row="0" Grid.Column="2" Name="txtEmail" ToolTip="Email" Controls:TextBoxHelper.Watermark="Email" VerticalAlignment="Center"  />
+        <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding Path= Name}" Name="txtName" ToolTip="Name" 
+                 Controls:TextBoxHelper.Watermark="Name" VerticalAlignment="Center" HorizontalContentAlignment="Left" Width="190" HorizontalAlignment="Left"  />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path= PrimaryContact}" Name="txtContact" ToolTip="Contact" 
+                 Controls:TextBoxHelper.Watermark="Contact" VerticalAlignment="Center" HorizontalContentAlignment="Left" Width="190" HorizontalAlignment="Left"  />
+        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Path= Email}" Name="txtEmail" ToolTip="Email" 
+                 Controls:TextBoxHelper.Watermark="Email" VerticalAlignment="Center" HorizontalContentAlignment="Left" Width="200" HorizontalAlignment="Left"  />
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3">
+            <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=FileExcelSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}" 
+                ToolTip="Download Result" x:Name="btnExport"
+                    HorizontalAlignment="Right" VerticalAlignment="Center"  Visibility="{Binding Path=DownloadExcelVisibility, Converter={StaticResource BooleanToVisibilityConverter} }">
+            </Button>
+            <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SearchSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                Command="{Binding SearchContactCmd}" Name="btnSearch" VerticalAlignment="Center" />
+            <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=SyncAltSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
+                Command="{Binding ResetContactCmd}" Name="btnReset" VerticalAlignment="Center" />
+        </StackPanel>
         
-
-        <Button Grid.Row="0" Grid.Column="4" Content="Search" Height="23"  Name="btnSearch" VerticalAlignment="Top" />
-        <Button Grid.Row="0" Grid.Column="5" Content="Reset" Height="23" Name="btnReset" VerticalAlignment="Top" />
-        <Button Grid.Row="0" Grid.Column="3" ToolTip="Download Result" x:Name="btnExport" BorderThickness="0" Style="{DynamicResource SquareButtonStyle}" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" 
-                Content="{iconPacks:FontAwesome Kind=DownloadSolid}" Visibility="{Binding Path=DownloadExcelVisibility, Converter={StaticResource BooleanToVisibilityConverter} }">
-            
-        </Button>
-
-        <!--<WrapPanel Grid.Row="0" Grid.Column="0">
-            
-        </WrapPanel>-->
-
-        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Height="450" AutoGenerateColumns="False" HorizontalAlignment="Left" 
-                  IsReadOnly="True" ItemsSource="{Binding ContactList}">
+        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Height="Auto" AutoGenerateColumns="False" HorizontalAlignment="Stretch" 
+                  IsReadOnly="True" ItemsSource="{Binding ContactList}" Width="Auto">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Contact" Binding="{Binding PrimaryContact}" />
-                <DataGridTextColumn Header="Alt Contact" Binding="{Binding AlternateContact}" />
-                <DataGridTextColumn Header="Email Address" Binding="{Binding Email}" />
-                <DataGridTextColumn Header="Address" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="40*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Contact" Binding="{Binding PrimaryContact}" Width="25*" />
+                <DataGridTextColumn Header="Alt Contact" Binding="{Binding AltContact}" Width="25*" />
+                <DataGridTextColumn Header="Email Address" Binding="{Binding Email}" Width="40*" />
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}"  Width="60*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="ToolTip" Value="{Binding Address}" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

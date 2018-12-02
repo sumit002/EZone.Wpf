@@ -6,8 +6,10 @@
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Master"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
         mc:Ignorable="d"
-        Title="Support Income Master" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+        Title="Support Income" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
     <Grid Margin="5,5,5,5">
         <!--<Grid.RowDefinitions>
@@ -91,21 +93,28 @@
                               Name="datagridSupportPayment" ItemsSource="{Binding SupportIncomeList}"
                               VerticalAlignment="Top" Width="Auto" IsReadOnly="True" CanUserSortColumns="True" Grid.ColumnSpan="2">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}"  Width="300*" >
+                            <DataGridTemplateColumn Header="Description" Width="180*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--<DataGridTextColumn Header="Description" Binding="{Binding Description}"   Width="200*" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="ToolTip" Value="{Binding Description}" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Binding="{Binding Remarks}"  Width="100*" >
+                            </DataGridTextColumn>-->
+                            <DataGridTextColumn Header="Remarks" Binding="{Binding Remarks}"  Width="50*" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="ToolTip" Value="{Binding Remarks}" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Amount Earned" Binding="{Binding Amount, StringFormat={}{0:00.00}}" MaxWidth="150" >
+                            <DataGridTextColumn Header="Amount Earned" Binding="{Binding Amount, StringFormat={}{0:00.00}}" MaxWidth="130" >
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Right" />
@@ -115,7 +124,7 @@
                             </DataGridTextColumn>
                             <DataGridTextColumn Header="Received On" Binding="{Binding SupportDate, StringFormat={}{0:dd/MM/yy}}" MaxWidth="250" />
 
-                            <DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="10*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" Foreground="Blue"
@@ -125,7 +134,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="10*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" Foreground="Red"

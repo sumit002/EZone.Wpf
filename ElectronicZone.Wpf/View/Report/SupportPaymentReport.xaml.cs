@@ -49,6 +49,7 @@ namespace ElectronicZone.Wpf.View.Report
                 {
                     btnExport.Visibility = System.Windows.Visibility.Hidden;
                     dataGridSupportPayment.ItemsSource = null;
+                    MessageBoxResult result = MessageBox.Show("No results found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
@@ -80,15 +81,15 @@ namespace ElectronicZone.Wpf.View.Report
 
         private void fromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
         }
 
         private void toDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
         }
 
-        private void validateCalendarMinMaxDate()
+        private void ValidateCalendarMinMaxDate()
         {
             try
             {

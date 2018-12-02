@@ -15,18 +15,18 @@ namespace ElectronicZone.Wpf.ViewModel
     public class SaleViewModel : ViewModelBase
     {
         #region Properties
-        ILogger logger = new Logger(typeof(PurchaseViewModel));
-        private IDialogCoordinator dialogCoordinator;
+        ILogger logger = new Logger(typeof(SaleViewModel));
+        private readonly IDialogCoordinator _dialogCoordinator;
         public ObservableCollection<Sale> SaleList { get; set; }
         public ObservableCollection<Purchase> PurchaseList { get; set; }
         public ObservableCollection<Product> ProductList { get; set; }
         public ObservableCollection<Brand> BrandList { get; set; }
-        public ObservableCollection<Contact> ContactList { get; set; }
+        //public ObservableCollection<Contact> ContactList { get; set; }
         #endregion
 
         #region Commands
-        public ICommand AddSaleOrderCmd { get; set; }
-        public ICommand CloseAddSaleOrderCmd { get; set; }
+        //public ICommand AddSaleOrderCmd { get; set; }
+        //public ICommand CloseAddSaleOrderCmd { get; set; }
 
         public ICommand SearchPurchaseResetCmd { get; set; }
         public ICommand SearchPurchaseOrderCmd { get; set; }
@@ -46,42 +46,42 @@ namespace ElectronicZone.Wpf.ViewModel
         public double PriceTo { get => _priceTo; set { _priceTo = value; OnPropertyChanged(); } }
 
         //Add Sale Properties
-        private int _selectedStockId;
-        private string _selectedProduct;
-        private string _selectedProductCode;
-        private string _selectedStockCode;
-        private double _selectedProductPrice;
-        private int _selectedProductAvlQuantity;
-        // private int _selePersonId;
-        private string _selePersonName;
-        private string _selePersonContact;
-        private int _seleQuantity;
-        private double _seleTotalAmount;
-        private double _seleAmountPaid;
-        private DateTime _seleDate;
-        private bool _selectedContactType;//New|Existing
+        //private int _selectedStockId;
+        //private string _selectedProduct;
+        //private string _selectedProductCode;
+        //private string _selectedStockCode;
+        //private double _selectedProductPrice;
+        //private int _selectedProductAvlQuantity;
+        //// private int _selePersonId;
+        //private string _selePersonName;
+        //private string _selePersonContact;
+        //private int _seleQuantity;
+        //private double _seleTotalAmount;
+        //private double _seleAmountPaid;
+        //private DateTime _seleDate;
+        //private bool _selectedContactType;//New|Existing
 
-        public int SelectedStockId { get => _selectedStockId; set { _selectedStockId = value; OnPropertyChanged(); } }
-        public string SelectedProduct { get => _selectedProduct; set { _selectedProduct = value; OnPropertyChanged(); } }
-        public string SelectedProductCode { get => _selectedProductCode; set { _selectedProductCode = value; OnPropertyChanged(); } }
-        public string SelectedStockCode { get => _selectedStockCode; set { _selectedStockCode = value; OnPropertyChanged(); } }
-        public double SelectedProductPrice { get => _selectedProductPrice; set { _selectedProductPrice = value; OnPropertyChanged(); } }
-        public int SelectedProductAvlQuantity { get => _selectedProductAvlQuantity; set { _selectedProductAvlQuantity = value; OnPropertyChanged(); } }
-        public string SelePersonName { get => _selePersonName; set { _selePersonName = value; OnPropertyChanged(); } }
-        public string SelePersonContact { get => _selePersonContact; set { _selePersonContact = value; OnPropertyChanged(); } }
-        public int SeleQuantity { get => _seleQuantity; set { _seleQuantity = value; OnPropertyChanged(); CalculateTotalSaleAmount(); } }
-        public double SeleTotalAmount { get => _seleTotalAmount; set { _seleTotalAmount = value; OnPropertyChanged(); } }
-        public double SeleAmountPaid { get => _seleAmountPaid; set { _seleAmountPaid = value; OnPropertyChanged(); } }
-        public DateTime SeleDate { get => _seleDate; set { _seleDate = value; OnPropertyChanged(); } }
-        public bool IsSaleToExistingContact { get => _selectedContactType; set { _selectedContactType = value; OnPropertyChanged(); OnSaleContactTypeChanged(); } }
+        //public int SelectedStockId { get => _selectedStockId; set { _selectedStockId = value; OnPropertyChanged(); } }
+        //public string SelectedProduct { get => _selectedProduct; set { _selectedProduct = value; OnPropertyChanged(); } }
+        //public string SelectedProductCode { get => _selectedProductCode; set { _selectedProductCode = value; OnPropertyChanged(); } }
+        //public string SelectedStockCode { get => _selectedStockCode; set { _selectedStockCode = value; OnPropertyChanged(); } }
+        //public double SelectedProductPrice { get => _selectedProductPrice; set { _selectedProductPrice = value; OnPropertyChanged(); } }
+        //public int SelectedProductAvlQuantity { get => _selectedProductAvlQuantity; set { _selectedProductAvlQuantity = value; OnPropertyChanged(); } }
+        //public string SelePersonName { get => _selePersonName; set { _selePersonName = value; OnPropertyChanged(); } }
+        //public string SelePersonContact { get => _selePersonContact; set { _selePersonContact = value; OnPropertyChanged(); } }
+        //public int SeleQuantity { get => _seleQuantity; set { _seleQuantity = value; OnPropertyChanged(); CalculateTotalSaleAmount(); } }
+        //public double SeleTotalAmount { get => _seleTotalAmount; set { _seleTotalAmount = value; OnPropertyChanged(); } }
+        //public double SeleAmountPaid { get => _seleAmountPaid; set { _seleAmountPaid = value; OnPropertyChanged(); } }
+        //public DateTime SeleDate { get => _seleDate; set { _seleDate = value; OnPropertyChanged(); } }
+        //public bool IsSaleToExistingContact { get => _selectedContactType; set { _selectedContactType = value; OnPropertyChanged(); OnSaleContactTypeChanged(); } }
 
-        private void OnSaleContactTypeChanged()
-        {
-            if (!IsSaleToExistingContact) {
-                this.SelePersonName = "";
-                this.SelePersonContact = "";
-            }
-        }
+        //private void OnSaleContactTypeChanged()
+        //{
+        //    if (!IsSaleToExistingContact) {
+        //        this.SelePersonName = "";
+        //        this.SelePersonContact = "";
+        //    }
+        //}
 
         private DateTime _todayDate;
         public DateTime TodayDate { get => _todayDate; set => _todayDate = value; }
@@ -93,7 +93,7 @@ namespace ElectronicZone.Wpf.ViewModel
             {
                 _selectedIndex = value;
                 OnPropertyChanged();
-                if (_selectedIndex == 1) { GetAllSales(); } /*else { loadProduct(); loadBrands(); }*/;
+                if (_selectedIndex == 1) { GetAllSalesAsync(); } /*else { loadProduct(); loadBrands(); }*/;
             }
         }
         private Product _sProduct;
@@ -108,24 +108,33 @@ namespace ElectronicZone.Wpf.ViewModel
             get { return _sBrand; }
             set { _sBrand = value; OnPropertyChanged(); }
         }
-        private Contact _sContact;
-        public Contact SContact
-        {
-            get { return _sContact; }
-            set { _sContact = value; OnPropertyChanged(); OnContactSelected(); }
-        }
+        //private Contact _sContact;
+        //public Contact SContact
+        //{
+        //    get { return _sContact; }
+        //    set { _sContact = value; OnPropertyChanged(); OnContactSelected(); }
+        //}
 
-        private void OnContactSelected()
-        {
-            if(SContact!= null)
-            {
-                this.SelePersonName = SContact.Name;
-                this.SelePersonContact = SContact.PrimaryContact;
-            }
-        }
+        //private void OnContactSelected()
+        //{
+        //    if(SContact!= null)
+        //    {
+        //        this.SelePersonName = SContact.Name;
+        //        this.SelePersonContact = SContact.PrimaryContact;
+        //    }
+        //}
 
         #endregion
+        private async void GetAllSalesAsync()
+        {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
 
+            //await System.Threading.Tasks.Task.Delay(1000);
+            GetAllSales();
+
+            await controller.CloseAsync();
+        }
         private void GetAllSales()
         {
             DataTable dt = new DataTable();
@@ -152,6 +161,7 @@ namespace ElectronicZone.Wpf.ViewModel
                     SaleDate = Convert.ToDateTime(row["SaleDate"]),
                     //IsActive = Convert.ToBoolean(row["IsActive"]),
                     CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
+                    CanCancel = Convert.ToBoolean(row["CanDelete"]),
                     //ModifiedDate = Convert.ToDateTime(row["ModifiedDate"])
                 });
             }
@@ -165,18 +175,18 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             try {
                 this.TabSelectedIndex = 0;
-                this.dialogCoordinator = instance;
+                this._dialogCoordinator = instance;
                 //this.PurchaseDate = DateTime.Now;
                 //this.TabHeaderText = "Add Purchase";
                 this.TodayDate = DateTime.Today;
                 //this.SelectedProduct = "asdasd";
-                this.IsSaleToExistingContact = true;
+                //this.IsSaleToExistingContact = true;
 
                 this.SaleList = new ObservableCollection<Sale>();
                 this.PurchaseList = new ObservableCollection<Purchase>();
                 this.ProductList = new ObservableCollection<Product>();
                 this.BrandList = new ObservableCollection<Brand>();
-                this.ContactList = new ObservableCollection<Contact>();
+                //this.ContactList = new ObservableCollection<Contact>();
 
                 this.CancelSaleOrderCmd = new CommandHandler(CancelSaleOrder, CanExecuteCancelSaleOrder);
                 this.SearchPurchaseResetCmd = new CommandHandler(SearchPurchaseReset, CanExecuteSearchPurchaseReset);
@@ -185,92 +195,91 @@ namespace ElectronicZone.Wpf.ViewModel
 
                 LoadProduct(); LoadBrands();
 
-                this.AddSaleOrderCmd = new CommandHandler(AddSaleOrder, CanExecuteAddSaleOrder);
-                this.CloseAddSaleOrderCmd = new CommandHandler(CloseAddSaleOrder, CanExecuteCloseAddSaleOrder);
-                LoadSalesPerson();
+                //this.AddSaleOrderCmd = new CommandHandler(AddSaleOrder, CanExecuteAddSaleOrder);
+                //this.CloseAddSaleOrderCmd = new CommandHandler(CloseAddSaleOrder, CanExecuteCloseAddSaleOrder);
+                //LoadSalesPerson();
             }
             catch (Exception ex) {
                 logger.LogException(ex);
             }
         }
 
-        private void CloseAddSaleOrder(object obj)
-        {
-            AddSale window = (AddSale)obj;
-            window.Close();
-        }
+        //private void CloseAddSaleOrder(object obj)
+        //{
+        //    AddSale window = (AddSale)obj;
+        //    window.Close();
+        //}
 
 
-        private Boolean ValidateSaleForm()
-        {
-            bool isFormValid = true;
-            //double total = this.SeleQuantity * this.SelectedProductPrice;
-            if(this.SelectedStockId <= 0)
-                isFormValid = false;
-            if (this.SeleAmountPaid <= 0)
-                isFormValid = false;
-            //if (string.IsNullOrEmpty(SeleDate))
-            //    isFormValid = false;
-            if (this.SeleQuantity > this.SelectedProductAvlQuantity)
-                isFormValid = false;
-            //if (this.SeleAmountPaid <= 0 && double.Parse(txtAmtPaid.Text) > total)
-            //    isFormValid = false;
-            return isFormValid;
-        }
-        private void AddSaleOrder(object obj)
-        {
-            // Validate Sale
-            if (ValidateSaleForm()) {
-                Sale saleOrder = new Sale() {
-                    StockId = this.SelectedStockId,
-                    Quantity = this.SeleQuantity,
-                    Price = this.SelectedProductPrice,
-                    Total = this.SeleTotalAmount,
-                    AmountPaid = this.SeleAmountPaid,
-                    SaleDate = this.SeleDate,
+        //private Boolean ValidateSaleForm()
+        //{
+        //    bool isFormValid = true;
+        //    //double total = this.SeleQuantity * this.SelectedProductPrice;
+        //    if(this.SelectedStockId <= 0)
+        //        isFormValid = false;
+        //    if (this.SeleAmountPaid <= 0)
+        //        isFormValid = false;
+        //    //if (string.IsNullOrEmpty(SeleDate))
+        //    //    isFormValid = false;
+        //    if (this.SeleQuantity > this.SelectedProductAvlQuantity)
+        //        isFormValid = false;
+        //    //if (this.SeleAmountPaid <= 0 && double.Parse(txtAmtPaid.Text) > total)
+        //    //    isFormValid = false;
+        //    return isFormValid;
+        //}
+        //private void AddSaleOrder(object obj)
+        //{
+        //    // Validate Sale
+        //    if (ValidateSaleForm()) {
+        //        Sale saleOrder = new Sale() {
+        //            StockId = this.SelectedStockId,
+        //            Quantity = this.SeleQuantity,
+        //            Price = this.SelectedProductPrice,
+        //            Total = this.SeleTotalAmount,
+        //            AmountPaid = this.SeleAmountPaid,
+        //            SaleDate = this.SeleDate,
 
-                    Contact = { Id = SContact.Id, Name = this.SelePersonName, PrimaryContact = this.SelePersonContact }
-                };
-                SaleManager sm = new SaleManager();
-                sm.CreateSalesOrder(saleOrder);
-                // Create Sale
-                AddSale window = (AddSale)obj;
-                window.Close();
-            }
-            else
-            {
-                MessageBoxResult result = MessageBox.Show("Invalid Data !", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+        //            Contact = { Id = SContact.Id, Name = this.SelePersonName, PrimaryContact = this.SelePersonContact }
+        //        };
+        //        SaleManager sm = new SaleManager();
+        //        sm.CreateSalesOrder(saleOrder);
+        //        // Create Sale
+        //        AddSale window = (AddSale)obj;
+        //        window.Close();
+        //    }
+        //    else
+        //    {
+        //        MessageBoxResult result = MessageBox.Show("Invalid Data !", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //    }
+        //}
 
-        }
+        //private bool CanExecuteCloseAddSaleOrder(object arg)
+        //{
+        //    return true;
+        //}
 
-        private bool CanExecuteCloseAddSaleOrder(object arg)
-        {
-            return true;
-        }
-
-        private bool CanExecuteAddSaleOrder(object arg)
-        {
-            return true;
-        }
+        //private bool CanExecuteAddSaleOrder(object arg)
+        //{
+        //    return true;
+        //}
 
         private void SaleThisPurchaseOrder(object obj)
         {
             var item = (Purchase)obj;
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                // stockId
-                this.SelectedStockId = item.Id;
-                this.SelectedProduct = item.Product;
-                this.SelectedProductCode = item.ProductCode;
-                this.SelectedStockCode = item.StockCode;
-                this.SelectedProductPrice = item.SalePrice;
-                this.SelectedProductAvlQuantity = item.AvlQuantity;
-            });
-            LoadSalesPerson();
+            //Application.Current.Dispatcher.Invoke(() =>
+            //{
+            //    // stockId
+            //    this.SelectedStockId = item.Id;
+            //    this.SelectedProduct = item.Product;
+            //    this.SelectedProductCode = item.ProductCode;
+            //    this.SelectedStockCode = item.StockCode;
+            //    this.SelectedProductPrice = item.SalePrice;
+            //    this.SelectedProductAvlQuantity = item.AvlQuantity;
+            //});
+            //LoadSalesPerson();
 
             //open modal for sale Item
-            AddSale saleScreen = new AddSale();
+            AddSale saleScreen = new AddSale(item);
             saleScreen.ShowDialog();
             //refresh sale data
             SearchPurchaseOrder(new object());
@@ -281,18 +290,25 @@ namespace ElectronicZone.Wpf.ViewModel
             return true;
         }
 
-        private void SearchPurchaseOrder(object obj)
+        private async void SearchPurchaseOrder(object obj)
         {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
+            //await System.Threading.Tasks.Task.Delay(1000);
             DataTable dt = new DataTable();
-            using (DataAccess da = new DataAccess()) {
-                dt = da.SearchStocks(this.SProduct != null ? this.SProduct.Id.ToString() : "", this.SBrand!= null ? this.SBrand.Id.ToString() : ""
-                    , this.ProductCode, this.StockCode, this.PriceFrom == 0 ? (double?) null: this.PriceFrom, this.PriceTo == 0 ? (double?) null : this.PriceTo, string.Empty, string.Empty, true);
+            using (DataAccess da = new DataAccess())
+            {
+                dt = da.SearchStocks(this.SProduct != null ? this.SProduct.Id.ToString() : "", this.SBrand != null ? this.SBrand.Id.ToString() : ""
+                    , this.ProductCode, this.StockCode, this.PriceFrom == 0 ? (double?)null : this.PriceFrom, this.PriceTo == 0 ? (double?)null : this.PriceTo, string.Empty, string.Empty, true);
             }
+
             this.PurchaseList.Clear();
-            if (dt.Rows.Count > 0) {
+            if (dt.Rows.Count > 0)
+            {
                 foreach (DataRow row in dt.Rows)
                 {
-                    PurchaseList.Add(new Purchase()
+                    this.PurchaseList.Add(new Purchase()
                     {
                         Id = int.Parse(row["StockId"].ToString()),
                         Product = Convert.ToString(row["Product"]),
@@ -302,13 +318,17 @@ namespace ElectronicZone.Wpf.ViewModel
                         AvlQuantity = int.Parse(row["AvlQuantity"].ToString()),
                         Quantity = int.Parse(row["Quantity"].ToString()),
                         SalePrice = Convert.ToDouble(row["SalePrice"]),
+                        PurchasePrice = Convert.ToDouble(row["PurchasePrice"]),
                         PurchaseDate = Convert.ToDateTime(row["PurchaseDate"])
                     });
                 }
             }
-            else {
-                MessageBoxResult result = MessageBox.Show("No Data Found", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("No Results Found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+
+            await controller.CloseAsync();
         }
 
         private void SearchPurchaseReset(object obj)
@@ -347,27 +367,25 @@ namespace ElectronicZone.Wpf.ViewModel
         }
 
         /// <summary>
-        /// Total/AmountPaid
+        /// Cancel Sale Order
         /// </summary>
         /// <param name="obj"></param>
         private void CancelSaleOrder(object obj)
         {
             var item = (Sale)obj;
             // Checking if any of the item has not sell 
-            if (item.AmountPaid == item.Total)
-            {
-                if (MessageBox.Show("Are you sure?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
-                {
+            if (item.CanCancel) {
+                if (MessageBox.Show($"Are you sure want to cancel order with amount {item.Total}?", "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
                     SaleManager sm = new SaleManager();
                     bool isCanceled = sm.ReverseSalesOrder(item);
                     if (isCanceled)
                     {
-                        MessageBoxResult result = MessageBox.Show("Sales Order Canceled Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBoxResult result = MessageBox.Show("Sale Canceled Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     this.SaleList.Remove(item);
                 }
             }
-            else { MessageBoxResult result = MessageBox.Show("Sale Cannot be Canceled!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
+            else { MessageBoxResult result = MessageBox.Show("Sale Cannot be Canceled! You might be exceed the date limit.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
         }
 
         /// <summary>
@@ -418,31 +436,61 @@ namespace ElectronicZone.Wpf.ViewModel
             }
         }
 
-        private void LoadSalesPerson()
-        {
-            DataTable dtProduct = new DataTable();
-            using (DataAccess da = new DataAccess())
-            {
-                dtProduct = da.GetAllSalesPerson();
-            }
+        //private void LoadSalesPerson()
+        //{
+        //    DataTable dtProduct = new DataTable();
+        //    using (DataAccess da = new DataAccess())
+        //    {
+        //        dtProduct = da.GetAllSalesPerson();
+        //    }
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (DataRow row in dtProduct.Rows)
-                {
-                    this.ContactList.Add(new Contact()
-                    {
-                        Id = int.Parse(row["Id"].ToString()),
-                        Name = Convert.ToString(row["Name"]),
-                        PrimaryContact = Convert.ToString(row["Contact"])
-                    });
-                }
-            });
-        }
+        //    Application.Current.Dispatcher.Invoke(() =>
+        //    {
+        //        foreach (DataRow row in dtProduct.Rows)
+        //        {
+        //            this.ContactList.Add(new Contact()
+        //            {
+        //                Id = int.Parse(row["Id"].ToString()),
+        //                Name = Convert.ToString(row["Name"]),
+        //                PrimaryContact = Convert.ToString(row["Contact"])
+        //            });
+        //        }
+        //    });
+        //}
 
-        private void CalculateTotalSaleAmount()
-        {
-            this.SeleTotalAmount = SeleQuantity * SelectedProductPrice;
-        }
+        //private void CalculateTotalSaleAmount()
+        //{
+        //    this.SeleTotalAmount = SeleQuantity * SelectedProductPrice;
+        //}
+
+        //private ICommand showCustomDialogCommand;
+
+        //public ICommand ShowCustomDialogCommand
+        //{
+        //    get
+        //    {
+        //        return this.showCustomDialogCommand ?? (this.showCustomDialogCommand = new SimpleCommand
+        //        {
+        //            CanExecuteDelegate = x => true,
+        //            ExecuteDelegate = x => RunCustomFromVm()
+        //        });
+        //    }
+        //}
+
+        //private async void RunCustomFromVm()
+        //{
+        //    var customDialog = new CustomDialog() { Title = "Custom Dialog" };
+
+        //    var dataContext = new CustomDialogExampleContent(instance =>
+        //    {
+        //        _dialogCoordinator.HideMetroDialogAsync(this, customDialog);
+
+        //        //Add Sale
+        //        System.Diagnostics.Debug.WriteLine(instance.SaleDate);
+        //    });
+        //    customDialog.Content = new AddSaleCustomDialog { DataContext = dataContext };
+
+        //    await _dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
+        //}
     }
 }

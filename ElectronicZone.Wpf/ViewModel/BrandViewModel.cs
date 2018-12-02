@@ -17,7 +17,7 @@ namespace ElectronicZone.Wpf.ViewModel
     {
         #region Properties
         ILogger logger = new Logger(typeof(BrandViewModel));
-        private IDialogCoordinator dialogCoordinator;
+        private IDialogCoordinator _dialogCoordinator;
         public ObservableCollection<Brand> BrandList { get; set; }
         #endregion
 
@@ -70,7 +70,7 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             this.TabHeaderText = "Add Brand";
             this.BrandList = new ObservableCollection<Brand>();
-            this.dialogCoordinator = instance;
+            this._dialogCoordinator = instance;
             this.IsAddMode = true;
 
             EditBrandCmd = new CommandHandler(EditBrand, CanExecuteEditBrand);
@@ -200,7 +200,10 @@ namespace ElectronicZone.Wpf.ViewModel
             return SelectedResult != null;
         }
 
-        private void GetAllBrands() {
+        private async void GetAllBrands() {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
             DataTable dtBrands = new DataTable();
             using (DataAccess da = new DataAccess()) {
                 dtBrands = da.GetAllBrands();
@@ -219,6 +222,7 @@ namespace ElectronicZone.Wpf.ViewModel
                     ModifiedDate = string.IsNullOrEmpty(row["ModifiedDate"].ToString()) ? (DateTime?)null : DateTime.Parse(row["ModifiedDate"].ToString())// Convert.ToDateTime(row["ModifiedDate"])
                 });
             }
+            await controller.CloseAsync();
         }
     }
 }

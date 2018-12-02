@@ -1,13 +1,6 @@
-﻿using ElectronicZone.Wpf.DataAccessLayer;
-using ElectronicZone.Wpf.Utility;
+﻿using ElectronicZone.Wpf.ViewModel;
 using MahApps.Metro.Controls;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace ElectronicZone.Wpf.View.Payment
 {
@@ -16,91 +9,96 @@ namespace ElectronicZone.Wpf.View.Payment
     /// </summary>
     public partial class PendingPayment : MetroWindow
     {
-        ILogger logger = new Logger(typeof(PendingPayment));
+        PendingPaymentViewModel vm = new PendingPaymentViewModel(DialogCoordinator.Instance);
+        //ILogger logger = new Logger(typeof(PendingPayment));
         public PendingPayment()
         {
             InitializeComponent();
-            loadSalesPerson();
-            loadPendings();
+            this.DataContext = vm;
 
-            // on esc close
-            this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
+            //LoadSalesPerson();
+            ////loadPendings();
+
+            //// on esc close
+            //this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
         }
 
-        private void loadSalesPerson()
-        {
-            DataTable dtPerson = new DataTable();
-            DataAccess da = new DataAccess();
-            dtPerson = da.GetAllSalesPerson();
-            // bind to combobox
-            cbSalesPerson.ItemsSource = dtPerson.DefaultView;
-            cbSalesPerson.SelectedItem = null;
-        }
+        //private void LoadSalesPerson()
+        //{
+        //    DataTable dtPerson = new DataTable();
+        //    using (DataAccess da = new DataAccess()) {
+        //        dtPerson = da.GetAllSalesPerson();
+        //    }
+        //    // bind to combobox
+        //    cbSalesPerson.ItemsSource = dtPerson.DefaultView;
+        //    cbSalesPerson.SelectedItem = null;
+        //}
 
-        private void HandleEsc(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-                Close();
-        }
+        //private void HandleEsc(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Escape)
+        //        Close();
+        //}
 
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                loadPendings();
-            }
-            catch (Exception ex)
-            {
-                logger.LogException(ex);
-            }
-        }
+        //private void btnSearch_Click(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        LoadPendings();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogException(ex);
+        //    }
+        //}
 
-        private void loadPendings()
-        {
-            DataTable dtPendingPayment = new DataTable();
-            DataAccess da = new DataAccess();
-            dtPendingPayment = da.SearchPendingPayment(null, null, string.Empty, string.Empty
-                , (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()), 0);
+        //private void LoadPendings()
+        //{
+        //    DataTable dtPendingPayment = new DataTable();
+        //    using (DataAccess da = new DataAccess())
+        //    {
+        //        dtPendingPayment = da.SearchPendingPayment(null, null, string.Empty, string.Empty
+        //            , (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()), 0);
+        //    }
+        //    dataGridPendingPayment.ItemsSource = dtPendingPayment.DefaultView;
+        //}
 
-            dataGridPendingPayment.ItemsSource = dtPendingPayment.DefaultView;
-        }
+        //private void btnReset_Click(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        ResetForm();
+        //        dataGridPendingPayment.ItemsSource = null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogException(ex);
+        //    }
+        //}
 
-        private void btnReset_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                ResetForm();
-                dataGridPendingPayment.ItemsSource = null;
-            }
-            catch (Exception ex)
-            {
-                logger.LogException(ex);
-            }
-        }
+        //private void ResetForm()
+        //{
+        //    // combobox
+        //    this.cbSalesPerson.SelectedIndex = -1;
+        //}
 
-        private void ResetForm()
-        {
-            // combobox
-            this.cbSalesPerson.SelectedIndex = -1;
-        }
+        //private void dataGridPendingPayment_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        //{
+        //    //Get the newly selected cells
+        //    IList<DataGridCellInfo> selectedcells = e.AddedCells;
 
-        private void dataGridPendingPayment_SelectedCellsChanged_1(object sender, SelectedCellsChangedEventArgs e)
-        {
-            //Get the newly selected cells
-            IList<DataGridCellInfo> selectedcells = e.AddedCells;
+        //    DataRowView drv = (DataRowView)dataGridPendingPayment.SelectedItem;
+        //    if (drv != null)
+        //    {
+        //        var selectedRow = drv.Row.ItemArray;
 
-            DataRowView drv = (DataRowView)dataGridPendingPayment.SelectedItem;
-            if (drv != null)
-            {
-                var selectedRow = drv.Row.ItemArray;
+        //        //open modal for sale Item
+        //        ClearPending clearPending = new ClearPending(selectedRow);
+        //        clearPending.ShowDialog();
 
-                //open modal for sale Item
-                ClearPending clearPending = new ClearPending(selectedRow);
-                clearPending.ShowDialog();
-
-                //refresh pending data
-                loadPendings();
-            }
-        }
+        //        //refresh pending data
+        //        LoadPendings();
+        //    }
+        //}
     }
 }

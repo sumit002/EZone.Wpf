@@ -1,14 +1,14 @@
 ﻿using ElectronicZone.Wpf.DataAccessLayer;
+using ElectronicZone.Wpf.Model;
 using ElectronicZone.Wpf.Utility;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace ElectronicZone.Wpf.View.Sale
 {
@@ -17,13 +17,30 @@ namespace ElectronicZone.Wpf.View.Sale
     /// </summary>
     public partial class AddSale : MetroWindow
     {
+        //SaleViewModel vm = new SaleViewModel(DialogCoordinator.Instance);
         ILogger logger = new Logger(typeof(AddSale));
-        private int salePersonId = 0;
-        public AddSale(object[] sale)
+        private int salePersonId, avlQuantity = 0;
+        private readonly Purchase purchase;
+        private string salePersonEmail = "";
+        private readonly double SaleOrderOfferPercentage, SaleOrderPromotionalOfferPercentage = 0;
+        DataTable dtContacts = new DataTable();
+        private double totalSaleAmt = 0;
+
+        public AddSale(Purchase obj)
         {
             InitializeComponent();
-            cbSalesPerson.Visibility = System.Windows.Visibility.Hidden;
-            LoadSaleData(sale);
+            //this.DataContext = vm;
+            //cbSalesPerson.Visibility = System.Windows.Visibility.Hidden;
+            this.purchase = obj;
+
+            SaleOrderPromotionalOfferPercentage = Convert.ToDouble(ConfigurationManager.AppSettings["SaleOrderPromotionalOfferPercentage"]);
+            txtDiscountPercentage.Value = this.SaleOrderOfferPercentage = Convert.ToDouble(ConfigurationManager.AppSettings["SaleOrderOfferPercentage"]);
+
+            LoadSaleData();
+
+            DiscountGridContainer.Visibility = ChkbDiscountedSale.IsChecked.Value ? Visibility.Visible : Visibility.Hidden;
+            LoadSalesPerson();
+
 
             // on esc close
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
@@ -35,41 +52,54 @@ namespace ElectronicZone.Wpf.View.Sale
                 Close();
         }
 
-        private void LoadSaleData(object[] sale)
+        private void LoadSaleData()
         {
             try
             {
-                this.txtStockId.Text = sale[0].ToString();
-                lblProduct.Content = string.Format("{0} ({1})", sale[2].ToString(), sale[4].ToString());
+                if (SaleOrderPromotionalOfferPercentage > 0) {
+                    OfferRow.Height = GridLength.Auto;
+                    this.lblSaleOfferDisplay.Content = SaleOrderPromotionalOfferPercentage.ToString();
+                }
+                this.txtStockId.Text = purchase.Id.ToString();
+                //lblProduct.Content = string.Format("{0} ({1})", purchase.Product, purchase.Brand);
                 //lblBrand.Content = sale[2].ToString();
-                this.lblProductCode.Content = string.Format("{0} ({1})", sale[5].ToString(), sale[6].ToString());
+                //this.lblProductCode.Content = string.Format("{0} ({1})", purchase.ProductCode, purchase.StockCode);
                 //this.txtStockCode.Text = sale[4].ToString();
                 //this.txtItemDesc.Text = sale[5].ToString();
-                this.lblAvlQuantity.Content = sale[9].ToString();
+                avlQuantity = purchase.AvlQuantity;
+                this.lblAvlQuantity.Content = purchase.AvlQuantity.ToString();
                 //this.txtQuantity.Value = int.Parse(sale[6].ToString());
-                this.lblPrice.Content = sale[11].ToString();//sale[7].ToString(); sale price/purchase price
-                txtQuantity.Maximum = double.Parse(sale[9].ToString());
-                this.dpSaleDate.DisplayDateStart = DateTime.Parse(sale[15].ToString());
+                this.tbItemPrice.Text = String.Format("{0:n}", purchase.SalePrice);//sale[7].ToString(); sale price/purchase price
+                txtQuantity.Maximum = double.Parse(purchase.AvlQuantity.ToString());
+                this.dpSaleDate.DisplayDateStart = purchase.PurchaseDate;
+                if(DateTime.Today > purchase.PurchaseDate)
+                    this.dpSaleDate.SelectedDate = DateTime.Today;
+
+
+                this.badgedItem.Badge = purchase.AvlQuantity.ToString();
+                this.btnBadge.Content = string.Format("{0} ({1})", purchase.Product, purchase.ProductCode);
+                this.sliderAmountPaid.Minimum = purchase.PurchasePrice;
+                this.sliderAmountPaid.Maximum = 500;
                 //this.chkbPersonType.IsChecked = true;
-                if (sale[14] != System.DBNull.Value)
-                {
-                    //Store binary data read from the database in a byte array
-                    byte[] blob = (byte[])sale[14];
-                    MemoryStream stream = new MemoryStream();
-                    stream.Write(blob, 0, blob.Length);
-                    stream.Position = 0;
+                //if (sale[14] != System.DBNull.Value)
+                //{
+                //    //Store binary data read from the database in a byte array
+                //    byte[] blob = (byte[])sale[14];
+                //    MemoryStream stream = new MemoryStream();
+                //    stream.Write(blob, 0, blob.Length);
+                //    stream.Position = 0;
 
-                    System.Drawing.Image img = System.Drawing.Image.FromStream(stream);
-                    BitmapImage bi = new BitmapImage();
-                    bi.BeginInit();
+                //    System.Drawing.Image img = System.Drawing.Image.FromStream(stream);
+                //    BitmapImage bi = new BitmapImage();
+                //    bi.BeginInit();
 
-                    MemoryStream ms = new MemoryStream();
-                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    bi.StreamSource = ms;
-                    bi.EndInit();
-                    imagePhoto.Source = bi;
-                }
+                //    MemoryStream ms = new MemoryStream();
+                //    img.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                //    ms.Seek(0, SeekOrigin.Begin);
+                //    bi.StreamSource = ms;
+                //    bi.EndInit();
+                //    imagePhoto.Source = bi;
+                //}
             }
             catch (Exception ex)
             {
@@ -81,149 +111,89 @@ namespace ElectronicZone.Wpf.View.Sale
         {
             this.Close();
         }
-        
-        /// <summary>
-        /// Save Sales [consists of 5 steps]
-        /// 1. Create Sale Person If New
-        /// 2. Add SaleMaster
-        /// 3. Add Pending Payment if any
-        /// 4. Add payment transaction
-        /// 5. Update Stock
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            CreateSaleOrder();
+        }
+
+        private void CreateSaleOrder()
+        {
+            if (ValidateSaleForm())
+            {
+                // double total = (int)txtQuantity.Value * double.Parse(tbItemPrice.Text.ToString());
+                ElectronicZone.Wpf.Model.Sale saleOrder = new ElectronicZone.Wpf.Model.Sale()
+                {
+                    StockId = Convert.ToInt32(this.txtStockId.Text),
+                    Quantity = Convert.ToInt32(txtQuantity.Value.ToString()),
+                    Price = Convert.ToDouble(tbItemPrice.Text.ToString()),
+                    Total = totalSaleAmt,
+                    AmountPaid = Convert.ToDouble(this.txtAmtPaid.Text.ToString()),
+                    SaleDate = dpSaleDate.SelectedDate.Value,
+                    IsDiscounted = this.ChkbDiscountedSale.IsChecked.Value,
+
+                    Contact = new Contact() { Id = salePersonId, Name = this.txtSalesName.Text, PrimaryContact = this.txtSalesContact.Text, Email = salePersonEmail }
+                };
+
+                SaleManager sm = new SaleManager();
+                sm.CreateSalesOrder(saleOrder);
+                this.Close();
+            }
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("Invalid Data !", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void CheckBoxChanged(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (validateSale())
+                DiscountGridContainer.Visibility = ChkbDiscountedSale.IsChecked.Value ? Visibility.Visible : Visibility.Hidden;
+                if (ChkbDiscountedSale.IsChecked.Value)
                 {
-                    // add/Create Sale Person
-                    if (salePersonId == 0)
-                        salePersonId = createSalePersonForStockSale();
-                    if (salePersonId > 0)
-                    {
-                        double total = (double)txtQuantity.Value * int.Parse(lblPrice.Content.ToString());
-                        bool isPending = (total > double.Parse(txtAmtPaid.Text) ? true : false);
-                        double pendingAmt = total - double.Parse(txtAmtPaid.Text);
-                        //Add SaleMaster
-                        Dictionary<string, string> saleMasterModel = new Dictionary<string, string>();
-                        saleMasterModel.Add("Id", null);
-                        saleMasterModel.Add("StockId", txtStockId.Text);
-                        saleMasterModel.Add("SalePersonId", salePersonId.ToString());
-                        saleMasterModel.Add("Quantity", this.txtQuantity.Value.ToString());
-                        saleMasterModel.Add("Price", lblPrice.Content.ToString());
-                        saleMasterModel.Add("Total", total.ToString());
-                        saleMasterModel.Add("AmountPaid", txtAmtPaid.Text);
-                        //saleMasterModel.Add("Pending", pendingAmt.ToString());
-                        saleMasterModel.Add("SaleDate", (DateTime.Parse(dpSaleDate.Text).ToString("yyyy-MM-dd HH:mm:ss")));
-                        saleMasterModel.Add("CreatedDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                        saleMasterModel.Add("ModifiedDate", null);
-                        DataAccess dataAccess = new DataAccess();
-                        int rslt = dataAccess.InsertOrUpdateSaleMaster(saleMasterModel, "tblSaleMaster");
-                        if (rslt > 0)
-                        {
-                            if (isPending)
-                            {
-                                #region add pending payment
-                                Dictionary<string, string> pendingPaymentModel = new Dictionary<string, string>();
-                                pendingPaymentModel.Add("Id", null);
-                                pendingPaymentModel.Add("SaleId", rslt.ToString());
-                                //pendingPaymentModel.Add("StockId", txtStockId.Text);
-                                pendingPaymentModel.Add("SalePersonId", salePersonId.ToString());
-                                pendingPaymentModel.Add("PendingAmount", pendingAmt.ToString());
-                                pendingPaymentModel.Add("IsPaid", "0");
-                                int pendingRowId = dataAccess.InsertOrUpdatePendingPayment(pendingPaymentModel, "tblPendingPayment");
-                                #endregion
-                            }
-                            // add payment transaction
-                            PaymentTransaction paymentTransaction = new PaymentTransaction();
-                            bool paymentStatus = paymentTransaction.AddPaymentTransaction(Global.UserId, double.Parse(txtAmtPaid.Text), PaymentTransaction.PaymentStatus.SALE_PAYMENT, rslt);
-                            if (paymentStatus)
-                            {
-                                #region Update Stock Quantity
-                                Dictionary<string, string> stockModel = new Dictionary<string, string>();
-                                stockModel.Add("Id", txtStockId.Text);
-                                stockModel.Add("AvlQuantity", this.txtQuantity.Value.ToString());
-                                stockModel.Add("ModifiedDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                                int isUpdated = dataAccess.UpdateStockQuantity(stockModel, "tblStockMaster");
-                                #endregion
-                                if (isUpdated == 1)
-                                {
-                                    MessageBoxResult result = MessageBox.Show("Sale Added Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    this.Close();
-                                }
-                                else
-                                {
-                                    MessageBoxResult result = MessageBox.Show("Error While Updating Stock!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                }
-                            }
-                            else
-                            {
-                                MessageBoxResult result = MessageBox.Show("Error While Adding Payment Transaction!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            }
-                        }
-                        else
-                        {
-                            MessageBoxResult result = MessageBox.Show("Error While Adding Sale!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
+                    sliderAmountPaid.SelectionStart = totalSaleAmt - (this.purchase.PurchasePrice * txtQuantity.Value.Value * SaleOrderOfferPercentage / 100);
+                    AvailDiscountByPercentage(SaleOrderOfferPercentage);
                 }
                 else
-                {
-                    MessageBoxResult result = MessageBox.Show("Invalid Data !", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    this.txtAmtPaid.Text = this.totalSaleAmt.ToString();
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
             }
-
         }
 
-        private void ResetForm()
-        {
-
-        }
-
-        private int createSalePersonForStockSale()
-        {
-            //create record
-            Dictionary<string, string> salePersonModel = new Dictionary<string, string>();
-            salePersonModel.Add("Id", null);
-            salePersonModel.Add("Title", "");
-            salePersonModel.Add("Name", txtSalesName.Text.Trim());
-            salePersonModel.Add("Contact", txtSalesContact.Text);
-            salePersonModel.Add("AlternateContact", "");
-            salePersonModel.Add("Email", "");
-            salePersonModel.Add("Address", "");
-
-            DataAccess dataAccess = new DataAccess();
-            int personId = dataAccess.InsertOrUpdateSalePerson(salePersonModel, "tblSalePerson");
-            if (personId > 0)
-                return personId;
-            else
-                return 0;
-        }
-
-        /// <summary>
-        /// Validate Sales Data b4 Save
-        /// </summary>
-        /// <returns></returns>
-        private Boolean validateSale()
+        private Boolean ValidateSaleForm()
         {
             bool isFormValid = true;
-            double total = (double)txtQuantity.Value * int.Parse(lblPrice.Content.ToString());
+
+            if ((salePersonId == 0) && (string.IsNullOrEmpty(txtSalesName.Text) && string.IsNullOrEmpty(txtSalesContact.Text)))
+                return false;
+            using (DataAccess da = new DataAccess())
+            {
+                if (salePersonId == 0 && (!string.IsNullOrEmpty(txtSalesName.Text) && !string.IsNullOrEmpty(txtSalesContact.Text))
+                    && da.IfContactExists("tblSalePerson", "Name", "Contact", txtSalesName.Text, txtSalesContact.Text))
+                {
+                    MessageBoxResult result = MessageBox.Show("Contact already exists! Please Select from List", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
+            }
+
+            if (txtQuantity.Value == null)
+                isFormValid = false;
+
+            // double total = (txtQuantity.Value == null ? 0 : (int)txtQuantity.Value) * double.Parse(tbItemPrice.Text.ToString());
             //bool isPending = total != double.Parse(txtAmtPaid.Text) ? true : false;
-            int avlQty = int.Parse(this.lblAvlQuantity.Content.ToString());
+            //int avlQty = int.Parse(this.lblAvlQuantity.Content.ToString());
 
             if (string.IsNullOrEmpty(txtAmtPaid.Text))
                 isFormValid = false;
             if (string.IsNullOrEmpty(dpSaleDate.Text))
                 isFormValid = false;
-            if (txtQuantity.Value > avlQty)
+            if (txtQuantity.Value > avlQuantity)
                 isFormValid = false;
-            if (!string.IsNullOrEmpty(txtAmtPaid.Text) && double.Parse(txtAmtPaid.Text) > total)
+            if (!string.IsNullOrEmpty(txtAmtPaid.Text) && double.Parse(txtAmtPaid.Text) > totalSaleAmt)
                 isFormValid = false;
 
             return isFormValid;
@@ -231,19 +201,42 @@ namespace ElectronicZone.Wpf.View.Sale
 
         private void txtQuantity_ValueDecremented(object sender, MahApps.Metro.Controls.NumericUpDownChangedRoutedEventArgs args)
         {
-            this.lblTotalPurchaseAmt.Content = CalculateTotalPrice(((this.txtQuantity.Value == null ? 0 : this.txtQuantity.Value) - 1).ToString(), this.lblPrice.Content.ToString());
+            try {
+                int qty = ((int)(this.txtQuantity.Value == null ? 0 : this.txtQuantity.Value) - 1);
+                this.lblTotalSaleAmt.Content = totalSaleAmt = CalculateTotalPrice(qty, Convert.ToDouble(this.tbItemPrice.Text));
+                this.txtAmtPaid.Text = totalSaleAmt.ToString();
+                this.sliderAmountPaid.Maximum = totalSaleAmt;
+                this.sliderAmountPaid.Minimum = qty * purchase.PurchasePrice;
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
         }
 
         private void txtQuantity_ValueIncremented(object sender, MahApps.Metro.Controls.NumericUpDownChangedRoutedEventArgs args)
         {
-            this.lblTotalPurchaseAmt.Content = CalculateTotalPrice(((this.txtQuantity.Value == null ? 0 : this.txtQuantity.Value) + 1).ToString(), this.lblPrice.Content.ToString());
+            try
+            {
+                int qty = ((int)(this.txtQuantity.Value == null ? 0 : this.txtQuantity.Value) + 1);
+                this.lblTotalSaleAmt.Content = totalSaleAmt = CalculateTotalPrice(qty, Convert.ToDouble(this.tbItemPrice.Text));
+                this.txtAmtPaid.Text = totalSaleAmt.ToString();
+                this.sliderAmountPaid.Maximum = totalSaleAmt;
+                this.sliderAmountPaid.Minimum = qty * purchase.PurchasePrice;
+                // Show Avail Offer
+                ChkbDiscountedSale.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
         }
 
-        private double CalculateTotalPrice(string qty, string price)
+        private double CalculateTotalPrice(int qty, double price)
         {
             double total = 0;
-            if (!string.IsNullOrEmpty(qty) && !string.IsNullOrEmpty(price))
-                total = double.Parse(qty) * double.Parse(price);
+            if (qty > 0 && price != 0)
+                total = qty * price;
             return total;
         }
 
@@ -254,29 +247,27 @@ namespace ElectronicZone.Wpf.View.Sale
             cbSalesPerson.IsEnabled = !isChecked;
             if (!isChecked)
             {
-                // get all sales person
-                //cbSalesPerson.Items.Clear();
-                loadSalesPerson();
+                LoadSalesPerson();
             }
             else
             {
                 salePersonId = 0;
-                this.txtSalesName.Text = "";
-                this.txtSalesContact.Text = "";
+                this.txtSalesName.Text = this.txtSalesContact.Text = "";
             }
         }
         /// <summary>
         /// 
         /// </summary>
-        private void loadSalesPerson()
+        private void LoadSalesPerson()
         {
-            DataTable dtProduct = new DataTable();
-            DataAccess da = new DataAccess();
-            dtProduct = da.GetAllSalesPerson();
+            //DataTable dtProduct = new DataTable();
+            using (DataAccess da = new DataAccess())
+            {
+                dtContacts = da.GetAllSalesPerson();
+            }
             // bind to combobox
-            cbSalesPerson.ItemsSource = dtProduct.DefaultView;
+            cbSalesPerson.ItemsSource = dtContacts.DefaultView;
             cbSalesPerson.SelectedItem = null;
-            //cbSalesPerson.SelectedIndex = -1;
         }
 
         private void EnablePersonContact(bool status)
@@ -289,15 +280,57 @@ namespace ElectronicZone.Wpf.View.Sale
                 cbSalesPerson.Visibility = System.Windows.Visibility.Visible;
         }
 
+        private void sliderAmountPaid_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            try
+            {
+                this.txtAmtPaid.Text = string.Format("{0:0.00}", Math.Round(sliderAmountPaid.Value));
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
+        }
+
+        private void txtDiscountPercentage_ValueDecremented(object sender, NumericUpDownChangedRoutedEventArgs args)
+        {
+            try
+            {
+                int discount = ((int)(this.txtDiscountPercentage.Value == null ? 0 : this.txtDiscountPercentage.Value) - 1);
+                AvailDiscountByPercentage(discount);
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
+        }
+
+        private void txtDiscountPercentage_ValueIncremented(object sender, NumericUpDownChangedRoutedEventArgs args)
+        {
+            try
+            {
+                int discount = ((int)(this.txtDiscountPercentage.Value == null ? 0 : this.txtDiscountPercentage.Value) + 1);
+                AvailDiscountByPercentage(discount);
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
+        }
+
+        private void AvailDiscountByPercentage(double discountPercent)
+        {
+            this.txtAmtPaid.Text = (totalSaleAmt - (this.purchase.PurchasePrice * txtQuantity.Value.Value * discountPercent / 100)).ToString();
+        }
+
         private void cbSalesPerson_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
-            {
+            if (e.AddedItems.Count > 0) {
                 var personObj = ((System.Data.DataRowView)(((object[])(e.AddedItems))[0])).Row.ItemArray;
                 this.txtSalesName.Text = personObj[2].ToString();//Person Name
                 this.txtSalesContact.Text = personObj[3].ToString();//Person Contact
                 salePersonId = int.Parse(personObj[0].ToString());//PersonId
-                //string text = (sender as ComboBox).SelectedItem as string;
+                salePersonEmail = Convert.ToString(personObj[5]);//Sales Email
             }
         }
     }

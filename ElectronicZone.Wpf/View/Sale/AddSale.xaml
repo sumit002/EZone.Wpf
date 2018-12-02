@@ -1,38 +1,211 @@
-﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Sale.AddSale"
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Sale.AddSale" x:Name="TestWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Sale"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="Add Sale" Height="450" Width="800" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Button Content="Save" Height="23" HorizontalAlignment="Left" Margin="130,260,0,0" Name="btnSave" VerticalAlignment="Top" Width="60" Click="btnSave_Click" />
-        <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="195,260,0,0" Name="btnCancel" VerticalAlignment="Top" Width="75" Click="btnCancel_Click" />
-        <Label Content="Code :" Height="28" HorizontalAlignment="Left" Margin="129,22,0,0" Name="label3" VerticalAlignment="Top" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="130,105,152,0" Name="txtSalesName" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sales Person Name" ToolTip="Sales Person Name" VerticalAlignment="Top" Width="282" TabIndex="1" />
-        <Label Content="Person Name" Height="28" HorizontalAlignment="Left" Margin="10,105,0,0" Name="label4" VerticalAlignment="Top" />
-        <Label Content="Person Contact" Height="28" HorizontalAlignment="Left" Margin="10,134,0,0" Name="label5" VerticalAlignment="Top" />
-        <Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Interval="1" Margin="130,168,0,0" Minimum="1" Name="txtQuantity" ToolTip="Quantity" VerticalAlignment="Top" Width="120" TabIndex="3" ValueDecremented="txtQuantity_ValueDecremented" ValueIncremented="txtQuantity_ValueIncremented" />
-        <Label Content="Quantity" Height="28" HorizontalAlignment="Left" Margin="10,168,0,0" Name="label6" VerticalAlignment="Top" />
-        <Label Content="Sale Date" Height="28" HorizontalAlignment="Left" Margin="9,230,0,0" Name="label8" VerticalAlignment="Top" />
-        <DatePicker Height="25" HorizontalAlignment="Left" Margin="130,230,0,0" Name="dpSaleDate" SelectedDateFormat="Short" ToolTip="Sale Date" VerticalAlignment="Top" Width="115" TabIndex="5" />
-        <Label Content="0" Height="28" HorizontalAlignment="Left" Margin="282,168,0,0" Name="lblTotalPurchaseAmt" ToolTip="Total" VerticalAlignment="Top" />
-        <TextBox Height="23" HorizontalAlignment="Right" Margin="0,2,47,0" Name="txtStockId" VerticalAlignment="Top" Width="41" IsReadOnly="True" Visibility="Hidden" />
-        <Label Content="_Product" Height="28" HorizontalAlignment="Left" Margin="129,0,0,0" Name="lblProduct" VerticalAlignment="Top" />
-        <Label Content="_PCode" Height="28" HorizontalAlignment="Left" Margin="176,22,0,0" Name="lblProductCode" VerticalAlignment="Top" />
-        <Label Content="Price :" Height="28" HorizontalAlignment="Left" Margin="129,47,0,0" Name="label1" VerticalAlignment="Top" />
-        <Label Content="_Price" Height="28" HorizontalAlignment="Left" Margin="176,47,0,0" Name="lblPrice" VerticalAlignment="Top" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="130,137,152,0" Name="txtSalesContact" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Sales Person Contact" ToolTip="Sales Person Contact" VerticalAlignment="Top" Width="282" TabIndex="2" />
-        <Label Content="Available Quantity :" Height="28" HorizontalAlignment="Left" Margin="129,72,0,0" Name="label2" VerticalAlignment="Top" />
-        <Label Content="_Qty" Height="28" HorizontalAlignment="Left" Margin="235,72,0,0" Name="lblAvlQuantity" VerticalAlignment="Top" />
-        <Label Content="Amount Paid" Height="28" HorizontalAlignment="Left" Margin="9,197,0,0" Name="label7" VerticalAlignment="Top" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="130,199,0,0" Name="txtAmtPaid" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Amount Paid" ToolTip="Amount Paid" VerticalAlignment="Top" Width="282" TabIndex="4" />
-        <Border BorderBrush="Silver" BorderThickness="1" Height="97" HorizontalAlignment="Left" Margin="3,2,0,0" Name="border1" VerticalAlignment="Top" Width="120">
+        Title="Add Sale" Height="400" Width="700" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="convVisibility"/>
+    </Window.Resources>
+    <Grid Height="Auto" FocusManager.FocusedElement="{Binding ElementName=cbSalesPerson}">
+        <!--<Controls:MetroHeader Margin="0 0 0 20" Header=" Metro  Header">
+            <Grid>
+            </Grid>
+        </Controls:MetroHeader>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"></RowDefinition>
+            <RowDefinition Height="0"></RowDefinition>
+            <RowDefinition Name="OfferRow" Height="0"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="290"></ColumnDefinition>
+            <ColumnDefinition Width="20"></ColumnDefinition>
+            <ColumnDefinition Width="250"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <!--<TextBlock Grid.Row="3" Grid.Column="0" Name="txtUserType" Text="User Type : " />
+        <StackPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Name="rbHolder1" Orientation="Horizontal">
+            <RadioButton GroupName="UserType">New Contact </RadioButton>
+            <RadioButton GroupName="UserType" IsChecked="True"> Existing Contact</RadioButton>
+        </StackPanel>-->
+        <!--<Controls:TransitioningContentControl x:Name="SecondcustomTransitioning"
+                                                  Width="250"
+                                                  Height="50"
+                                                  Margin="0 10 0 0"
+                                                  CustomVisualStatesName="SecondCustomTransition"
+                                                  Transition="Custom">-->
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Label FontWeight="Bold" HorizontalAlignment="Center" Foreground="Red"
+               ContentStringFormat="Offer : Discount of {0}% is going on." Name="lblSaleOfferDisplay" ToolTip="Offer" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Person Name *" Height="28" HorizontalAlignment="Left" Name="label4" VerticalAlignment="Top" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelePersonName}" HorizontalAlignment="Left" Name="txtSalesName" Controls:TextBoxHelper.ClearTextButton="True" 
+                 Controls:TextBoxHelper.Watermark="Sales Person Name" ToolTip="Sales Person Name" VerticalAlignment="Center" Width="282" TabIndex="1" />
+        <Label Grid.Row="6" Grid.Column="0" Content="Person Contact *" Height="28" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Top" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SelePersonContact}" HorizontalAlignment="Left" Name="txtSalesContact" Controls:TextBoxHelper.ClearTextButton="True" 
+                 Controls:TextBoxHelper.Watermark="Sales Person Contact" ToolTip="Sales Person Contact" VerticalAlignment="Center" Width="282" TabIndex="2" />
+        <Label Grid.Row="7" Grid.Column="0" Content="Quantity *" Height="28" HorizontalAlignment="Left" Name="label6" VerticalAlignment="Top" />
+        <Controls:NumericUpDown Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" Interval="1" Minimum="1" Name="txtQuantity" ToolTip="Quantity" 
+                                ValueDecremented="txtQuantity_ValueDecremented" ValueIncremented="txtQuantity_ValueIncremented"
+                                VerticalAlignment="Center" Width="120" TabIndex="3" />
+        <Label Grid.Row="7" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Right" 
+               ContentStringFormat="Total : {0:00.00}" Name="lblTotalSaleAmt" ToolTip="Total" VerticalAlignment="Center" />
+        <Label Grid.Row="8" Grid.Column="0" Content="Amount Paid *" Height="28" HorizontalAlignment="Left" Name="label7" VerticalAlignment="Top" />
+        <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
+            <TextBox HorizontalAlignment="Left" Name="txtAmtPaid" Controls:TextBoxHelper.ClearTextButton="True"
+                 Controls:TextBoxHelper.Watermark="Amount Paid" ToolTip="Amount Paid" VerticalAlignment="Center" Width="120" TabIndex="4" />
+            <CheckBox Name="ChkbDiscountedSale" HorizontalAlignment="Left" IsChecked="False" Visibility="Hidden" Margin="10,0,0,0"
+                      Checked="CheckBoxChanged" Unchecked="CheckBoxChanged">Discount Price</CheckBox>
+        </StackPanel>
+        <Label Grid.Row="9" Grid.Column="0" Content="Sale Date *" Height="28" HorizontalAlignment="Left" Name="label8" VerticalAlignment="Top" />
+        <DatePicker Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" Name="dpSaleDate" 
+                    SelectedDateFormat="Short" ToolTip="Sale Date" VerticalAlignment="Center" Width="115" TabIndex="5" />
+
+
+        <TextBox Height="23" HorizontalAlignment="Right" Name="txtStockId" VerticalAlignment="Top" Width="41" IsReadOnly="True" 
+                 Visibility="Hidden" />
+        <!--<Border BorderBrush="Silver" BorderThickness="1" Height="97" HorizontalAlignment="Left" Name="border1" VerticalAlignment="Top" Width="120">
             <Image Height="100" Name="imagePhoto" Stretch="Fill" Width="123" />
+        </Border>-->
+        <Controls:ToggleSwitch Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" OnLabel="New Contact" OffLabel="Existing Contact" Name="chkbPersonType" 
+                               IsCheckedChanged="chkbPersonType_IsCheckedChanged" VerticalAlignment="Center"
+                               IsChecked="False" ToolTip="Sale Person Type" />
+        <ComboBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Name="cbSalesPerson"
+                  SelectedValuePath="Id" SelectionChanged="cbSalesPerson_SelectionChanged"
+                  VerticalAlignment="Center" Width="200" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} ({1})">
+                                <Binding Path="Name"/>
+                                <Binding Path="Contact"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <!--<ComboBox Width="200" Grid.Row="4" Grid.Column="1"
+                          Name="cbSalesPersonNew"
+                          Controls:TextBoxHelper.UseFloatingWatermark="True"
+                          Controls:TextBoxHelper.Watermark="Autocompletion"
+                          DisplayMemberPath="Name"
+                          IsEditable="True"
+                          ItemsSource="{Binding Albums}"
+                          MaxDropDownHeight="125"
+                          Style="{DynamicResource VirtualisedMetroComboBox}"
+                          Text="{Binding Path=Title}" />-->
+
+
+
+        <Button Content="Save" Grid.Row="10" Grid.Column="1" 
+                Click="btnSave_Click" HorizontalAlignment="Left" Name="btnSave" 
+                VerticalAlignment="Center" Width="75" />
+        <Button Content="Cancel" Grid.Row="10" Grid.Column="1" IsCancel="True" 
+                Click="btnCancel_Click" HorizontalAlignment="Left" Name="btnCancel" 
+                VerticalAlignment="Center" Width="75" Margin="85,0,0,0" />
+        
+        
+
+        <RichTextBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3"
+                             Padding="5" IsEnabled="False"
+                             IsDocumentEnabled="True"
+                             SpellCheck.IsEnabled="True">
+            <FlowDocument>
+                <Paragraph>
+                    <TextBlock>Notes :</TextBlock>
+                    <LineBreak />
+                    <TextBlock>1. Please enter mandatory fields(marked with *) to create record.</TextBlock>
+                    <LineBreak />
+                    <Run>2. Sales can not be edited once created. Make sure you create with valid fields.</Run>
+                    <LineBreak />
+                    <Run>3. You can make sale of maximum available quantity(Minimum of 1).</Run>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+
+        <Border Grid.Row="2" Grid.Column="3" Grid.RowSpan="6" Height="120" Width="250" BorderBrush="Gray" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2">
+            <DockPanel Background="Gray" >
+                <!-- Put Elements inside this -->
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" >
+                    <StackPanel Margin="10">
+                        <DockPanel>
+                            <Controls:Badged Grid.Row="3" Grid.Column="1" Name="badgedItem"
+                             Badge="3" ToolTip="Available Quantity">
+                                <Button Name="btnBadge" Content="Product" Style="{StaticResource ButtonStyleMD}" />
+                            </Controls:Badged>
+                        </DockPanel>
+                        <!--<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource HeaderStyleMD}" HorizontalAlignment="Left" Name="lblProduct" VerticalAlignment="Center" />
+                <DockPanel>
+                    <Label Grid.Row="1" Grid.Column="0" Content="Code :" Height="28" HorizontalAlignment="Left" Name="label3" VerticalAlignment="Top" />
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding SelectedProductCode, UpdateSourceTrigger=PropertyChanged}" Height="28" HorizontalAlignment="Left" Name="lblProductCode" VerticalAlignment="Top" />
+                </DockPanel>-->
+                        <DockPanel>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Price Per Item:" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" FontWeight="Bold" Foreground="Black" Name="tbItemPrice" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                            <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SelectedProductPrice, UpdateSourceTrigger=PropertyChanged}" Height="28" HorizontalAlignment="Left" Name="lblPrice" VerticalAlignment="Top" />-->
+                        </DockPanel>
+                        <DockPanel>
+                            <Label Grid.Row="3" Grid.Column="0" Content="Available Quantity :" Height="28" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" />
+                            <Label Grid.Row="3" Grid.Column="1" FontWeight="Bold" Height="28" HorizontalAlignment="Left" Name="lblAvlQuantity" VerticalAlignment="Top" />
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
         </Border>
-        <Controls:ToggleSwitch HorizontalAlignment="Right" OnLabel="New" OffLabel="Existing" Margin="0,64,12,186" Name="chkbPersonType" IsCheckedChanged="chkbPersonType_IsCheckedChanged" IsChecked="True" ToolTip="Sale Person Type" />
-        <ComboBox Height="23" HorizontalAlignment="Right" Margin="0,104,4,0" Name="cbSalesPerson" DisplayMemberPath="Name" SelectedValuePath="Id" VerticalAlignment="Top" Width="144" SelectionChanged="cbSalesPerson_SelectionChanged" IsEnabled="False" />
+        
+        
+
+        <Grid Name="DiscountGridContainer" Grid.Column="3" Height="Auto" HorizontalAlignment="Left"
+              Grid.Row="8" Grid.RowSpan="2" VerticalAlignment="Top" Width="250">
+            <StackPanel>
+                <!--<TextBlock Name="txtUserType" Text="User Type : " />-->
+                <StackPanel Name="rbHolder1" Orientation="Horizontal" Margin="6">
+                    <TextBlock>Discount </TextBlock>
+                    <RadioButton Name="RadioSlider" GroupName="SaleDiscount">By Range</RadioButton>
+                    <RadioButton Name="RadioPercentage" GroupName="SaleDiscount" IsChecked="True">By Percentage</RadioButton>
+                </StackPanel>
+                <Controls:NumericUpDown HorizontalAlignment="Left" Interval="1" Minimum="0" Maximum="50" Name="txtDiscountPercentage" ToolTip="Discount On Purchase Price" 
+                                        Visibility="{Binding IsChecked, ElementName=RadioPercentage, Converter={StaticResource convVisibility}}"
+                                ValueDecremented="txtDiscountPercentage_ValueDecremented" ValueIncremented="txtDiscountPercentage_ValueIncremented"
+                                VerticalAlignment="Center" Width="200" />
+                <Slider Width="Auto" Margin="3" IsSelectionRangeEnabled="True" Name="sliderAmountPaid"
+                        Visibility="{Binding IsChecked, ElementName=RadioSlider, Converter={StaticResource convVisibility}}"
+                         Controls:SliderHelper.ChangeValueBy="LargeChange" Controls:SliderHelper.EnableMouseWheel="MouseHover"
+                        Thumb.DragCompleted="sliderAmountPaid_DragCompleted"
+                                    AutoToolTipPlacement="TopLeft"
+                                    LargeChange="10"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Orientation="Horizontal"
+                                    SelectionStart="0"
+                                    SmallChange="1"
+                                    Style="{DynamicResource MahApps.Metro.Styles.FlatSlider}"
+                TickFrequency="5"
+                                    TickPlacement="TopLeft"
+                                    Value="0" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Controls:MetroWindow>
