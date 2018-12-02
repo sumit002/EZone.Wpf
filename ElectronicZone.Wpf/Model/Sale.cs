@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace ElectronicZone.Wpf.Model
         private bool _isActive;
         private DateTime _createdDate;
         private DateTime _modifiedDate;
+        private bool _isDiscounted;
+        private bool _canCancel;
 
         public int Id { get => _id; set => _id = value; }
         public int StockId { get => _stockId; set => _stockId = value; }
@@ -32,10 +35,10 @@ namespace ElectronicZone.Wpf.Model
         public bool IsActive { get => _isActive; set => _isActive = value; }
         public DateTime CreatedDate { get => _createdDate; set => _createdDate = value; }
         public DateTime ModifiedDate { get => _modifiedDate; set => _modifiedDate = value; }
+        public bool IsDiscounted { get => _isDiscounted; set => _isDiscounted = value; }
+        public bool CanCancel { get => _canCancel; set => _canCancel = value; }
 
-        //private int _productId;
         private string _product;
-        //private int _brandId;
         private string _brand;
         private string _productCode;
         private string _stockCode;
@@ -44,9 +47,7 @@ namespace ElectronicZone.Wpf.Model
         private double pending;
         private string _invoiceNumber;
 
-        //public int ProductId { get => _productId; set => _productId = value; }
         public string Product { get => _product; set => _product = value; }
-        //public int BrandId { get => _brandId; set => _brandId = value; }
         public string Brand { get => _brand; set => _brand = value; }
         public string ProductCode { get => _productCode; set => _productCode = value; }
         public string StockCode { get => _stockCode; set => _stockCode = value; }

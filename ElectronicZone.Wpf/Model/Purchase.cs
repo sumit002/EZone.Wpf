@@ -23,6 +23,8 @@ namespace ElectronicZone.Wpf.Model
         private string _product;
         private string _brand;
         private double _totalPurchasePrice;
+        //private bool _isAddMoreQtyMode;
+        //private int _oldQuantity;
 
 
         public int Id { get => _id; set => _id = value; }
@@ -43,5 +45,7 @@ namespace ElectronicZone.Wpf.Model
         public string Product { get => _product; set => _product = value; }
         public string Brand { get => _brand; set => _brand = value; }
         public double TotalPurchasePrice { get => _totalPurchasePrice; set => _totalPurchasePrice = value; }
+        //public bool IsAddMoreQtyMode { get => _isAddMoreQtyMode; set => _isAddMoreQtyMode = value; }
+        //public int OldQuantity { get => _oldQuantity; set => _oldQuantity = value; }
     }
 }

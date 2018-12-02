@@ -26,13 +26,19 @@ namespace ElectronicZone.Wpf.Model
         public string Name { get => _name; set => _name = value; }
         public string PrimaryContact { get => _primaryContact; set => _primaryContact = value; }
         public double Total { get => _total; set => _total = value; }
-        public double AmountPaid { get => _amountPaid; set => _amountPaid = value; }
+        //public double AmountPaid { get => _amountPaid; set => _amountPaid = value; }
         public DateTime SaleDate { get => _saleDate; set => _saleDate = value; }
+
+        
+        public double MinAmountForDiscount { get ; set ; }
+        public string SalePersonToDisplay { get; set; }
+        public string ProductToDisplay { get; set; }
+        public string ProductCodeToDisplay { get; set; }
 
         private string _name;
         private string _primaryContact;
         private double  _total;
-        private double _amountPaid;
+        //private double _amountPaid;
         private DateTime _saleDate;
         #endregion
     }
