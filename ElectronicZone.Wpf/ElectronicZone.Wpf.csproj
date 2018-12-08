@@ -49,6 +49,9 @@
     <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=2018.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2018.2.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
       <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
     </Reference>
@@ -66,6 +69,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.109.1\lib\net46\System.Data.SQLite.dll</HintPath>
@@ -98,27 +102,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converter\EMailConverter.cs" />
     <Compile Include="Converter\GenericConverter.cs" />
+    <Compile Include="Converter\QuantityToColorConverter.cs" />
+    <Compile Include="Converter\RowToIndexConverter.cs" />
+    <Compile Include="CustomControls\CalenderBackground.cs" />
+    <Compile Include="Events\ElectronicZoneEvents.cs" />
     <Compile Include="Helper\CommandHandler.cs" />
     <Compile Include="Helper\ICloseable.cs" />
+    <Compile Include="Helper\SimpleCommand.cs" />
     <Compile Include="Model\Brand.cs" />
     <Compile Include="Model\Contact.cs" />
+    <Compile Include="Model\CustomDialogExampleContent.cs" />
+    <Compile Include="Model\FirebaseProduct.cs" />
+    <Compile Include="Model\Invoice.cs" />
+    <Compile Include="Model\PendingPayment.cs" />
+    <Compile Include="Model\Product.cs" />
     <Compile Include="Model\Purchase.cs" />
+    <Compile Include="Model\Sale.cs" />
+    <Compile Include="Model\SupportIncome.cs" />
+    <Compile Include="Model\User.cs" />
+    <Compile Include="Utility\CommonEnum.cs" />
     <Compile Include="Utility\CommonMethods.cs" />
     <Compile Include="Utility\DateTimeUtility.cs" />
+    <Compile Include="Utility\EMail\CustomConfiguration.cs" />
+    <Compile Include="Utility\EMail\EmailUtility.cs" />
+    <Compile Include="Utility\EMail\SendMailService.cs" />
     <Compile Include="Utility\Global.cs" />
     <Compile Include="Utility\goExcelOut.cs" />
     <Compile Include="Utility\goPDFOut.cs" />
     <Compile Include="Utility\Logger.cs" />
+    <Compile Include="Utility\MailService.cs" />
     <Compile Include="Utility\PaymentTransaction.cs" />
+    <Compile Include="Utility\PurchaseManager.cs" />
     <Compile Include="Utility\SaleManager.cs" />
     <Compile Include="ViewModel\BrandViewModel.cs" />
     <Compile Include="ViewModel\ContactViewModel.cs" />
+    <Compile Include="ViewModel\FirebaseProductViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\PendingPaymentViewModel.cs" />
+    <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\PurchaseViewModel.cs" />
     <Compile Include="ViewModel\SaleInvoiceViewModel.cs" />
+    <Compile Include="ViewModel\SaleViewModel.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.cs" />
+    <Compile Include="ViewModel\SupportIncomeViewModel.cs" />
     <Compile Include="View\Common\AboutUs.xaml.cs">
       <DependentUpon>AboutUs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Common\CartesianChart.xaml.cs">
+      <DependentUpon>CartesianChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Common\Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
@@ -126,11 +160,38 @@
     <Compile Include="View\Common\Info.xaml.cs">
       <DependentUpon>Info.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Common\MasterDashboard.xaml.cs">
+      <DependentUpon>MasterDashboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Common\PieChart.xaml.cs">
+      <DependentUpon>PieChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Common\Profile.xaml.cs">
+      <DependentUpon>Profile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Common\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Common\SalesAnalysis.xaml.cs">
+      <DependentUpon>SalesAnalysis.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Common\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Common\StockAnalysis.xaml.cs">
+      <DependentUpon>StockAnalysis.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Common\Tiles.xaml.cs">
+      <DependentUpon>Tiles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DashboardWindow.xaml.cs">
       <DependentUpon>DashboardWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Firebase\FirebaseTest.xaml.cs">
+      <DependentUpon>FirebaseTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Master\BrandMaster.xaml.cs">
       <DependentUpon>BrandMaster.xaml</DependentUpon>
@@ -199,6 +260,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Common\CartesianChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Common\Help.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -207,11 +272,47 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Common\MasterDashboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Common\PieChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Common\Profile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Common\Registration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Common\SalesAnalysis.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Common\Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Common\StockAnalysis.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Common\Tiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DashboardWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Firebase\FirebaseTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -298,6 +399,39 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="Resources\Images\box.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\circle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\cross.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\gray.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\tick.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Tjek.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\EmailTemplate\NewUser.html" />
+    <Content Include="Resources\EmailTemplate\Otp.html" />
+    <Content Include="Resources\EmailTemplate\SupportIncomeCreate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\EmailTemplate\SalesOrderCreate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\EmailTemplate\PurchaseOrderCreate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\EmailTemplate\ResetPassword.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\EmailTemplate\UnlockUser.html" />
     <Resource Include="Resources\author.jpg" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -306,6 +440,7 @@
     <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="eZone.db" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -315,7 +450,9 @@
     <None Include="Resources\invoice_sample2.pdf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="View\Purchase\" />
@@ -328,7 +465,9 @@
     <Resource Include="Resources\file.png" />
     <Resource Include="Resources\help.png" />
     <Resource Include="Resources\info.png" />
-    <Resource Include="Resources\logo.png" />
+    <Content Include="Resources\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\pending.png" />
     <Resource Include="Resources\product.png" />
     <Resource Include="Resources\purchase.png" />
