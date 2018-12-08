@@ -17,11 +17,16 @@ namespace ElectronicZone.Wpf.View.Report
     public partial class PurchaseReport : MetroWindow
     {
         ILogger logger = new Logger(typeof(PurchaseReport));
+
         public PurchaseReport()
         {
             InitializeComponent();
-            loadProduct();
-            loadBrands();
+            LoadProduct();
+            LoadBrands();
+
+            DateTimeUtility dtUtility = new DateTimeUtility();
+            fromDate.SelectedDate = dtUtility.GetMonthStartDate();
+            toDate.SelectedDate = DateTime.Now;
 
             // on esc close
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
@@ -38,12 +43,12 @@ namespace ElectronicZone.Wpf.View.Report
             try
             {
                 DataTable dtPurchase = new DataTable();
-                DataAccess da = new DataAccess();
-                dtPurchase = da.SearchStocks((this.cbProduct.SelectedValue == null ? "" : this.cbProduct.SelectedValue.ToString()), (this.cbBrandCompany.SelectedValue == null ? "" : this.cbBrandCompany.SelectedValue.ToString()), this.txtProdCode.Text, this.txtStockCode.Text, null, null,
-                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
-                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
-                    (this.chkBoxAvailableStock.IsChecked == null ? false : this.chkBoxAvailableStock.IsChecked == true ? true : false));
-
+                using (DataAccess da = new DataAccess()) {
+                    dtPurchase = da.SearchStocks((this.cbProduct.SelectedValue == null ? "" : this.cbProduct.SelectedValue.ToString()), (this.cbBrandCompany.SelectedValue == null ? "" : this.cbBrandCompany.SelectedValue.ToString()), this.txtProdCode.Text, this.txtStockCode.Text, null, null,
+                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        (this.chkBoxAvailableStock.IsChecked == null ? false : this.chkBoxAvailableStock.IsChecked == true ? true : false));
+                }
                 if (dtPurchase.Rows.Count > 0)
                 {
                     btnExport.Visibility = System.Windows.Visibility.Visible;
@@ -94,37 +99,39 @@ namespace ElectronicZone.Wpf.View.Report
         /// <summary>
         /// Load All Active Products
         /// </summary>
-        private void loadProduct()
+        private void LoadProduct()
         {
             DataTable dtProduct = new DataTable();
-            DataAccess da = new DataAccess();
-            dtProduct = da.GetAllProducts();
+            using (DataAccess da = new DataAccess()) {
+                dtProduct = da.GetAllProducts();
+            }
             // bind to combobox
             cbProduct.ItemsSource = dtProduct.DefaultView;
         }
         /// <summary>
         /// Load All Active Brands
         /// </summary>
-        private void loadBrands()
+        private void LoadBrands()
         {
             DataTable dtBrand = new DataTable();
-            DataAccess da = new DataAccess();
-            dtBrand = da.GetAllBrands();
+            using (DataAccess da = new DataAccess()) {
+                dtBrand = da.GetAllBrands();
+            }
             // bind to combobox
             cbBrandCompany.ItemsSource = dtBrand.DefaultView;
         }
 
         private void fromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
         }
 
         private void toDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
         }
 
-        private void validateCalendarMinMaxDate()
+        private void ValidateCalendarMinMaxDate()
         {
             try
             {

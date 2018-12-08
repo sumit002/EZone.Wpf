@@ -18,9 +18,9 @@ namespace ElectronicZone.Wpf.View.Common
     /// <summary>
     /// Interaction logic for Graphs.xaml
     /// </summary>
-    public partial class Graphs : UserControl
+    public partial class CartesianChart : UserControl
     {
-        public Graphs()
+        public CartesianChart()
         {
             InitializeComponent();
         }

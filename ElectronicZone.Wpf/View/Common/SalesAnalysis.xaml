@@ -13,7 +13,7 @@
                 <ColumnDefinition Width="430*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="83*" />
+                <RowDefinition Height="50*" />
                 <RowDefinition Height="259*" />
             </Grid.RowDefinitions>
 
@@ -23,7 +23,7 @@
                        FontSize="30"
                        FontWeight="Light"
                        Foreground="{DynamicResource BlackBrush}"
-                       Text="Sales Analysis" />
+                       Text="Sales On Demand" />
 
             <WrapPanel Grid.Row="1"
                        Grid.Column="1"
@@ -32,6 +32,19 @@
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top">
 
+                <ListView Margin="2" BorderThickness="1"
+                                  ItemsSource="{Binding SaleOnDemandList}"
+                                  SelectedIndex="0"
+                                  Style="{StaticResource VirtualisedMetroListView}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Product}" Header="Product" />
+                            <GridViewColumn DisplayMemberBinding="{Binding ProductCode}" Header="Product Code" />
+                            <GridViewColumn DisplayMemberBinding="{Binding SaleCount}" Header="Items Sold" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                
             </WrapPanel>
         </Grid>
     </ScrollViewer>

@@ -129,8 +129,17 @@
                     </RichTextBox>
 
                     <DataGrid Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" 
-                              Name="datagridSales" ItemsSource="{Binding SaleList}"
+                              Name="datagridSales" ItemsSource="{Binding SaleList}" Foreground="Red"
                               VerticalAlignment="Top" Width="Auto" IsReadOnly="True">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Pending}" Value="0">
+                                        <Setter Property="Foreground" Value="Black"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Product Code" Binding="{Binding ProductCode}" Width="50*" />
                             <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="50*" />

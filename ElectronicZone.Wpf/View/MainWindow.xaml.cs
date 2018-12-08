@@ -60,21 +60,6 @@ namespace ElectronicZone.Wpf.View
             help.ShowDialog();
         }
 
-        private void RegisterProduct_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show("Registration will be available soon!", "Coming Soon!", MessageBoxButton.OK, MessageBoxImage.None);
-        }
-
-        private void CheckUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show("Update will be available soon!", "Coming Soon!", MessageBoxButton.OK, MessageBoxImage.None);
-        }
-
-        private void TechnicalSupport_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show("Technical Support will be available soon!", "Coming Soon!", MessageBoxButton.OK, MessageBoxImage.None);
-        }
-
         private void Invoice_Click(object sender, RoutedEventArgs e)
         {
             SaleInvoice saleInvoice = new SaleInvoice();
@@ -192,10 +177,20 @@ namespace ElectronicZone.Wpf.View
             System.Diagnostics.Process.Start("https://github.com/sumit002/EZone.Wpf");
         }
 
+        private void LaunchREADMEGitHub(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/sumit002/EZone.Wpf/blob/master/README.md");
+        }
+
+        private void LaunchLICENSEGitHub(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/sumit002/EZone.Wpf/blob/master/LICENSE");
+        }
+
         private void LaunchOnTwitter(object sender, RoutedEventArgs e)
         {
             // ToDo: Get The link from AppSettings
-            System.Diagnostics.Process.Start("https://github.com/sumit002/EZone.Wpf");
+            System.Diagnostics.Process.Start("https://twitter.com/summit_dash");
         }
 
         private void LaunchSizeToContentDemo(object sender, RoutedEventArgs e)

@@ -8,7 +8,43 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="Electronic Zone" Height="575" Width="1060" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen" 
-        WindowStyle="SingleBorderWindow" Icon="/Resources/ezone.ico">
+        WindowStyle="SingleBorderWindow" Icon="/Resources/ezone.ico" WindowState="Maximized">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <!--<Ellipse x:Key="AppThemeMenuIcon"
+                     Width="16"
+                     Height="16"
+                     x:Shared="False"
+                     Fill="{Binding ColorBrush, Mode=OneWay}"
+                     Stroke="{Binding BorderColorBrush, Mode=OneWay}"
+                     StrokeThickness="1" />
+            <Ellipse x:Key="AccentMenuIcon"
+                     Width="16"
+                     Height="16"
+                     x:Shared="False"
+                     Fill="{Binding ColorBrush, Mode=OneWay}" />-->
+            
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <!--Dashboard Window Left Window Section-->
+    <!--<Controls:MetroWindow.LeftWindowCommands>
+        <Controls:WindowCommands>
+            <Button Click="LaunchOnGitHub" ToolTip="Find it on GitHub">
+                <iconPacks:FontAwesome Width="20"
+                                          Height="20"
+                                          Kind="GithubBrands" />
+            </Button>
+            <Button Click="LaunchOnTwitter" ToolTip="Follow on Twitter">
+                <iconPacks:FontAwesome Width="20"
+                                          Height="20"
+                                          Kind="TwitterBrands" />
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>-->
+
+
     <!--Dashboard Flyout Window Section-->
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
@@ -17,7 +53,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
@@ -41,9 +76,46 @@
 
     <!--Dashboard Right Window Section-->
     <Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
-            <ToggleButton Content="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand"/>
-            <ToggleButton Content="Profile" Name="myProfile" IsChecked="{Binding ElementName=flyoutMyProfile, Path=IsOpen}" Cursor="Hand"/>
+        <Controls:WindowCommands ShowLastSeparator="True">
+            <Button
+                    Content="Flyouts"
+                    ToolTip="Flyouts demo window" />
+            <Button 
+                    Content="IconPacks"
+                    ToolTip="All MahApp icons" />
+            <Button 
+                    Content="VS"
+                    ToolTip="Visual Studio style demo" />
+            <Button 
+                    Content="Clean"
+                    ToolTip="Clean window style demo" />
+            <Button 
+                    Content="Interop"
+                    ToolTip="The interop demo" />
+            <Button 
+                    Content="Navigation"
+                    ToolTip="Window navigation demo" />
+            <Button 
+                    Content="Theme"
+                    ToolTip="Window Theme demo" />
+            <Button ToolTip="Window Accent demo" >
+                <iconPacks:FontAwesome Width="20"
+                                          Height="20"
+                                          Kind="PaletteSolid" />
+            </Button>
+            <!--<ToggleButton Content="Confirm quit"
+                          IsChecked="{Binding QuitConfirmationEnabled}"
+                          ToolTip="Enable quit confirmation dialog on exit" />-->
+            <ToggleButton ToolTip="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand">
+                <iconPacks:FontAwesome Width="20"
+                                          Height="20"
+                                          Kind="CogSolid" />
+            </ToggleButton>
+            <ToggleButton Name="myProfile" ToolTip="Profile" IsChecked="{Binding ElementName=flyoutMyProfile, Path=IsOpen}" Cursor="Hand">
+                <iconPacks:FontAwesome Width="20"
+                                          Height="20"
+                                          Kind="UserCircleSolid" />
+            </ToggleButton>
             <!--<ToggleButton Content="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand"/>
             <ToggleButton Content="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand"/>-->
 
@@ -57,9 +129,10 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -69,15 +142,15 @@
 
         <!--Dashboard Menu Section-->
         <Menu Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="0" Margin="1,0,0,0" IsMainMenu="True" Height="30" 
-              HorizontalAlignment="Stretch" Name="menuTop" VerticalAlignment="Top" Width="auto" >
-            <MenuItem Header="_e Zone" >
+              HorizontalAlignment="Left" Name="menuTop" VerticalAlignment="Stretch" Width="auto" >
+            <!--<MenuItem Header="_e Zone" >
                 <MenuItem Header="_Our Story" Click="Info_Click" >
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="HistorySolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                        <!--<Image Source="/ElectronicZone.Wpf;component/Resources/file.png" Width="22px"></Image>-->
+                        --><!--<Image Source="/ElectronicZone.Wpf;component/Resources/file.png" Width="22px"></Image>--><!--
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
+            </MenuItem>-->
             <MenuItem Header="_Sales" >
                 <MenuItem Header="_Sale Master" Click="Sale_Click" >
                     <MenuItem.Icon>
@@ -105,13 +178,13 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="_Contact" >
+            <!--<MenuItem Header="_Contact" >
                 <MenuItem Header="_Contact" Click="Contact_Click" >
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="UserShieldSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
+            </MenuItem>-->
             <MenuItem Header="_Reports" Name="menuReports" >
                 <MenuItem Header="_Sales Report"  Click="SalesReport_Click" >
                     <MenuItem.Icon>
@@ -136,7 +209,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header=" Report" Click="ContactReport_Click">
+                <MenuItem Header="_Contact Report" Click="ContactReport_Click">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="FilePowerpointSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
@@ -152,6 +225,11 @@
                 <MenuItem Header="_Brand Master" Click="BrandMaster_Click" >
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="FontAwesomeFlagBrands" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Contact Master" Click="Contact_Click" >
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconFontAwesome Kind="UserShieldSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="_Invoice Master" Click="InvoiceMaster_Click">
@@ -188,7 +266,13 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="_About e Zone" Click="AboutUs_Click">
+                <MenuItem Header="_Our Story" Click="Info_Click" >
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconFontAwesome Kind="HistorySolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <!--<Image Source="/ElectronicZone.Wpf;component/Resources/file.png" Width="22px"></Image>-->
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_About eZone" Click="AboutUs_Click">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="UserFriendsSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
@@ -299,5 +383,12 @@
             </lvc:PieChart.DataTooltip>
         </lvc:PieChart>
 
+        <StatusBar Grid.Row="7" Grid.ColumnSpan="3">
+            <StatusBarItem>eZone Application</StatusBarItem>
+            <Separator Style="{StaticResource MetroStatusBarSeparator}" />
+            <StatusBarItem>Version :</StatusBarItem>
+            <StatusBarItem>1.0.1</StatusBarItem>
+            <!--<StatusBarItem Content="{Binding ElementName=MainTabControl, Path=SelectedItem.Header, Mode=OneWay}" />-->
+        </StatusBar>
     </Grid>
 </Controls:MetroWindow>

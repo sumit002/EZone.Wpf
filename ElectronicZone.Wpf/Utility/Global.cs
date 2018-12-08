@@ -1,31 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElectronicZone.Wpf.Utility
+﻿namespace ElectronicZone.Wpf.Utility
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Global
     {
-        // private static readonly Global instance = new Global();
-
+        #region Fields & Properties
         private static int _UserId;
-        //private static string _UserName;
+        private static string _UserName;
         private static string _Name;
-        //private static string _Password;
+        private static bool _isAdmin;
 
         public static int UserId { get => _UserId; set => _UserId = value; }
         public static string Name { get => _Name; set => _Name = value; }
+        public static string UserName { get => _UserName; set => _UserName = value; }
+        public static bool IsAdmin { get => _isAdmin; set => _isAdmin = value; } 
+        #endregion
 
         public static bool VerifyUser() {
             return (UserId > 0) ? true : false;
         }
-
-        //public Global(string userName, int id)
-        //{
-        //    _UserName = userName;
-        //    _UserId = id;
-        //}
     }
 }

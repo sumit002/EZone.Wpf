@@ -18,6 +18,9 @@ using static ElectronicZone.Wpf.Utility.CommonEnum;
 
 namespace ElectronicZone.Wpf.ViewModel
 {
+    /// <summary>
+    /// ViewModel Class For MainWindow
+    /// </summary>
     public class MainWindowViewModel : ViewModelBase
     {
         #region Fields/Properties
@@ -34,6 +37,8 @@ namespace ElectronicZone.Wpf.ViewModel
         public SeriesCollection Series { get; set; }
         public SeriesCollection SeriesCollection { get; set; }
         public ObservableCollection<Model.Purchase> PurchaseOUtofStockList { get; set; }
+        public ObservableCollection<Model.Sale> SaleOnDemandList { get; set; }
+        public Model.User _user { get; set; }
         #endregion
 
         /// <summary>
@@ -58,6 +63,8 @@ namespace ElectronicZone.Wpf.ViewModel
             this.Series = new SeriesCollection {};
             this.SeriesCollection = new SeriesCollection { };
             this.PurchaseOUtofStockList = new ObservableCollection<Model.Purchase>();
+            this.SaleOnDemandList = new ObservableCollection<Model.Sale>();
+            this._user = new Model.User() { Id = Global.UserId, Name = Global.Name, IsAdmin = Global.IsAdmin };
         }
 
         private int _selectedIndex;
@@ -68,11 +75,12 @@ namespace ElectronicZone.Wpf.ViewModel
             {
                 _selectedIndex = value;
                 OnPropertyChanged();
-                if (_selectedIndex == 1)
-                {
+                if (_selectedIndex == 1) {
                     LoadDasboardAnalysis();
                 } else if (_selectedIndex == 2) {
                     LoadStockAnalysis();
+                } else if (_selectedIndex == 3) {
+                    LoadSaleAnalysis();
                 };
             }
         }
@@ -89,6 +97,49 @@ namespace ElectronicZone.Wpf.ViewModel
                     ExecuteDelegate = x => ((Flyout)x).IsOpen = false
                 });
             }
+        }
+
+        private ICommand showMessageDialogCommand;
+        public ICommand ShowMessageDialogCommand
+        {
+            get
+            {
+                return this.showMessageDialogCommand ?? (this.showMessageDialogCommand = new SimpleCommand
+                {
+                    CanExecuteDelegate = x => true,
+                    ExecuteDelegate = x => ShowMessage((string)x)
+                });
+            }
+        }
+
+        private ICommand saveSettingsCommand;
+        public ICommand SaveSettingsCommand
+        {
+            get
+            {
+                return this.saveSettingsCommand ?? (this.saveSettingsCommand = new SimpleCommand
+                {
+                    CanExecuteDelegate = x => true,
+                    ExecuteDelegate = x => ShowMessage("Save Settings")
+                });
+            }
+        }
+        private ICommand restoreDefaultSettingsCommand;
+        public ICommand RestoreDefaultSettingsCommand {
+            get
+            {
+                return this.restoreDefaultSettingsCommand ?? (this.restoreDefaultSettingsCommand = new SimpleCommand
+                {
+                    CanExecuteDelegate = x => true,
+                    ExecuteDelegate = x => ShowMessage("Restore Default Settings")
+                });
+            }
+        }
+
+
+
+        private void ShowMessage(string val) {
+            this._dialogCoordinator.ShowMessageAsync(this, "Oops!", $"{val} will be available Soon"); 
         }
 
         private ICommand searchDashboardCmd;
@@ -334,15 +385,15 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private async void LoadDasboardAnalysis()
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            ProgressDialogController controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
             controller.SetIndeterminate();
 
-            DataTable dtPaymentIncome, dtPurchaseInvest, dtSales, dtPurchases;
+            SaleManager _sm = new SaleManager();
+            DataTable dtPaymentIncome, dtPurchaseInvest, dtSales;
             using (DataAccess da = new DataAccess()) {
                 dtPaymentIncome = da.SearchPaymentIncome(StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), null);
                 dtPurchaseInvest = da.SearchPaymentInvest(StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), PaymentStatus.PURCHASE_PAYMENT.ToString());
-                dtSales = da.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty, null, null, StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), string.Empty);
-                //dtPurchases = da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
+                dtSales = _sm.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty, null, null, StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), string.Empty);
             }
             this.TotalSupportIncome = dtPaymentIncome.AsEnumerable().Where(x => x.Field<string>("PaymentType") == PaymentStatus.SUPPORT_PAYMENT.ToString()).Select(a => a.Field<double>("Amount")).Sum();
             this.TotalSaleIncome = dtPaymentIncome.AsEnumerable().Where(x => x.Field<string>("PaymentType") == PaymentStatus.SALE_PAYMENT.ToString()).Select(a => a.Field<double>("Amount")).Sum();
@@ -353,57 +404,44 @@ namespace ElectronicZone.Wpf.ViewModel
             InitializeCharts();
             await controller.CloseAsync();
         }
+
         private void InitializeCharts()
         {
-            //var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
-            //controller.SetIndeterminate();
-
-            //await controller.CloseAsync();
-
             this.Series.Clear();
-            this.Series.Add(new PieSeries
-            {
+            this.Series.Add(new PieSeries {
                 Title = "Sale Income",
                 Values = new ChartValues<double> { TotalSaleIncome },
-                
                 // PushOut = 10,
                 DataLabels = true,
                 LabelPoint = PointLabel
             });
-            this.Series.Add(new PieSeries
-            {
+            this.Series.Add(new PieSeries {
                 Title = "Support Income",
                 Values = new ChartValues<double> { TotalSupportIncome },
-                // PushOut = 10,
                 DataLabels = true,
                 LabelPoint = PointLabel
             });
 
             this.SeriesCollection.Clear();
             //adding series will update and animate the chart automatically
-            SeriesCollection.Add(new ColumnSeries
-            {
+            SeriesCollection.Add(new ColumnSeries {
                 Title = "Sale Income",
                 Values = new ChartValues<double> { TotalSaleIncome }
             });
-            this.SeriesCollection.Add(new ColumnSeries
-            {
+            this.SeriesCollection.Add(new ColumnSeries {
                 Title = "Support Income",
                 Values = new ChartValues<double> { TotalSupportIncome }
             });
-            this.SeriesCollection.Add(new ColumnSeries
-            {
+            this.SeriesCollection.Add(new ColumnSeries {
                 Title = "Total Income",
                 Values = new ChartValues<double> { TotalIncome }
             });
 
-            this.SeriesCollection.Add(new ColumnSeries
-            {
+            this.SeriesCollection.Add(new ColumnSeries {
                 Title = "Total Sale",
                 Values = new ChartValues<double> { TotalSaleAmount }
             });
-            this.SeriesCollection.Add(new ColumnSeries
-            {
+            this.SeriesCollection.Add(new ColumnSeries {
                 Title = "Total Purchase",
                 Values = new ChartValues<double> { TotalPurchasePayment }
             });
@@ -425,9 +463,7 @@ namespace ElectronicZone.Wpf.ViewModel
 
             PurchaseManager _pm = new PurchaseManager();
             this.PurchaseOUtofStockList.Clear();
-            DataTable dtPurchases = _pm.GetAllOutOfStocks();
-            foreach (DataRow row in _pm.GetAllOutOfStocks().Rows)
-            {
+            foreach (DataRow row in _pm.GetAllOutOfStocks().Rows) {
                 PurchaseOUtofStockList.Add(new Model.Purchase()
                 {
                     Id = int.Parse(row["StockId"].ToString()),
@@ -445,7 +481,31 @@ namespace ElectronicZone.Wpf.ViewModel
                 });
             }
             await controller.CloseAsync();
-        } 
+        }
+        #endregion
+
+        #region Sale Region
+        /// <summary>
+        /// Load Sale Section
+        /// </summary>
+        private async void LoadSaleAnalysis()
+        {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
+            SaleManager _sm = new SaleManager();
+            this.SaleOnDemandList.Clear();
+            foreach (DataRow row in _sm.GetSalesOnDemand().Rows) {
+                SaleOnDemandList.Add(new Model.Sale()
+                {
+                    Id = int.Parse(row["SalesId"].ToString()),
+                    Product = Convert.ToString(row["Product"]),
+                    ProductCode = (string)row["ProductCode"],
+                    SaleCount = int.Parse(row["SaleCount"].ToString())
+                });
+            }
+            await controller.CloseAsync();
+        }
         #endregion
     }
 }

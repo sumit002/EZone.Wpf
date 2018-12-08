@@ -133,17 +133,18 @@
 
             <WrapPanel Grid.Row="3"
                        Grid.Column="1"
-                       Width="1220"
+                       Width="1020"
                        Height="400"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top">
+                
                     <commonViews:PieChart  DataContext="{Binding}" />
                     <!--<lvc:PieChart Name="pieChart" LegendLocation="None" Width="400" Height="300"
                       Series="{Binding Series}">
                     </lvc:PieChart>-->
-
-                <lvc:CartesianChart Width="500" Height="250" Series="{Binding SeriesCollection}" LegendLocation="Bottom">
-                </lvc:CartesianChart>
+                    <commonViews:CartesianChart  DataContext="{Binding}" />
+                    <!--<lvc:CartesianChart Width="500" Height="250" Series="{Binding SeriesCollection}" LegendLocation="Bottom">
+                    </lvc:CartesianChart>-->
 
             </WrapPanel>
         </Grid>

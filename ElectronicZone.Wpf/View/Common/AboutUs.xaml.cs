@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using MahApps.Metro.Controls;
 
 namespace ElectronicZone.Wpf.View.Common
 {
     /// <summary>
     /// Interaction logic for AboutUs.xaml
     /// </summary>
-    public partial class AboutUs : Window
+    public partial class AboutUs : MetroWindow
     {
         public AboutUs()
         {
             InitializeComponent();
+
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.versionInfo.Text = $"Version - {version}";
         }
     }
 }

@@ -22,6 +22,7 @@ namespace ElectronicZone.Wpf.ViewModel
         public ObservableCollection<Purchase> PurchaseList { get; set; }
         public ObservableCollection<Product> ProductList { get; set; }
         public ObservableCollection<Brand> BrandList { get; set; }
+        SaleManager _sm = null;
         //public ObservableCollection<Contact> ContactList { get; set; }
         #endregion
 
@@ -124,47 +125,6 @@ namespace ElectronicZone.Wpf.ViewModel
         //}
 
         #endregion
-        private async void GetAllSalesAsync()
-        {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
-            controller.SetIndeterminate();
-
-            //await System.Threading.Tasks.Task.Delay(1000);
-            GetAllSales();
-
-            await controller.CloseAsync();
-        }
-        private void GetAllSales()
-        {
-            DataTable dt = new DataTable();
-            using (DataAccess da = new DataAccess()) {
-                dt = da.GetAllSales(string.Empty);
-            }
-            this.SaleList.Clear();
-            foreach (DataRow row in dt.Rows)
-            {
-                this.SaleList.Add(new Sale()
-                {
-                    Id = int.Parse(row["SalesId"].ToString()),
-                    StockId = int.Parse(row["StockId"].ToString()),
-                    Product = Convert.ToString(row["Product"]),
-                    Brand = Convert.ToString(row["Brand"]),
-                    ProductCode = Convert.ToString(row["ProductCode"]),
-                    StockCode = Convert.ToString(row["StockCode"]),
-                    SaleTo = Convert.ToString(row["SaleTo"]),
-                    SaleContact = Convert.ToString(row["SaleContact"]),
-                    AmountPaid = Convert.ToDouble(row["AmountPaid"]),
-                    Quantity = int.Parse(row["Quantity"].ToString()),
-                    Price = Convert.ToDouble(row["SalePrice"]),
-                    Total = Convert.ToDouble(row["Total"]),
-                    SaleDate = Convert.ToDateTime(row["SaleDate"]),
-                    //IsActive = Convert.ToBoolean(row["IsActive"]),
-                    CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
-                    CanCancel = Convert.ToBoolean(row["CanDelete"]),
-                    //ModifiedDate = Convert.ToDateTime(row["ModifiedDate"])
-                });
-            }
-        }
 
         /// <summary>
         /// Constructor
@@ -180,6 +140,7 @@ namespace ElectronicZone.Wpf.ViewModel
                 this.TodayDate = DateTime.Today;
                 //this.SelectedProduct = "asdasd";
                 //this.IsSaleToExistingContact = true;
+                this._sm = new SaleManager();
 
                 this.SaleList = new ObservableCollection<Sale>();
                 this.PurchaseList = new ObservableCollection<Purchase>();
@@ -208,15 +169,54 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
             controller.SetIndeterminate();
-            DwonloadSaleInvoice((Sale)obj);
+            DownloadSaleInvoice((Sale)obj);
             await controller.CloseAsync();
+        }
+
+        private async void GetAllSalesAsync()
+        {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
+            //await System.Threading.Tasks.Task.Delay(1000);
+            GetAllSales();
+
+            await controller.CloseAsync();
+        }
+        private void GetAllSales()
+        {
+            this.SaleList.Clear();
+            foreach (DataRow row in _sm.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty,null,null, string.Empty, string.Empty, string.Empty).Rows)
+            {
+                this.SaleList.Add(new Sale()
+                {
+                    Id = int.Parse(row["SalesId"].ToString()),
+                    StockId = int.Parse(row["StockId"].ToString()),
+                    Product = Convert.ToString(row["Product"]),
+                    Brand = Convert.ToString(row["Brand"]),
+                    ProductCode = Convert.ToString(row["ProductCode"]),
+                    StockCode = Convert.ToString(row["StockCode"]),
+                    SaleTo = Convert.ToString(row["SaleTo"]),
+                    SaleContact = Convert.ToString(row["SaleContact"]),
+                    AmountPaid = Convert.ToDouble(row["AmountPaid"]),
+                    Quantity = int.Parse(row["Quantity"].ToString()),
+                    Price = Convert.ToDouble(row["SalePrice"]),
+                    Total = Convert.ToDouble(row["Total"]),
+                    Pending = Convert.ToDouble(row["Pending"]),
+                    SaleDate = Convert.ToDateTime(row["SaleDate"]),
+                    //IsActive = Convert.ToBoolean(row["IsActive"]),
+                    CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
+                    CanCancel = Convert.ToBoolean(row["CanDelete"]),
+                    //ModifiedDate = Convert.ToDateTime(row["ModifiedDate"])
+                });
+            }
         }
 
         /// <summary>
         /// Download Invoice For Sale
         /// </summary>
         /// <param name="_sale"></param>
-        private void DwonloadSaleInvoice(Sale _sale)
+        private void DownloadSaleInvoice(Sale _sale)
         {
             try
             {
@@ -399,7 +399,7 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             var item = (Sale)obj;
             // Checking if any of the item has not sell 
-            if (item.CanCancel) {
+            if (item.CanCancel && item.Pending == 0) {
                 if (MessageBox.Show($"Are you sure want to cancel order with amount {item.Total}?", "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
                     SaleManager sm = new SaleManager();
                     bool isCanceled = sm.ReverseSalesOrder(item);
@@ -410,7 +410,7 @@ namespace ElectronicZone.Wpf.ViewModel
                     this.SaleList.Remove(item);
                 }
             }
-            else { MessageBoxResult result = MessageBox.Show("Sale Cannot be Canceled! You might be exceed the date limit.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
+            else { MessageBoxResult result = MessageBox.Show("Sale Cannot be Canceled! You might be exceed the date limit or its a pending sale.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
         }
 
         /// <summary>

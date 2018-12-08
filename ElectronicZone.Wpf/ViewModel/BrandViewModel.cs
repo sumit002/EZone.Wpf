@@ -219,7 +219,8 @@ namespace ElectronicZone.Wpf.ViewModel
                     Name = (string)row["Name"],
                     Description = (string)row["Description"],
                     CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
-                    ModifiedDate = string.IsNullOrEmpty(row["ModifiedDate"].ToString()) ? (DateTime?)null : DateTime.Parse(row["ModifiedDate"].ToString())// Convert.ToDateTime(row["ModifiedDate"])
+                    ModifiedDate = string.IsNullOrEmpty(row["ModifiedDate"].ToString()) ? (DateTime?)null : DateTime.Parse(row["ModifiedDate"].ToString()),
+                    IsNotUsed = !Convert.ToBoolean(row["IsUsed"])
                 });
             }
             await controller.CloseAsync();

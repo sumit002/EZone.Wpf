@@ -14,22 +14,17 @@ namespace ElectronicZone.Wpf
     public partial class LoginWindow : MetroWindow
     {
         //private readonly Context _ezContext;
-        ILogger logger = new Logger(typeof(LoginWindow));
+        ILogger _logger = new Logger(typeof(LoginWindow));
 
         public LoginWindow()
         {
             InitializeComponent();
-            LoadUIControls();
+            //_logger.LogInfoMessage("Initialising Login Page ...");
+            //LoadUIControls();
             OnLoginLoad();
         }
 
-        private void LoadUIControls()
-        {
-            //string asd = _ezContext.GetCultureInfo.m_resourceManger.GetString("LoginPasswordLabel");
-            lblUsername.Content = "Username";// _ezContext.GetCultureInfo.m_resourceManger.GetString("LoginPasswordLabel");
-        }
-
-        private bool validateForm()
+        private bool ValidateForm()
         {
             if (string.IsNullOrEmpty(txtUsername.Text.Trim()))
             {
@@ -47,10 +42,10 @@ namespace ElectronicZone.Wpf
 
         private void OnLoginLoad()
         {
-            // this.txtUsername.Focus();
-            txtUsername.Text = "admin";
-            txtPassword.Password = "123456";
-            this.btnLogin.Focus();
+            this.txtUsername.Focus();
+            //txtUsername.Text = "admin";
+            //txtPassword.Password = "123456";
+            //this.btnLogin.Focus();
         }
         /// <summary>
         /// on login button click
@@ -59,37 +54,46 @@ namespace ElectronicZone.Wpf
         /// <param name="e"></param>
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            DataTable dt = new DataTable();
-            DataAccess dataAccess = new DataAccess();
+            _logger.LogInfoMessage($"Login Button Clicked with username : {this.txtUsername.Text.Trim()}");
             try
             {
-                if (validateForm())
-                {
-                    dt = dataAccess.ValidateUserLogin(this.txtUsername.Text.Trim(), this.txtPassword.Password.Trim());
-                    if (dt.Rows.Count == 1)
-                    {
-                        this.Hide();
-                        // setting global variables
-                        Global.UserId = Convert.ToInt32(dt.Rows[0]["Id"]);
-                        Global.Name = Convert.ToString(dt.Rows[0]["Name"]);
-                        DashboardWindow dashboard = new DashboardWindow();
-                        dashboard.ShowDialog();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Invalid Username or Password!");
-                        logger.LogError(string.Format("Invalid Username {0} or Password {1}", this.txtUsername.Text, this.txtPassword.Password));
-                    }
+                if (ValidateForm()) {
+                    ValidateUserLogin();
                 }
-                else
-                {
+                else {
                     MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                logger.LogException(ex);
+                _logger.LogException(ex);
+            }
+        }
+
+        private void ValidateUserLogin()
+        {
+            DataTable dt = new DataTable();
+            using (DataAccess da = new DataAccess())
+            { dt = da.ValidateUserLogin(this.txtUsername.Text.Trim(), this.txtPassword.Password.Trim()); }
+                
+            if (dt.Rows.Count == 1) {
+                this.Hide();
+                // setting global variables
+                Global.UserId = Convert.ToInt32(dt.Rows[0]["Id"]);
+                Global.Name = Convert.ToString(dt.Rows[0]["Name"]);
+                Global.UserName = Convert.ToString(dt.Rows[0]["Username"]);
+                Global.IsAdmin = Convert.ToBoolean(dt.Rows[0]["IsAdmin"]);
+
+                MainWindow _window = new MainWindow();
+                _window.ShowDialog();
+                //DashboardWindow dashboard = new DashboardWindow();
+                //dashboard.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Invalid Username or Password!");
+                _logger.LogError(string.Format("Invalid Username {0} or Password {1}", this.txtUsername.Text, this.txtPassword.Password));
             }
         }
 
@@ -101,7 +105,7 @@ namespace ElectronicZone.Wpf
             }
             catch (Exception ex)
             {
-                logger.LogException(ex);
+                _logger.LogException(ex);
             }
 
         }

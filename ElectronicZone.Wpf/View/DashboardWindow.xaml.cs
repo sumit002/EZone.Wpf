@@ -13,6 +13,8 @@ using ElectronicZone.Wpf.View.Report;
 using ElectronicZone.Wpf.View.Payment;
 using ElectronicZone.Wpf.View.Common;
 using ElectronicZone.Wpf.DataAccessLayer;
+using static ElectronicZone.Wpf.Utility.CommonEnum;
+using System.Configuration;
 
 namespace ElectronicZone.Wpf.View
 {
@@ -33,7 +35,7 @@ namespace ElectronicZone.Wpf.View
         public Func<double, string> Formatter { get; set; }
 
         // public object totalPayment = { async = null, c = null  };
-        private decimal _totalPurchasePayment, _totalSaleIncome, _totalSupportIncome, _totalIncome = 0;
+        private double _totalPurchasePayment, _totalSaleIncome, _totalSupportIncome, _totalIncome = 0;
         #endregion
 
         public DashboardWindow()
@@ -42,40 +44,43 @@ namespace ElectronicZone.Wpf.View
             InitializeSettings();
             //set dates for dashboard result
             DateTimeUtility dtUtility = new DateTimeUtility();
-            dpDashboardFromDate.SelectedDate = dtUtility.getMonthStartDate();
+            dpDashboardFromDate.SelectedDate = dtUtility.GetMonthStartDate();
             dpDashboardToDate.SelectedDate = DateTime.Now;
 
             SetDate();
 
-            loadDashboardComponents();
+            LoadDashboardComponents();
 
-            // InitializeCharts();
+            InitializeCharts();
         }
 
         #region Functions & Methods
         private void SetDate()
         {
-            fromDate = string.IsNullOrEmpty(dpDashboardFromDate.Text) ? "" : (DateTime.Parse(dpDashboardFromDate.Text).ToString("yyyy-MM-dd HH:mm:ss"));
-            toDate = string.IsNullOrEmpty(dpDashboardToDate.Text) ? "" : (DateTime.Parse(dpDashboardToDate.Text).ToString("yyyy-MM-dd HH:mm:ss"));
+            fromDate = string.IsNullOrEmpty(dpDashboardFromDate.Text) ? "" : (DateTime.Parse(dpDashboardFromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
+            toDate = string.IsNullOrEmpty(dpDashboardToDate.Text) ? "" : (DateTime.Parse(dpDashboardToDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"]));
         }
-        private void loadDashboardComponents()
+        /// <summary>
+        /// Load Dashboard Components
+        /// </summary>
+        private void LoadDashboardComponents()
         {
             try
             {
-                getPaymentIncome();
-                getPaymentInvest();
+                GetPaymentIncome();
+                GetPaymentInvest();
 
                 // load top 5 Pending Payments
-                loadTopPendingPayment();
+                LoadTopPendingPayment();
 
                 // load top 5 Sales
-                loadTopSales();
+                LoadTopSales();
 
                 // load top 5 Purchases
-                loadTopPurchases();
+                LoadTopPurchases();
 
                 // load top 5 Sellers
-                loadTopSellers();
+                LoadTopSellers();
             }
             catch (Exception ex)
             {
@@ -84,37 +89,39 @@ namespace ElectronicZone.Wpf.View
             }
         }
 
-        private void getPaymentInvest()
+        private void GetPaymentInvest()
         {
-            DataAccess da = new DataAccess();
-            DataTable dtPurchaseInvest = da.SearchPaymentInvest(fromDate, toDate, PaymentTransaction.PaymentStatus.PURCHASE_PAYMENT.ToString());
-
-            _totalPurchasePayment = CommonMethods.GetSum(dtPurchaseInvest, "Amount");
-            tbTotalPurchasePayment.Text = _totalPurchasePayment.ToString("F", CultureInfo.InvariantCulture);
+            using (DataAccess da = new DataAccess()) {
+                DataTable dtPurchaseInvest = da.SearchPaymentInvest(fromDate, toDate, PaymentStatus.PURCHASE_PAYMENT.ToString());
+                _totalPurchasePayment = CommonMethods.GetSum(dtPurchaseInvest, "Amount");
+                tbTotalPurchasePayment.Text = _totalPurchasePayment.ToString("F", CultureInfo.InvariantCulture);
+            }
         }
 
-        private void getPaymentIncome()
+        private void GetPaymentIncome()
         {
-            DataAccess da = new DataAccess();
-            DataTable dtSupportIncome = da.SearchPaymentIncome(fromDate, toDate, PaymentTransaction.PaymentStatus.SUPPORT_PAYMENT.ToString());
+            using (DataAccess da = new DataAccess()) {
+                DataTable dtSupportIncome = da.SearchPaymentIncome(fromDate, toDate, PaymentStatus.SUPPORT_PAYMENT.ToString());
 
-            _totalSupportIncome = CommonMethods.GetSum(dtSupportIncome, "Amount");
-            tbTotalSupportIncome.Text = _totalSupportIncome.ToString("F", CultureInfo.InvariantCulture);
+                _totalSupportIncome = CommonMethods.GetSum(dtSupportIncome, "Amount");
+                tbTotalSupportIncome.Text = _totalSupportIncome.ToString("F", CultureInfo.InvariantCulture);
 
-            DataTable dtSaleIncome = da.SearchPaymentIncome(fromDate, toDate, PaymentTransaction.PaymentStatus.SALE_PAYMENT.ToString());
+                DataTable dtSaleIncome = da.SearchPaymentIncome(fromDate, toDate, PaymentStatus.SALE_PAYMENT.ToString());
 
-            _totalSaleIncome = CommonMethods.GetSum(dtSaleIncome, "Amount");
-            tbTotalSaleIncome.Text = _totalSaleIncome.ToString("F", CultureInfo.InvariantCulture);
+                _totalSaleIncome = CommonMethods.GetSum(dtSaleIncome, "Amount");
+                tbTotalSaleIncome.Text = _totalSaleIncome.ToString("F", CultureInfo.InvariantCulture);
 
-            _totalIncome = CommonMethods.GetSum(dtSupportIncome, "Amount") + CommonMethods.GetSum(dtSaleIncome, "Amount");
-            tbTotalIncome.Text = _totalIncome.ToString("F", CultureInfo.InvariantCulture);
+                _totalIncome = CommonMethods.GetSum(dtSupportIncome, "Amount") + CommonMethods.GetSum(dtSaleIncome, "Amount");
+                tbTotalIncome.Text = _totalIncome.ToString("F", CultureInfo.InvariantCulture);
+            }
         }
 
-        private void loadTopPendingPayment()
+        private void LoadTopPendingPayment()
         {
             DataTable dtPending = new DataTable();
-            DataAccess da = new DataAccess();
-            dtPending = da.SearchPendingPayment(null, null, fromDate, toDate, string.Empty, 0);
+            using (DataAccess da = new DataAccess()) {
+                dtPending = da.SearchPendingPayment(null, null, fromDate, toDate, string.Empty, 0);
+            }
             // soprt Column and Select top 5
             dtPending = CommonMethods.SortTable(dtPending, "PendingAmount", true);
             dtPending = CommonMethods.GetTopRow(dtPending);
@@ -122,11 +129,12 @@ namespace ElectronicZone.Wpf.View
             dataGridPendingPayment.ItemsSource = dtPending.DefaultView;
         }
 
-        private void loadTopSales()
+        private void LoadTopSales()
         {
             DataTable dtSales = new DataTable();
-            DataAccess da = new DataAccess();
-            dtSales = da.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty, null, null, fromDate, toDate, string.Empty);
+            using (DataAccess da = new DataAccess()) {
+                dtSales = da.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty, null, null, fromDate, toDate, string.Empty);
+            }
             // sort Column and Select top 5
             dtSales = CommonMethods.SortTable(dtSales, "Total", true);
             dtSales = CommonMethods.GetTopRow(dtSales);
@@ -134,11 +142,12 @@ namespace ElectronicZone.Wpf.View
             dataGridTopSales.ItemsSource = dtSales.DefaultView;
         }
 
-        private void loadTopPurchases()
+        private void LoadTopPurchases()
         {
             DataTable dtPurchase = new DataTable();
-            DataAccess da = new DataAccess();
-            dtPurchase = da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, fromDate, toDate);
+            using (DataAccess da = new DataAccess()) {
+                dtPurchase = da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, fromDate, toDate);
+            }
             // sort Column and Select top 5
             dtPurchase = CommonMethods.SortTable(dtPurchase, "PurchasePrice", true);
             dtPurchase = CommonMethods.GetTopRow(dtPurchase);
@@ -146,12 +155,12 @@ namespace ElectronicZone.Wpf.View
             dataGridTopPurchases.ItemsSource = dtPurchase.DefaultView;
         }
 
-        private void loadTopSellers()
+        private void LoadTopSellers()
         {
             // ToDO : 
         }
 
-        private void validateCalendarMinMaxDate()
+        private void ValidateCalendarMinMaxDate()
         {
             try
             {
@@ -179,7 +188,7 @@ namespace ElectronicZone.Wpf.View
                 new PieSeries
                 {
                     Title = "Sale Income",
-                    Values = new ChartValues<decimal> {_totalSaleIncome},
+                    Values = new ChartValues<double> {_totalSaleIncome},
                     // PushOut = 10,
                     DataLabels = true,
                     LabelPoint = PointLabel
@@ -187,7 +196,7 @@ namespace ElectronicZone.Wpf.View
                 new PieSeries
                 {
                     Title = "Support Income",
-                    Values = new ChartValues<decimal> {_totalSupportIncome},
+                    Values = new ChartValues<double> {_totalSupportIncome},
                     DataLabels = true,
                     LabelPoint = PointLabel
                 }
@@ -250,7 +259,7 @@ namespace ElectronicZone.Wpf.View
 
         private void btnDashboardResult_Click(object sender, RoutedEventArgs e)
         {
-            loadDashboardComponents();
+            LoadDashboardComponents();
             InitializeCharts();
         }
 
@@ -380,13 +389,13 @@ namespace ElectronicZone.Wpf.View
 
         private void dpDashboardFromDate_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
             SetDate();
         }
 
         private void dpDashboardToDate_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            validateCalendarMinMaxDate();
+            ValidateCalendarMinMaxDate();
             SetDate();
         }
 

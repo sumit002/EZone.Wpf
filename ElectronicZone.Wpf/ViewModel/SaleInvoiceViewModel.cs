@@ -8,11 +8,11 @@ namespace ElectronicZone.Wpf.ViewModel
 {
     public class SaleInvoiceViewModel : ViewModelBase
     {
-        ILogger logger = new Logger(typeof(LoginWindow));
-        // Commands
+        ILogger logger = new Logger(typeof(SaleInvoiceViewModel));
         public ICommand GenerateInvoiceCmd { get; set; }
-
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public SaleInvoiceViewModel()
         {
             this.GenerateInvoiceCmd = new CommandHandler(OnGeneratePdf, CanExecuteGeneratePdf);
@@ -27,14 +27,14 @@ namespace ElectronicZone.Wpf.ViewModel
         public void OnGeneratePdf(object obj) {
             try
             {
-                string fileName = string.Format("{1}-{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now, "Invoice");
-                string strPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string filePath = Path.Combine(strPath, string.Format("{0}.pdf", fileName));
-                string logoPath = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName).Replace("\\bin\\Debug", "")
-                 + "\\logo\\logo.png";
+                //string fileName = string.Format("{1}-{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now, "Invoice");
+                //string strPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                //string filePath = Path.Combine(strPath, string.Format("{0}.pdf", fileName));
+                //string logoPath = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName).Replace("\\bin\\Debug", "")
+                // + "\\logo\\logo.png";
 
-                goPDFOut invoice = new goPDFOut();
-                invoice.GeneratePDF(filePath, logoPath, "[ PAID ]");
+                goPDFOut invoice = new goPDFOut(new int[] { 139 });
+                invoice.GeneratePDF();
             }
             catch (Exception ex)
             {

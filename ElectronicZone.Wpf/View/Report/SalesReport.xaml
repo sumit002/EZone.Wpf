@@ -67,19 +67,19 @@
         </StackPanel>-->
 
         <DataGrid Grid.Row="3" Grid.ColumnSpan="6" AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Left" IsReadOnly="True" Name="dataGridSales" 
-                  VerticalAlignment="Top" Width="Auto">
-            <!--<DataGrid.RowStyle>
+                  VerticalAlignment="Top" Width="Auto" Foreground="Red">
+            <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding State}" Value="State1">
-                            <Setter Property="Background" Value="Red"></Setter>
+                        <DataTrigger Binding="{Binding Pending}" Value="0">
+                            <Setter Property="Foreground" Value="Black"></Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding State}" Value="State2">
-                            <Setter Property="Background" Value="Green"></Setter>
+                        <DataTrigger Binding="{Binding IsDiscount}" Value="True">
+                            <Setter Property="Foreground" Value="Maroon"></Setter>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </DataGrid.RowStyle>-->
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Product}" Header="Product" Width="100*" />
                 <DataGridTextColumn Binding="{Binding Brand}" Header="Brand" Width="100*"/>

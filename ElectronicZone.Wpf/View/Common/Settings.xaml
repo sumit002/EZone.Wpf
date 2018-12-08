@@ -6,9 +6,12 @@
              xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Common"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Thickness x:Key="ColumnMargin">10 2 10 2</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 0 0</Thickness>
+    </UserControl.Resources>
 
-
-    <Grid Width="500" Margin="5">
+    <Grid Width="500" Margin="{StaticResource ColumnMargin}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
@@ -20,25 +23,68 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         
-        <Label Grid.Row="0" Grid.Column="0" Content="Show Reports Section" />
-        <CheckBox Content="Show" Grid.Column="1" Grid.Row="0" Height="16" HorizontalAlignment="Left" Name="chkbShowReports" 
-                  IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Top" />
+        <!--<Label Grid.Row="0" Grid.Column="0" Content="Show Reports Section" />-->
+        <StackPanel Grid.Row="0">
+            <CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Name="chkbShowReports" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Reports Download Location" />
-        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=DownloadPathList}" x:Name="comboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120"/>
+            <CheckBox Content="Send Email For Support Income"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Show Window Title Bar" />
+            <CheckBox Content="Send Email For Purchase Order"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+
+            <CheckBox Content="Send Email For Sales Order"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+
+            <CheckBox Content="Show Stock Analysis Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+
+            <CheckBox Content="Show Sales Analysis Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+
+            <CheckBox Content="Show Masters Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+
+            <CheckBox Content="Allow Invoice Download"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+
+            <CheckBox Content="Allow Report Download"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+            <!--<CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />
+            <CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />
+
+            <CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />
+            <CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />
+            <CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />
+            <CheckBox Content="Show Reports Section"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="{Binding ShowReportMenu, Mode=TwoWay}" VerticalAlignment="Center" />-->
+            <CheckBox Content="Check for Updates"  HorizontalAlignment="Left" Margin="{StaticResource ControlMargin}"
+                      IsChecked="True" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <!--<Label Grid.Row="1" Grid.Column="0" Content="Reports Download Location" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=DownloadPathList}" 
+                  x:Name="comboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120"/>-->
+
+        <!--<Label Grid.Row="2" Grid.Column="0" Content="Show Window Title Bar" />
         <Label Grid.Row="3" Grid.Column="0" Content="Show in Task Bar" />
         <Label Grid.Row="4" Grid.Column="0" Content="Ignore Task Bar on Maximize" />
-        <Label Grid.Row="5" Grid.Column="0" Content="Show Separators in (RightWindowCommand)" />
-
-        <Button Command="{Binding asdasdJKLKJNHBGV}" Content="Reset" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Right" Name="btnSaveSettings" VerticalAlignment="Center" Width="75" />
+        <Label Grid.Row="5" Grid.Column="0" Content="Show Separators in (RightWindowCommand)" />-->
+        <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <Button Command="{Binding SaveSettingsCommand}" Content="Save Changes" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto" />
+            <Button Command="{Binding RestoreDefaultSettingsCommand}" Content="Restore to Defaults" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto" />
+        </StackPanel>
     </Grid>
     
 </UserControl>

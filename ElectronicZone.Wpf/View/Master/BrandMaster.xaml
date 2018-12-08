@@ -81,8 +81,9 @@
                             <DataGridTemplateColumn Width="5*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" Foreground="Red" ToolTip="Delete" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
-                                            Path=DataContext.DeleteBrandCmd}" CommandParameter="{Binding}"/>
+                                        <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" Foreground="Red" ToolTip="Delete" IsEnabled="{Binding IsNotUsed}" 
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                Path=DataContext.DeleteBrandCmd}" CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

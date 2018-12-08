@@ -51,6 +51,8 @@ namespace ElectronicZone.Wpf.Model
         public double Pending { get => pending; set => pending = value; }
         public string InvoiceNumber { get => _invoiceNumber; set => _invoiceNumber = value; }
 
+        public int SaleCount { get; set; }
+
         public Contact Contact { get; set; }
         #endregion
     }

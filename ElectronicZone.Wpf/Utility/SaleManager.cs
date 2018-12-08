@@ -4,16 +4,39 @@ using ElectronicZone.Wpf.Utility.EMail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Windows;
 
 namespace ElectronicZone.Wpf.Utility
 {
+    /// <summary>
+    /// Sale Manager
+    /// </summary>
     public class SaleManager
     {
         ILogger logger = new Logger(typeof(SaleManager));
         public SaleManager()
-        {
+        { }
 
+        /// <summary>
+        /// Get All Sales
+        /// </summary>
+        /// <returns></returns>
+        public DataTable SearchSales(string productId, string brandId, string productCode, string stockCode, int? priceMin, int? priceMax, string fromDate, string toDate, string salesPersonId)
+        {
+            using (DataAccess da = new DataAccess()) {
+                return da.SearchSales(productId, brandId, productCode, stockCode, priceMin, priceMax, fromDate, toDate, salesPersonId);
+            }
+        }
+        /// <summary>
+        /// Get Sales On Demand
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetSalesOnDemand()
+        {
+            using (DataAccess da = new DataAccess()) {
+                return da.GetSalesOnDemand();
+            }
         }
 
         /// <summary>
@@ -186,7 +209,7 @@ namespace ElectronicZone.Wpf.Utility
             pendingPmt.Add("PendingAmount", pendingPayment.PendingAmount.ToString());
             // If Discounted Payment Then Paid the amt with IsDiscount=true, PaidAmt
             if (pendingPayment.IsDiscount) {
-                pendingPmt.Add("IsPaid", "1"); pendingPmt.Add("IsDiscount", pendingPayment.IsDiscount.ToString());
+                pendingPmt.Add("IsPaid", "1"); pendingPmt.Add("IsDiscount", (pendingPayment.IsDiscount == true ? "1" : "0"));
                 pendingPmt.Add("PaidAmount", "0"/*pendingPayment.PaidAmount.ToString()*/);
                 pendingPmt.Add("PaidDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateOnly"]));
                 //ConfigurationManager.AppSettings["DateOnly"]
@@ -212,9 +235,9 @@ namespace ElectronicZone.Wpf.Utility
                 pendingPaymentModel.Add("SaleId", payment.SaleId.ToString());
                 pendingPaymentModel.Add("SalePersonId", payment.SalePersonId.ToString());
                 pendingPaymentModel.Add("PendingAmount", payment.PendingAmount.ToString());
-                pendingPaymentModel.Add("IsPaid", payment.IsPaid.ToString());// true
+                pendingPaymentModel.Add("IsPaid", (payment.IsPaid == true ? "1" : "0"));// true
                 pendingPaymentModel.Add("PaidDate", payment.PaidDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
-                pendingPaymentModel.Add("IsDiscount", payment.IsDiscount.ToString());
+                pendingPaymentModel.Add("IsDiscount", (payment.IsDiscount == true ? "1" : "0"));
                 //Note : Discounted payment shd more than purchase total amount
                 pendingPaymentModel.Add("PaidAmount", payment.PaidAmount.ToString());
                 int pendingPaymentId = da.InsertOrUpdatePendingPayment(pendingPaymentModel, "tblPendingPayment");

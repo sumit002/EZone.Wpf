@@ -1,12 +1,14 @@
-﻿<Window x:Class="ElectronicZone.Wpf.View.Common.AboutUs"
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Common.AboutUs"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Common"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="About Us" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
-    <Grid Background="Azure">
+        Title="About" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen"
+        ShowMaxRestoreButton="False" ShowMinButton="False">
+    <Grid Background="{StaticResource GradientBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -15,27 +17,39 @@
         <FlowDocumentScrollViewer>
             <FlowDocument x:Name="FD">
                 <Paragraph>
-                    <Image Source="/MyElectronicZoneWpf;component/Images/logo.png" Width="70" Height="70" Margin="0,0,30,0" />
-                    <Run FontSize="35">See what we're all about</Run>
+                    <Image Source="/ElectronicZone.Wpf;component/Resources/logo.png" Width="70" Height="70" Margin="0,0,30,0" />
+                    <Run FontSize="30">eZone</Run>
+                    <Run FontSize="20" Foreground="Gray"> - Electronic Zone</Run>
+                    <TextBlock Name="versionInfo"></TextBlock>
+                    <TextBlock>Copyright ©  2018</TextBlock>
                     <!--<Run FontSize="12">to provide reliable solutions</Run>-->
-                </Paragraph>
-                <Paragraph>
-                    <Bold>Electronic Zone - eZone</Bold>
-                </Paragraph>
-                <Paragraph>
-                    Welcome to eZone! My name is Sumit Dash and am the founder of eZone, a place/store to find all your business strategies you crave. I started this product after being told by one of my younger brother's real life problem.
                 </Paragraph>
 
                 <Paragraph>
-                    As a result I suggest to manage with a solution given by me and here it is. I also share ideas and techniques from my personal experience of getting in shape and doing it simple way. 'eZone' is created to inspire you to get track of your business goals.
+                    Welcome to eZone! My name is Sumit Das and am the founder of eZone, a place/store to find all your business strategies you crave. I started this product after being told by one of my younger brother's real life problem.
+                </Paragraph>
+
+                <Paragraph>
+                    The Core features includes Sales and Purchases along with Support Income (i.e. the additional source of income comes due to other activities). This also features masters like Product/Category master, Brand/Company master, Contact/Sales Person master, Sales and Purchase/Stock master etc. 
+                </Paragraph>
+
+                <Paragraph>
+                    The new build has few additional analysis screens of the recorded data.
+                </Paragraph>
+                
+                <Paragraph>
+                    The reports section includes as follows :
+                    I   Sales Report
+                    II  Purchase Report
+                    III Contact Report
+                    IV  Payment Report 
+                        * Support Payment Report 
+                        ** Pending Payment Report
+
                 </Paragraph>
 
             </FlowDocument>
         </FlowDocumentScrollViewer>
 
-
-
-
-
     </Grid>
-</Window>
+</Controls:MetroWindow>

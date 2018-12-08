@@ -5,39 +5,123 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElectronicZone.Wpf"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Sign In" WindowStartupLocation="CenterScreen">
-    <!--<Window.DataContext>
-        <vmLogin:LoginViewModel></vmLogin:LoginViewModel>
-    </Window.DataContext>-->
+        Dialog:DialogParticipation.Register="{Binding}"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="" ShowTitleBar="False"  WindowStartupLocation="CenterScreen" Width="400" Height="200"
+        ShowMaxRestoreButton="False" ShowCloseButton="False" ShowMinButton="False">
     
-    <Grid x:Name="LoginLayer" Background="#B0000000">
-        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="LightBlue">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+    <Window.Resources>
+        <Thickness x:Key="ColumnMargin">10 2 10 2</Thickness>
+        <Thickness x:Key="ControlMargin">0 5 0 0</Thickness>
+    </Window.Resources>
 
-            <Button Content="Login" Height="23" HorizontalAlignment="Left" Margin="157,94,0,0" Name="btnLogin" VerticalAlignment="Top" Width="60" Click="btnLogin_Click" ToolTip="Click to Login" TabIndex="2" />
-            <TextBox Height="23" HorizontalAlignment="Left" Margin="157,12,0,0" Name="txtUsername" VerticalAlignment="Top" Width="150" ToolTip="Type your Username" MaxLength="100" TabIndex="0" />
-            <PasswordBox Height="23" HorizontalAlignment="Left" Margin="157,52,0,0" Name="txtPassword" VerticalAlignment="Top" Width="150" ToolTip="Type Password" PasswordChar="*" MaxLength="100" TabIndex="1" />
+    <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource GradientBackground}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <Label Content="Username" Height="28" HorizontalAlignment="Left" Margin="68,10,0,0" Name="lblUsername" VerticalAlignment="Top" Foreground="Black" />
-            <Label Content="Password" Height="28" HorizontalAlignment="Left" Margin="68,52,0,0" Name="lblPassword" VerticalAlignment="Top" Foreground="Black" />
-            <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="232,94,0,0" Name="btnCancel" VerticalAlignment="Top" Width="60" Click="btnCancel_Click" TabIndex="3" />
+        <StackPanel Grid.Row="1" Margin="{StaticResource ColumnMargin}">
+            <Controls:MetroHeader Margin="{StaticResource ControlMargin}" Header="Username">
+                <Controls:MetroHeader.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome VerticalAlignment="Center" Kind="UserAltSolid" />
+                            <TextBlock Margin="2 0 0 0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Controls:MetroHeader.HeaderTemplate>
+                <TextBox SpellCheck.IsEnabled="True" Controls:TextBoxHelper.Watermark="Username" Name="txtUsername">
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Enter Valid Username" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+            </Controls:MetroHeader>
             
-            <!--<TextBlock Text="Log in" Grid.ColumnSpan="2" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
-            <TextBlock Text="Name" Grid.Row="1" Margin="3"/>
-            <TextBox x:Name="txtUserName" Text="{Binding TxtUserName, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Margin="3" MinWidth="100" HorizontalAlignment="Left"/>
-            <TextBlock Text="Password" Grid.Row="2" Margin="3"/>
-            <TextBox x:Name="txtPassword" Text="{Binding TxtPassword, Mode=TwoWay}" Grid.Column="1" Grid.Row="2" Margin="3" MinWidth="100" HorizontalAlignment="Left"/>
-            <Button Command="{Binding MyCommand}" CommandParameter="{Binding ElementName=LoginWindow}" Content="Log in" Grid.Row="3" Grid.Column="1" Margin="3"/>-->
-        </Grid>
+            <Controls:MetroHeader Margin="{StaticResource ControlMargin}" Header="Password">
+                <Controls:MetroHeader.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome VerticalAlignment="Center" Kind="KeySolid" />
+                            <TextBlock Margin="2 0 0 0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Controls:MetroHeader.HeaderTemplate>
+                <PasswordBox  Controls:TextBoxHelper.Watermark="Password" Name="txtPassword">
+                </PasswordBox>
+            </Controls:MetroHeader>
+        </StackPanel>
+        <!--<TextBox Height="23" HorizontalAlignment="Left" Margin="157,12,0,0" Name="txtUsername" VerticalAlignment="Top" Width="150" ToolTip="Type your Username" MaxLength="100" TabIndex="0" />
+        <PasswordBox Height="23" HorizontalAlignment="Left" Margin="157,52,0,0" Name="txtPassword" VerticalAlignment="Top" Width="150" ToolTip="Type Password" PasswordChar="*" MaxLength="100" TabIndex="1" />
+
+        <Label Content="Username" Height="28" HorizontalAlignment="Left" Margin="68,10,0,0" Name="lblUsername" VerticalAlignment="Top" Foreground="Black" />
+        <Label Content="Password" Height="28" HorizontalAlignment="Left" Margin="68,52,0,0" Name="lblPassword" VerticalAlignment="Top" Foreground="Black" />-->
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="{StaticResource ColumnMargin}">
+            <Button Content="Login" Height="23" HorizontalAlignment="Right" Name="btnLogin" 
+                    Margin="{StaticResource ControlMargin}" VerticalAlignment="Top" Width="60" Click="btnLogin_Click" ToolTip="Click to Login" TabIndex="2" />
+            <Button Content="Cancel" Height="23" HorizontalAlignment="Right" Name="btnCancel" 
+                    Margin="{StaticResource ControlMargin}" VerticalAlignment="Top" Width="60" Click="btnCancel_Click" TabIndex="3" />
+        </StackPanel>
+
+        <!--<StackPanel Grid.Row="3">
+            <StackPanel.Resources>
+                <Style x:Key="AccentCircleButtonStyle"
+                        BasedOn="{StaticResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
+                        TargetType="{x:Type ButtonBase}">
+                    <Setter Property="Foreground" Value="{DynamicResource AccentColorBrush}" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentColorBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource GrayBrush7}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Resources>
+
+            <Button Width="48"
+                    Height="48"
+                    Margin="4"
+                    Style="{StaticResource AccentCircleButtonStyle}">
+                <iconPacks:FontAwesome Width="20"
+                                            Height="20"
+                                            Kind="BloggerBrands" />
+            </Button>
+
+        </StackPanel>-->
+
+
+        <!--<Controls:Badged x:Name="CountingBadge"
+                            Width="100"
+                            Margin="{StaticResource ControlMargin}">
+            <Button Click="CountingButton_OnClick" Content="Click Me" />
+        </Controls:Badged>-->
+
+        <!--<Controls:Badged Width="100"
+                            Margin="{StaticResource ControlMargin}"
+                            Badge="3">
+            <Button Content="Mail" />
+        </Controls:Badged>-->
+        <!--<TextBlock Text="Log in" Grid.ColumnSpan="2" FontWeight="Bold" HorizontalAlignment="Center" Margin="5" FontSize="20"/>
+        <TextBlock Text="Name" Grid.Row="1" Margin="3"/>
+        <TextBox x:Name="txtUserName" Text="{Binding TxtUserName, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Margin="3" MinWidth="100" HorizontalAlignment="Left"/>
+        <TextBlock Text="Password" Grid.Row="2" Margin="3"/>
+        <TextBox x:Name="txtPassword" Text="{Binding TxtPassword, Mode=TwoWay}" Grid.Column="1" Grid.Row="2" Margin="3" MinWidth="100" HorizontalAlignment="Left"/>
+        <Button Command="{Binding MyCommand}" CommandParameter="{Binding ElementName=LoginWindow}" Content="Log in" Grid.Row="3" Grid.Column="1" Margin="3"/>-->
     </Grid>
 </Controls:MetroWindow>

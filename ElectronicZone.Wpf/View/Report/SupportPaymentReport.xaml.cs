@@ -19,6 +19,11 @@ namespace ElectronicZone.Wpf.View.Report
         public SupportPaymentReport()
         {
             InitializeComponent();
+
+            DateTimeUtility dtUtility = new DateTimeUtility();
+            fromDate.SelectedDate = dtUtility.GetMonthStartDate();
+            toDate.SelectedDate = DateTime.Now;
+
             // on esc close
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
             this.txtDescription.Focus();
@@ -35,10 +40,11 @@ namespace ElectronicZone.Wpf.View.Report
             try
             {
                 DataTable dtSupportPayment = new DataTable();
-                DataAccess da = new DataAccess();
-                dtSupportPayment = da.SearchSupportPayment((int?)null, (int?)null,
-                    string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
-                    string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])), this.txtDescription.Text);
+                using (DataAccess da = new DataAccess()) {
+                    dtSupportPayment = da.SearchSupportPayment((int?)null, (int?)null,
+                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])), this.txtDescription.Text);
+                }
 
                 if (dtSupportPayment.Rows.Count > 0)
                 {

@@ -116,6 +116,13 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
+                <DataGridTextColumn Header="Remarks" Binding="{Binding Remarks}" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="ToolTip" Value="{Binding Remarks}" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Amount, StringFormat={}{0:00.00}}" Header="Amount">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">

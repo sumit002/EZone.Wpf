@@ -98,7 +98,8 @@ namespace ElectronicZone.Wpf.DataAccessLayer
 
         public DataTable GetAllProducts()
         {
-            string queryToUse = string.Format("SELECT Id, Name, Description, IsActive, CreatedDate, ModifiedDate FROM tblProductMaster WHERE IsActive = 1");
+            // string queryToUse = string.Format("SELECT Id, Name, Description, IsActive, CreatedDate, ModifiedDate FROM tblProductMaster WHERE IsActive = 1");
+            string queryToUse = string.Format("SELECT * FROM vw_ProductMaster WHERE IsActive = 1");
             return sQLHelper.GetSelectedValue(queryToUse, null);
         }
 
@@ -132,7 +133,8 @@ namespace ElectronicZone.Wpf.DataAccessLayer
 
         public DataTable GetAllBrands()
         {
-            string queryToUse = string.Format("SELECT Id, Name, Description, IsActive, CreatedDate, ModifiedDate FROM tblBrandMaster WHERE IsActive = 1");
+            // string queryToUse = string.Format("SELECT Id, Name, Description, IsActive, CreatedDate, ModifiedDate FROM tblBrandMaster WHERE IsActive = 1");
+            string queryToUse = string.Format("SELECT * FROM vw_BrandMaster WHERE IsActive = 1");
             return sQLHelper.GetSelectedValue(queryToUse, null);
         }
 
@@ -293,16 +295,10 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             return rslt;
         }
 
-        public DataTable GetAllSales(string id)
+        public DataTable GetSalesOnDemand()
         {
-            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
-            //construct parameter
-            if (!string.IsNullOrEmpty(id))
-            {
-                dbParameterList.Add(new SQLiteParameter("@Id", id));
-            }
-            string queryToUse = string.Format("SELECT * FROM vw_SaleMaster");
-            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+            string queryToUse = string.Format("Select SalesId, Product, ProductCode, COUNT(*) AS SaleCount from vw_SaleMaster GROUP BY Product, ProductCode ORDER BY SaleCount DESC");
+            return sQLHelper.GetSelectedValue(queryToUse, null);
         }
 
         public int DeleteSalesOrder(int Id)
@@ -314,7 +310,6 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
         }
         
-
         public DataTable GetSaleInvoices(string SalesIds)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
@@ -484,7 +479,7 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
             //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
-            string queryToUse = string.Format("SELECT * FROM vw_SaleMaster Where Quantity>0 ");
+            string queryToUse = string.Format("SELECT * FROM vw_SaleMaster Where Quantity > 0 ");
             if (!string.IsNullOrEmpty(productId))
                 queryToUse += string.Format(" AND ProductId = {0}", productId);
             if (!string.IsNullOrEmpty(brandId))

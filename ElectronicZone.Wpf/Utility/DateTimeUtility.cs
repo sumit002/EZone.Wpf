@@ -1,11 +1,8 @@
 ﻿namespace ElectronicZone.Wpf.Utility
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Globalization;
     using System.Configuration;
+    using System.Globalization;
 
     /// <summary>
     /// Basically this Utility handles the date time object to convert in 
@@ -18,7 +15,7 @@
             return dt.ToString();
         }
 
-        public DateTime getMonthStartDate() {
+        public DateTime GetMonthStartDate() {
             DateTime date = DateTime.Now;
             var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
             return firstDayOfMonth;

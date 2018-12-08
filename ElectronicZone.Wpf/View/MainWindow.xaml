@@ -78,7 +78,7 @@
     <!--Dashboard Right Window Section-->
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands ShowLastSeparator="True">
-            <Button
+            <!--<Button
                     Content="Flyouts"
                     ToolTip="Flyouts demo window" />
             <Button 
@@ -103,10 +103,10 @@
                 <iconPacks:FontAwesome Width="20"
                                           Height="20"
                                           Kind="PaletteSolid" />
-            </Button>
-            <ToggleButton Content="Confirm quit"
+            </Button>-->
+            <ToggleButton Content="Confirm Quit ?"
                           IsChecked="{Binding QuitConfirmationEnabled}"
-                          ToolTip="Enable quit confirmation dialog on exit" />
+                          ToolTip="Enable Confirmation on Close" />
             <ToggleButton ToolTip="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand">
                 <iconPacks:FontAwesome Width="20"
                                           Height="20"
@@ -119,7 +119,6 @@
             </ToggleButton>
             <!--<ToggleButton Content="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand"/>
             <ToggleButton Content="Settings" IsChecked="{Binding ElementName=flyoutSettings, Path=IsOpen}" Cursor="Hand"/>-->
-
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
@@ -140,7 +139,7 @@
                         <iconPacks:PackIconFontAwesome Kind="HandshakeRegular" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_Dashboard" Click="Dashboard_Click" >
+                <!--<MenuItem Header="_Dashboard" Click="Dashboard_Click" >
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="HandshakeRegular" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
@@ -149,7 +148,7 @@
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="HandshakeRegular" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </MenuItem>-->
             </MenuItem>
             <MenuItem Header="_Purchase" >
                 <MenuItem Header="_Purchase Master" Click="StockMaster_Click" >
@@ -181,16 +180,16 @@
                         <iconPacks:PackIconFontAwesome Kind="ChartBarSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-                
+
                 <Separator/>
-                <MenuItem Header="_Pending Payment Report" Click="PendingPaymentReport_Click">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconFontAwesome Kind="FilePowerpointSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                    </MenuItem.Icon>
-                </MenuItem>
                 <MenuItem Header="_Support Payment Report" Click="SupportPaymentReport_Click">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="HandHoldingUsdSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Pending Payment Report" Click="PendingPaymentReport_Click">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconFontAwesome Kind="FilePowerpointSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
@@ -216,39 +215,44 @@
                         <iconPacks:PackIconFontAwesome Kind="UserShieldSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_Invoice Master" Click="InvoiceMaster_Click">
+                <!--<MenuItem Header="_Invoice Master" Click="InvoiceMaster_Click">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="ReceiptSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </MenuItem>-->
             </MenuItem>
             <MenuItem Header="_Help" >
-                <MenuItem Header="_View Help" Click="Help_Click" >
+                <MenuItem Header="_View Help" Click="LaunchREADMEGitHub" >
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="QuestionSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="_License" Click="LaunchLICENSEGitHub" >
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconFontAwesome Kind="IdBadgeSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem Header="_Register Product" Click="RegisterProduct_Click">
+                <MenuItem Header="_Register Product" Command="{Binding ShowMessageDialogCommand}" CommandParameter="Register Product">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="RegisteredSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_Check for Update" Click="CheckUpdate_Click">
+                <MenuItem Header="_Check for Update" Command="{Binding ShowMessageDialogCommand}" CommandParameter="Check for Update">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="CloudUploadAltSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_Technical Support" Click="TechnicalSupport_Click">
+                <MenuItem Header="_Technical Support"  Command="{Binding ShowMessageDialogCommand}" CommandParameter="Technical Support">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="PhoneSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_Invoice Test" Click="Invoice_Click">
+                <!--<MenuItem Header="_Invoice Test" Click="Invoice_Click">
                     <MenuItem.Icon>
                         <iconPacks:PackIconFontAwesome Kind="ReceiptSolid" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </MenuItem>-->
                 <Separator />
                 <MenuItem Header="_Our Story" Click="Info_Click" >
                     <MenuItem.Icon>
@@ -261,7 +265,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Window">
+            <!--<MenuItem Header="Window">
                 <MenuItem Header="ShowTitleBar"
                           IsCheckable="True"
                           IsChecked="{Binding Path=ShowMyTitleBar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -274,9 +278,7 @@
                 <MenuItem Header="Ignore taskbar on maximize"
                           IsCheckable="True"
                           IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:MetroWindow}}, Path=IgnoreTaskbarOnMaximize}" />
-                <!--<MenuItem Header="Toggle FullScreen (no taskbar, window style = none)"
-                          IsCheckable="True"
-                          IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:MetroWindow}}, Path=ToggleFullScreen}" />-->
+                
                 <Separator />
                 <MenuItem Click="MenuWindowWithoutBorderOnClick" Header="Window without Border" />
                 <MenuItem Click="MenuWindowWithBorderOnClick" Header="Window with Border" />
@@ -292,18 +294,7 @@
                           IsCheckable="True"
                           IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:MetroWindow}}, Path=RightWindowCommands.ShowLastSeparator}"
                           IsEnabled="{Binding ElementName=ShowSeparatorsMI, Path=IsChecked, Mode=OneWay}" />
-                <!--<Separator />
-                <MenuItem Command="{Binding ToggleIconScalingCommand}"
-                          CommandParameter="{x:Static Controls:MultiFrameImageMode.ScaleDownLargerFrame}"
-                          Header="Window icon: scale down larger frame"
-                          IsCheckable="True"
-                          IsChecked="{Binding IsScaleDownLargerFrame, Mode=OneWay}" />
-                <MenuItem Command="{Binding ToggleIconScalingCommand}"
-                          CommandParameter="{x:Static Controls:MultiFrameImageMode.NoScaleSmallerFrame}"
-                          Header="Window icon: no scale, smaller frame"
-                          IsCheckable="True"
-                          IsChecked="{Binding IsNoScaleSmallerFrame, Mode=OneWay}" />-->
-            </MenuItem>
+            </MenuItem>-->
         </Menu>
 
 
@@ -319,10 +310,10 @@
             <TabItem Header="Stock Analysis">
                 <commonViews:StockAnalysis  DataContext="{Binding}" />
             </TabItem>
-            <!--<TabItem Header="Sales Analysis">
+            <TabItem Header="Sales Analysis">
                 <commonViews:SalesAnalysis  DataContext="{Binding}" />
             </TabItem>
-            <TabItem Header="Statistics">
+            <!--<TabItem Header="Statistics">
                 <exampleViews:TextExamples DataContext="{Binding}" />
             </TabItem>
             <TabItem Header="Others">
@@ -330,12 +321,11 @@
             </TabItem>-->
         </Controls:MetroAnimatedSingleRowTabControl>
 
-        <StatusBar Grid.Row="2">
+        <!--<StatusBar Grid.Row="2">
             <StatusBarItem>eZone App</StatusBarItem>
             <Separator Style="{StaticResource MetroStatusBarSeparator}" />
             <StatusBarItem>Version :</StatusBarItem>
             <StatusBarItem>1.0.1</StatusBarItem>
-            <!--<StatusBarItem Content="{Binding ElementName=MainTabControl, Path=SelectedItem.Header, Mode=OneWay}" />-->
-        </StatusBar>
+        </StatusBar>-->
     </Grid>
 </Controls:MetroWindow>

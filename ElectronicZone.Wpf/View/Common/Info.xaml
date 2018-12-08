@@ -1,13 +1,15 @@
-﻿<Window x:Class="ElectronicZone.Wpf.View.Common.Info"
+﻿<Controls:MetroWindow x:Class="ElectronicZone.Wpf.View.Common.Info"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Common"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Info" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
+        Title="Info" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen"
+        ShowMaxRestoreButton="False" ShowMinButton="False">
 
-    <Grid>
+    <Grid Background="{StaticResource GradientBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -16,15 +18,15 @@
         <FlowDocumentScrollViewer>
             <FlowDocument x:Name="FD">
                 <Paragraph>
-                    <Image Source="/ElectronicZone.Wpf;component/Resources/logo.png" Width="70" Height="70" Margin="0,0,30,0" />
-                    <Run FontSize="40">Summit Dash</Run>
+                    <Image Source="/ElectronicZone.Wpf;component/Resources/author.jpg" Width="120" Height="100" Margin="0,0,30,0" />
+                    <Run FontSize="40">Sumit Das</Run>
                     <Run FontSize="12">About Author</Run>
                 </Paragraph>
                 <Paragraph>
                     Welcome to eZone !
                 </Paragraph>
                 <Paragraph>
-                    My name is Sumit Dash and am the founder of
+                    My name is Sumit Das and am the founder of
                     <Bold>eZone</Bold> , a place/store to find all your business strategies you crave. I started this product after being told by one of my younger brother's real life problem.
 
                 </Paragraph>
@@ -38,4 +40,4 @@
         </FlowDocumentScrollViewer>
 
     </Grid>
-</Window>
+</Controls:MetroWindow>

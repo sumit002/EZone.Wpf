@@ -4,7 +4,6 @@ using MahApps.Metro.Controls;
 using System;
 using System.Configuration;
 using System.Data;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,12 +16,17 @@ namespace ElectronicZone.Wpf.View.Report
     public partial class SalesReport : MetroWindow
     {
         ILogger logger = new Logger(typeof(SalesReport));
+
         public SalesReport()
         {
             InitializeComponent();
-            loadProduct();
-            loadBrands();
-            loadSalesPerson();
+            LoadProduct();
+            LoadBrands();
+            LoadSalesPerson();
+
+            DateTimeUtility dtUtility = new DateTimeUtility();
+            fromDate.SelectedDate = dtUtility.GetMonthStartDate();
+            toDate.SelectedDate = DateTime.Now;
 
             // on esc close
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
@@ -63,19 +67,17 @@ namespace ElectronicZone.Wpf.View.Report
             try
             {
                 DataTable dtSales = new DataTable();
-                DataAccess da = new DataAccess();
-                dtSales = da.SearchSales((this.cbProduct.SelectedValue == null ? "" : this.cbProduct.SelectedValue.ToString()), (this.cbBrandCompany.SelectedValue == null ? "" : this.cbBrandCompany.SelectedValue.ToString()), this.txtProdCode.Text, this.txtStockCode.Text, (int?)this.txtPriceFrom.Value, (int?)this.txtPriceTo.Value,
+                SaleManager _sm = new SaleManager();
+                dtSales = _sm.SearchSales((this.cbProduct.SelectedValue == null ? "" : this.cbProduct.SelectedValue.ToString()), (this.cbBrandCompany.SelectedValue == null ? "" : this.cbBrandCompany.SelectedValue.ToString()), this.txtProdCode.Text, this.txtStockCode.Text, (int?)this.txtPriceFrom.Value, (int?)this.txtPriceTo.Value,
                     string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
                     string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
                     (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()));
 
-                if (dtSales.Rows.Count > 0)
-                {
+                if (dtSales.Rows.Count > 0) {
                     btnExport.Visibility = System.Windows.Visibility.Visible;
                     dataGridSales.ItemsSource = dtSales.DefaultView;
                 }
-                else
-                {
+                else {
                     btnExport.Visibility = System.Windows.Visibility.Hidden;
                     dataGridSales.ItemsSource = null;
                 }
@@ -90,33 +92,36 @@ namespace ElectronicZone.Wpf.View.Report
         /// <summary>
         /// Load All Active Products
         /// </summary>
-        private void loadProduct()
+        private void LoadProduct()
         {
             DataTable dtProduct = new DataTable();
-            DataAccess da = new DataAccess();
-            dtProduct = da.GetAllProducts();
+            using (DataAccess da = new DataAccess()) {
+                dtProduct = da.GetAllProducts();
+            }
             // bind to combobox
             cbProduct.ItemsSource = dtProduct.DefaultView;
         }
         /// <summary>
         /// Load All Active Brands
         /// </summary>
-        private void loadBrands()
+        private void LoadBrands()
         {
             DataTable dtBrand = new DataTable();
-            DataAccess da = new DataAccess();
-            dtBrand = da.GetAllBrands();
+            using (DataAccess da = new DataAccess()) {
+                dtBrand = da.GetAllBrands();
+            }
             // bind to combobox
             cbBrandCompany.ItemsSource = dtBrand.DefaultView;
         }
         /// <summary>
         /// 
         /// </summary>
-        private void loadSalesPerson()
+        private void LoadSalesPerson()
         {
             DataTable dtProduct = new DataTable();
-            DataAccess da = new DataAccess();
-            dtProduct = da.GetAllSalesPerson();
+            using (DataAccess da = new DataAccess()) {
+                dtProduct = da.GetAllSalesPerson();
+            }
             // bind to combobox
             cbSalesPerson.ItemsSource = dtProduct.DefaultView;
             cbSalesPerson.SelectedItem = null;
