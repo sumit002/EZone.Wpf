@@ -1,15 +1,17 @@
 ﻿using ElectronicZone.Wpf.DataAccessLayer;
 using ElectronicZone.Wpf.Helper;
+using ElectronicZone.Wpf.Utility;
 using ElectronicZone.Wpf.View.Master;
+using ElectronicZone.Wpf.View.Payment;
 using ElectronicZone.Wpf.View.Report;
 using LiveCharts;
 using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
 using static ElectronicZone.Wpf.Utility.CommonEnum;
@@ -27,12 +29,17 @@ namespace ElectronicZone.Wpf.ViewModel
             get;
             set;
         }
-        #endregion
 
         public Func<ChartPoint, string> PointLabel { get; set; }
         public SeriesCollection Series { get; set; }
         public SeriesCollection SeriesCollection { get; set; }
+        public ObservableCollection<Model.Purchase> PurchaseOUtofStockList { get; set; }
+        #endregion
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dialogCoordinator"></param>
         public MainWindowViewModel(IDialogCoordinator dialogCoordinator)
         {
             this.Title = "Electronic Zone";
@@ -50,6 +57,7 @@ namespace ElectronicZone.Wpf.ViewModel
             PointLabel = chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
             this.Series = new SeriesCollection {};
             this.SeriesCollection = new SeriesCollection { };
+            this.PurchaseOUtofStockList = new ObservableCollection<Model.Purchase>();
         }
 
         private int _selectedIndex;
@@ -60,8 +68,11 @@ namespace ElectronicZone.Wpf.ViewModel
             {
                 _selectedIndex = value;
                 OnPropertyChanged();
-                if (_selectedIndex == 1) {
-                    GetPaymentInOut();
+                if (_selectedIndex == 1)
+                {
+                    LoadDasboardAnalysis();
+                } else if (_selectedIndex == 2) {
+                    LoadStockAnalysis();
                 };
             }
         }
@@ -88,7 +99,7 @@ namespace ElectronicZone.Wpf.ViewModel
                 return this.searchDashboardCmd ?? (this.searchDashboardCmd = new SimpleCommand
                 {
                     CanExecuteDelegate = x => true,
-                    ExecuteDelegate = x => GetPaymentInOut()
+                    ExecuteDelegate = x => LoadDasboardAnalysis()
                 });
             }
         }
@@ -134,6 +145,21 @@ namespace ElectronicZone.Wpf.ViewModel
                     ExecuteDelegate = x => {
                         SupportIncomeMaster contactMaster = new SupportIncomeMaster();
                         contactMaster.ShowDialog();
+                    }
+                });
+            }
+        }
+        private ICommand openPendingPaymentCmd;
+        public ICommand OpenPendingPaymentCmd
+        {
+            get
+            {
+                return this.openPendingPaymentCmd ?? (this.openPendingPaymentCmd = new SimpleCommand
+                {
+                    CanExecuteDelegate = x => true,
+                    ExecuteDelegate = x => {
+                        PendingPayment pendingPayment = new PendingPayment();
+                        pendingPayment.ShowDialog();
                     }
                 });
             }
@@ -304,9 +330,9 @@ namespace ElectronicZone.Wpf.ViewModel
         public DateTime EndDate { get => _endDate; set { _endDate = value; OnPropertyChanged();} }
 
         /// <summary>
-        /// Get Payment In & Out
+        /// Get Payment In Out & Charts
         /// </summary>
-        private async void GetPaymentInOut()
+        private async void LoadDasboardAnalysis()
         {
             var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
             controller.SetIndeterminate();
@@ -316,29 +342,17 @@ namespace ElectronicZone.Wpf.ViewModel
                 dtPaymentIncome = da.SearchPaymentIncome(StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), null);
                 dtPurchaseInvest = da.SearchPaymentInvest(StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), PaymentStatus.PURCHASE_PAYMENT.ToString());
                 dtSales = da.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty, null, null, StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), string.Empty);
-                dtPurchases = da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
+                //dtPurchases = da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, StartDate.ToString(ConfigurationManager.AppSettings["DateOnly"]), EndDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
             }
-            this.TotalSupportIncome = dtPaymentIncome.AsEnumerable().Where(x => x.Field<string>("PaymentType") == PaymentStatus.SUPPORT_PAYMENT.ToString())
-                        .Select(a => a.Field<double>("Amount")).Sum();
-            this.TotalSaleIncome = dtPaymentIncome.AsEnumerable().Where(x => x.Field<string>("PaymentType") == PaymentStatus.SALE_PAYMENT.ToString())
-                        .Select(a => a.Field<double>("Amount")).Sum();
+            this.TotalSupportIncome = dtPaymentIncome.AsEnumerable().Where(x => x.Field<string>("PaymentType") == PaymentStatus.SUPPORT_PAYMENT.ToString()).Select(a => a.Field<double>("Amount")).Sum();
+            this.TotalSaleIncome = dtPaymentIncome.AsEnumerable().Where(x => x.Field<string>("PaymentType") == PaymentStatus.SALE_PAYMENT.ToString()).Select(a => a.Field<double>("Amount")).Sum();
             this.TotalIncome = TotalSaleIncome + TotalSupportIncome;
-            this.TotalPurchasePayment = dtPurchaseInvest.AsEnumerable()
-                        .Select(x => x.Field<double>("Amount") ).Sum();
-            this.TotalSaleAmount = dtSales.AsEnumerable()
-                        .Select(x => x.Field<double>("AmountPaid")).Sum();
+            this.TotalPurchasePayment = dtPurchaseInvest.AsEnumerable().Select(x => x.Field<double>("Amount") ).Sum();
+            this.TotalSaleAmount = dtSales.AsEnumerable().Select(x => x.Field<double>("AmountPaid")).Sum();
             //Load Charts
             InitializeCharts();
-
-
-
-
-
             await controller.CloseAsync();
         }
-
-        
-        
         private void InitializeCharts()
         {
             //var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
@@ -398,6 +412,40 @@ namespace ElectronicZone.Wpf.ViewModel
             //Formatter = value => value.ToString("N");
             //DataContext = this;
         }
+        #endregion
+
+        #region Stock Region
+        /// <summary>
+        /// Load Stock Analys
+        /// </summary>
+        private async void LoadStockAnalysis()
+        {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+
+            PurchaseManager _pm = new PurchaseManager();
+            this.PurchaseOUtofStockList.Clear();
+            DataTable dtPurchases = _pm.GetAllOutOfStocks();
+            foreach (DataRow row in _pm.GetAllOutOfStocks().Rows)
+            {
+                PurchaseOUtofStockList.Add(new Model.Purchase()
+                {
+                    Id = int.Parse(row["StockId"].ToString()),
+                    Product = Convert.ToString(row["Product"]),
+                    ProductId = int.Parse(row["ProductId"].ToString()),
+                    ProductCode = (string)row["ProductCode"],
+                    StockCode = Convert.ToString(row["StockCode"]),
+                    //ItemDesc = Convert.ToString(row["ItemDesc"]),
+
+                    Quantity = int.Parse(row["Quantity"].ToString()),
+                    AvlQuantity = int.Parse(row["AvlQuantity"].ToString()),
+
+                    PurchaseDate = Convert.ToDateTime(row["PurchaseDate"]),
+                    CreatedDate = Convert.ToDateTime(row["CreatedDate"])
+                });
+            }
+            await controller.CloseAsync();
+        } 
         #endregion
     }
 }

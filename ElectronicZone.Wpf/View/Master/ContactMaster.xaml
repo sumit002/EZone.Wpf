@@ -110,7 +110,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="8*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" ToolTip="Edit" Foreground="Blue"
@@ -119,7 +119,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="8*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" ToolTip="Delete" Foreground="Red" IsEnabled="{Binding CanDelete}"
@@ -129,7 +129,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="8*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{iconPacks:FontAwesome Kind=CopyRegular}" ToolTip="Copy to Clipboard" Foreground="Orange"

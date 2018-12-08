@@ -192,14 +192,14 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             return sQLHelper.InsertOrUpdate(string.Empty, updateQuery, existanceTestQuery, dbParameterList);
         }
 
-        public DataTable GetAllStocks()
-        {
-            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
-            //construct parameter
-            //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
-            string queryToUse = string.Format("SELECT * FROM vw_StockMaster_New");
-            return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
-        }
+        //public DataTable GetAllStocks()
+        //{
+        //    List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+        //    //construct parameter
+        //    //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
+        //    string queryToUse = string.Format("SELECT * FROM vw_StockMaster_New");
+        //    return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
+        //}
 
         public int DeleteStock(int Id)
         {
@@ -219,8 +219,11 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         /// <param name="stockCode"></param>
         /// <param name="priceMin"></param>
         /// <param name="priceMax"></param>
+        /// <param name="fromDate"></param>
+        /// <param name="toDate"></param>
+        /// <param name="avlQty"></param>
         /// <returns></returns>
-        public DataTable SearchStocks(string productId, string brandId, string productCode, string stockCode, double? priceMin, double? priceMax, string fromDate, string toDate, bool? avlQty = false)
+        public DataTable SearchStocks(string productId, string brandId, string productCode, string stockCode, double? priceMin, double? priceMax, string fromDate, string toDate, bool? avlQty = false, bool? outOfStock = false)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
             //dbParameterList.Add(new SQLiteParameter("@ProjectId", id));
@@ -242,7 +245,9 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             if (!string.IsNullOrEmpty(toDate))
                 queryToUse += string.Format(" AND PurchaseDate <= '{0}'", toDate);
             if (avlQty.Value)
-                queryToUse += string.Format(" AND AvlQuantity>=1");
+                queryToUse += string.Format(" AND AvlQuantity > 0");
+            if(outOfStock.Value)
+                queryToUse += string.Format(" AND AvlQuantity = 0");
             return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 
@@ -310,14 +315,13 @@ namespace ElectronicZone.Wpf.DataAccessLayer
         }
         
 
-        public DataTable GetSaleInvoice(string SalesId)
+        public DataTable GetSaleInvoices(string SalesIds)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
-            if (!string.IsNullOrEmpty(SalesId))
-            {
-                dbParameterList.Add(new SQLiteParameter("@SalesId", SalesId));
+            if (!string.IsNullOrEmpty(SalesIds)) {
+                dbParameterList.Add(new SQLiteParameter("@SalesIds", SalesIds));
             }
-            string queryToUse = string.Format("SELECT * FROM vw_SaleMaster Where SalesId=@SalesId");
+            string queryToUse = string.Format("SELECT * FROM vw_SaleMaster Where SalesId IN (@SalesIds)");
             return sQLHelper.GetSelectedValue(queryToUse, dbParameterList);
         }
 

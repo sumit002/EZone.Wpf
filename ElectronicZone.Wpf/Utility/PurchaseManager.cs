@@ -30,7 +30,14 @@ namespace ElectronicZone.Wpf.Utility
         /// <returns></returns>
         public DataTable GetAllStocks() {
             using (DataAccess da = new DataAccess()) {
-                return da.GetAllStocks();
+                return da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, null, null);
+            }
+        }
+
+        public DataTable GetAllOutOfStocks()
+        {
+            using (DataAccess da = new DataAccess()) {
+                return da.SearchStocks(string.Empty, string.Empty, string.Empty, string.Empty, null, null, null, null, false, true);
             }
         }
 

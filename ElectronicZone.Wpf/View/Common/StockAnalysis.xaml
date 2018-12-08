@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="ElectronicZone.Wpf.View.Common.StockAnalysis"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ElectronicZone.Wpf.View.Common"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" >
+    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+        <Grid Background="{StaticResource GradientBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="430*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50*" />
+                <RowDefinition Height="259*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="1"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI"
+                       FontSize="30"
+                       FontWeight="Light"
+                       Foreground="{DynamicResource BlackBrush}"
+                       Text="Below Items are running Out Of Stock Now" />
+
+            <WrapPanel Grid.Row="1"
+                       Grid.Column="1"
+                       Width="940"
+                       Height="382"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top">
+                
+                <!--<TabControl Margin="10" TabStripPlacement="Left">
+                    <TabItem Header="ListBox">-->
+                        <ListView Margin="2" BorderThickness="1"
+                                  ItemsSource="{Binding PurchaseOUtofStockList}"
+                                  SelectedIndex="0"
+                                  Style="{StaticResource VirtualisedMetroListView}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Product}" Header="Product" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding ProductCode}" Header="Product Code" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    <!--</TabItem>
+                </TabControl>-->
+                
+            </WrapPanel>
+        </Grid>
+    </ScrollViewer>
+    
+</UserControl>

@@ -310,16 +310,19 @@
 
         <Controls:MetroAnimatedSingleRowTabControl x:Name="MainTabControl" Grid.Row="1" 
                                                    SelectedIndex="{Binding TabSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=Default}">
-            <TabItem Header="Dashboard">
+            <TabItem Header="My Dashboard">
                 <commonViews:Tiles  DataContext="{Binding}" />
             </TabItem>
-            <TabItem Header="My Analysis">
+            <TabItem Header="Business Analysis">
                 <commonViews:MasterDashboard  DataContext="{Binding}" />
             </TabItem>
-            <TabItem Header="Graphs">
-                <commonViews:Graphs  DataContext="{Binding}" />
+            <TabItem Header="Stock Analysis">
+                <commonViews:StockAnalysis  DataContext="{Binding}" />
             </TabItem>
-            <!--<TabItem Header="Statistics">
+            <!--<TabItem Header="Sales Analysis">
+                <commonViews:SalesAnalysis  DataContext="{Binding}" />
+            </TabItem>
+            <TabItem Header="Statistics">
                 <exampleViews:TextExamples DataContext="{Binding}" />
             </TabItem>
             <TabItem Header="Others">

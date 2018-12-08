@@ -7,6 +7,7 @@ using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -25,13 +26,11 @@ namespace ElectronicZone.Wpf.ViewModel
         #endregion
 
         #region Commands
-        //public ICommand AddSaleOrderCmd { get; set; }
-        //public ICommand CloseAddSaleOrderCmd { get; set; }
-
         public ICommand SearchPurchaseResetCmd { get; set; }
         public ICommand SearchPurchaseOrderCmd { get; set; }
         public ICommand CancelSaleOrderCmd { get; set; }
         public ICommand SaleThisPurchaseOrderCmd { get; set; }
+        public ICommand DownloadSaleInvoiceCmd { get; set; }
         #endregion
 
         #region UI Models
@@ -192,6 +191,7 @@ namespace ElectronicZone.Wpf.ViewModel
                 this.SearchPurchaseResetCmd = new CommandHandler(SearchPurchaseReset, CanExecuteSearchPurchaseReset);
                 this.SearchPurchaseOrderCmd = new CommandHandler(SearchPurchaseOrder, CanExecuteSearchPurchaseOrder);
                 this.SaleThisPurchaseOrderCmd = new CommandHandler(SaleThisPurchaseOrder, CanExecuteSaleThisPurchaseOrder);
+                this.DownloadSaleInvoiceCmd = new CommandHandler(DownloadSaleInvoice, CanExecuteCancelSaleOrder);
 
                 LoadProduct(); LoadBrands();
 
@@ -200,6 +200,31 @@ namespace ElectronicZone.Wpf.ViewModel
                 //LoadSalesPerson();
             }
             catch (Exception ex) {
+                logger.LogException(ex);
+            }
+        }
+
+        private async void DownloadSaleInvoice(object obj)
+        {
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            controller.SetIndeterminate();
+            DwonloadSaleInvoice((Sale)obj);
+            await controller.CloseAsync();
+        }
+
+        /// <summary>
+        /// Download Invoice For Sale
+        /// </summary>
+        /// <param name="_sale"></param>
+        private void DwonloadSaleInvoice(Sale _sale)
+        {
+            try
+            {
+                goPDFOut invoice = new goPDFOut(new int[] { _sale.Id });
+                invoice.GeneratePDF();
+            }
+            catch (Exception ex)
+            {
                 logger.LogException(ex);
             }
         }

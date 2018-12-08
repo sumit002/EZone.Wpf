@@ -80,6 +80,13 @@
                                Style="{StaticResource LargeTileStyle}">
                     <iconPacks:FontAwesome Width="30" Height="30" Kind="RupeeSignSolid" />
                 </Controls:Tile>
+                <Controls:Tile Title="Manage Pendings"
+                               HorizontalTitleAlignment="Center"
+                               Controls:ControlsHelper.MouseOverBorderBrush="{StaticResource WhiteBrush}"
+                               Background="DodgerBlue" Command="{Binding Path=OpenPendingPaymentCmd}"
+                               Style="{StaticResource LargeTileStyle}">
+                    <iconPacks:FontAwesome Width="30" Height="30" Kind="HandsHelpingSolid" />
+                </Controls:Tile>
                 
                 
                 <!--<Controls:Tile Title="Count"

@@ -176,7 +176,7 @@ namespace ElectronicZone.Wpf.ViewModel
             {
                 return false;
             }
-            else if (!string.IsNullOrEmpty(this.Name) && !string.IsNullOrEmpty(this.PrimaryContact) 
+            else if (this.Id == 0 && !string.IsNullOrEmpty(this.Name) && !string.IsNullOrEmpty(this.PrimaryContact) 
                 && da.IfContactExists(_tableToUse, "Name", "Contact", this.Name, this.PrimaryContact))
             {
                 MessageBoxResult result = MessageBox.Show("Contact Already Exists!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);

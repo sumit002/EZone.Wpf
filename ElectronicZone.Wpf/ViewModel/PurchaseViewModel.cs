@@ -25,7 +25,7 @@ namespace ElectronicZone.Wpf.ViewModel
         public ObservableCollection<Product> ProductList { get; set; }
         public ObservableCollection<Brand> BrandList { get; set; }
         public PurchaseManager _pm;
-        string imageName = ""; 
+        //string imageName = ""; 
         #endregion
 
         #region  UI Models

@@ -69,7 +69,7 @@
                             </DataGridTextColumn>
                             <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="50*" />
                             <DataGridTextColumn Header="Created On" Binding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yy}}" />
-                            <DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="5*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="{iconPacks:FontAwesome Kind=EditRegular}" Foreground="Blue" ToolTip="Edit"
@@ -78,7 +78,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="5*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="{iconPacks:FontAwesome Kind=TrashAltRegular}" Foreground="Red" ToolTip="Delete" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},

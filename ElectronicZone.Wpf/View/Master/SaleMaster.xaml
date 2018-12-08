@@ -122,7 +122,8 @@
                              SpellCheck.IsEnabled="True">
                         <FlowDocument>
                             <Paragraph>
-                                <TextBlock>Note : Sales with Pending Amount is Highlighted.</TextBlock>
+                                <TextBlock>Note : 1. Sales with Pending Amount is Highlighted.</TextBlock>
+                                <TextBlock>2. Sales Can be Canceled or Deleted within 60 Days of the Creation Date.</TextBlock> 
                             </Paragraph>
                         </FlowDocument>
                     </RichTextBox>
@@ -173,6 +174,15 @@
                                     <DataTemplate>
                                         <Button Content="{iconPacks:FontAwesome Kind=BanSolid}" Foreground="Red" ToolTip="Cancel Sale" IsEnabled="{Binding CanCancel}"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.CancelSaleOrderCmd}"
+                                                CommandParameter="{Binding}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="12*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{iconPacks:FontAwesome Kind=FileDownloadSolid}" Foreground="Black" ToolTip="Dwonload Invoice"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.DownloadSaleInvoiceCmd}"
                                                 CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

@@ -1,81 +1,90 @@
-﻿using System;
-using System.Windows;
+﻿using ElectronicZone.Wpf.DataAccessLayer;
+using ElectronicZone.Wpf.Model;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
-using ElectronicZone.Wpf.DataAccessLayer;
-//http://www.aspmemo.net/2014/01/how-to-generate-invoice-form-as-pdf.html
+using System.IO;
+using System.Windows;
 
 namespace ElectronicZone.Wpf.Utility
 {
+    /// <summary>
+    /// Generate Invoice PDF
+    /// Ref : http://www.aspmemo.net/2014/01/how-to-generate-invoice-form-as-pdf.html
+    /// </summary>
     public class goPDFOut
     {
-        private string _filePath;
-        //Class Variables
-        string orderNo = DateTime.Now.Ticks.ToString().Substring(0, 6);
-        string orderDate = DateTime.Now.ToString("dd MMM yyyy");
-        string _custAddress = "#113, Sharada Nilaya, 2nd Floor, J P Nagar 6th Phase, Karnataka";
-        string _custName = "Sumit Kumar Das";
-        decimal totalAmtStr = 200;
-        string accountNo = "0123456789012";
-        string accountName = "Sumit Das";
-        string branch = "Phahon Yothin Branch";
-        string bank = "Kasikorn Bank";
+        #region Class Variables
+        private string _orderNo, _orderDate, _filePath, _logoPath, _custName, _custAddress, _companyName, _companyAddress, _watermarkText, _itemTableFooterText, _invoiceFooterNote;
+        decimal totalAmtStr = 0;
+        List<Invoice> invoiceList = new List<Invoice>();  
+        #endregion
 
-        // for Gridview
-        DataTable dt = new DataTable();
-
-        public goPDFOut()
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="saleIdArr"></param>
+        public goPDFOut(int [] saleIdArr)
         {
+            #region File & Logo Section
+            string fileName = string.Format("{1}-{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now, "Invoice");
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            _filePath = Path.Combine(strPath, string.Format("{0}.pdf", fileName));
+            _logoPath = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName) + "\\Resources\\logo.png";
+            // App Settings
+            this._watermarkText = ConfigurationManager.AppSettings["InvoiceWatermarkText"];
+            this._itemTableFooterText = ConfigurationManager.AppSettings["InvoiceItemTableFooterText"];
+            this._invoiceFooterNote = ConfigurationManager.AppSettings["InvoiceFooterNote"];
+            this._companyName = ConfigurationManager.AppSettings["InvoiceCompanyName"];
+            this._companyAddress = ConfigurationManager.AppSettings["InvoiceCompanyAddress"];
+            #endregion
 
-            DataAccess da = new DataAccess();
-            DataTable dtSaleInvoice = da.GetSaleInvoice("139");
+            DataTable dtSaleInvoice;
+            var saleIds = string.Join(",", saleIdArr);
+            using (DataAccess da = new DataAccess()) {
+                dtSaleInvoice = da.GetSaleInvoices(saleIds);
+            }
 
-            dt.Columns.Add("NO", Type.GetType("System.String"));
-            dt.Columns.Add("ITEM", Type.GetType("System.String"));
-            dt.Columns.Add("QUANTITY", Type.GetType("System.String"));
-            dt.Columns.Add("AMOUNT", Type.GetType("System.String"));
-
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; i < dtSaleInvoice.Rows.Count; ++i)
             {
-                dt.Rows.Add();
-                dt.Rows[i]["NO"] = (i + 1).ToString();
-                dt.Rows[i]["ITEM"] = "Item " + i.ToString();
-                dt.Rows[i]["QUANTITY"] = (i + 1).ToString();
-                dt.Rows[i]["AMOUNT"] = (i + 1).ToString();
-                totalAmtStr += (i + 1);
+                _orderDate = Convert.ToDateTime(dtSaleInvoice.Rows[i]["SaleDate"]).ToString(ConfigurationManager.AppSettings["InvoiceDateDisplayFormat"]);
+                _orderNo = dtSaleInvoice.Rows[i]["InvoiceNumber"].ToString();
+                _custName = dtSaleInvoice.Rows[i]["SaleTo"].ToString();
+                _custAddress = dtSaleInvoice.Rows[i]["SaleAddress"].ToString();
+
+                invoiceList.Add(new Invoice() {
+                    SrNo = $"{i + 1}",
+                    Item = $"{dtSaleInvoice.Rows[i]["Product"].ToString()}-{dtSaleInvoice.Rows[i]["ProductCode"].ToString()}",
+                    Price = dtSaleInvoice.Rows[i]["SalePrice"].ToString(),
+                    Quantity = dtSaleInvoice.Rows[i]["Quantity"].ToString(),
+                    Total = dtSaleInvoice.Rows[i]["Total"].ToString()
+                });
+                totalAmtStr += Convert.ToDecimal(dtSaleInvoice.Rows[i]["Total"]);
             }
         }
 
-        /*private void button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Generate PDF using iTextSharp
+        /// </summary>
+        public void GeneratePDF()
         {
-            string fileName = string.Format("{1}-{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now, "Invoice");
-            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string filePath = Path.Combine(strPath, string.Format("{0}.pdf", fileName));
-            string logoPath = System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName).Replace("\\bin\\Debug", "")
-             + "\\logo\\logo.png";
-
-            GeneratePDF(filePath, logoPath, "[ PAID ]");
-        }*/
-
-        public void GeneratePDF(string filePath, string logoPath, string watermarkText = null)
-        {
-            // using iTextSharp
             using (Document document = new Document(PageSize.A4, 70, 70, 70, 70))
             {
-                using (PdfWriter docWriter = PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.Create)))
+                using (PdfWriter docWriter = PdfWriter.GetInstance(document, new FileStream(_filePath, FileMode.Create)))
                 {
                     // First, create our fonts
                     var titleFont = FontFactory.GetFont("Arial", 14, Font.BOLD);
                     var boldTableFont = FontFactory.GetFont("Arial", 10, Font.BOLD);
-                    var bodyFont = FontFactory.GetFont("Arial", 10, Font.NORMAL);
+                    var _bodyFont = FontFactory.GetFont("Arial", 10, Font.NORMAL);
                     Rectangle pageSize = docWriter.PageSize;
 
                     #region Watermark
-                    if (!string.IsNullOrEmpty(watermarkText))
+                    if (!string.IsNullOrEmpty(_watermarkText))
                     {
-                        PdfWriterEvents writerEvent = new PdfWriterEvents(watermarkText);
+                        PdfWriterEvents writerEvent = new PdfWriterEvents(_watermarkText);
                         docWriter.PageEvent = writerEvent;
                     }
                     #endregion
@@ -94,17 +103,18 @@ namespace ElectronicZone.Wpf.Utility
                     headertable.DefaultCell.Border = Rectangle.NO_BORDER;
                     //headertable.DefaultCell.Border = Rectangle.BOX; //for testing
                     headertable.SpacingAfter = 30;
+
                     PdfPTable nested = new PdfPTable(1);
                     nested.DefaultCell.Border = Rectangle.BOX;
-                    PdfPCell nextPostCell1 = new PdfPCell(new Phrase("ABC Co.,Ltd", bodyFont));
+                    PdfPCell nextPostCell1 = new PdfPCell(new Phrase(_companyName, _bodyFont));
                     nextPostCell1.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
                     nested.AddCell(nextPostCell1);
-                    PdfPCell nextPostCell2 = new PdfPCell(new Phrase("111/206 Moo 9, Ramkhamheang Road,", bodyFont));
+                    PdfPCell nextPostCell2 = new PdfPCell(new Phrase(_companyAddress, _bodyFont));
                     nextPostCell2.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
                     nested.AddCell(nextPostCell2);
-                    PdfPCell nextPostCell3 = new PdfPCell(new Phrase("Nonthaburi 11120", bodyFont));
-                    nextPostCell3.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
-                    nested.AddCell(nextPostCell3);
+                    //PdfPCell nextPostCell3 = new PdfPCell(new Phrase("Nonthaburi 11120", _bodyFont));
+                    //nextPostCell3.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
+                    //nested.AddCell(nextPostCell3);
                     PdfPCell nesthousing = new PdfPCell(nested);
                     nesthousing.Rowspan = 4;
                     nesthousing.Padding = 0f;
@@ -115,30 +125,31 @@ namespace ElectronicZone.Wpf.Utility
                     invoiceCell.HorizontalAlignment = 2;
                     invoiceCell.Border = Rectangle.NO_BORDER;
                     headertable.AddCell(invoiceCell);
-                    PdfPCell noCell = new PdfPCell(new Phrase("No :", bodyFont));
+
+                    PdfPCell noCell = new PdfPCell(new Phrase("No :", _bodyFont));
                     noCell.HorizontalAlignment = 2;
                     noCell.Border = Rectangle.NO_BORDER;
                     headertable.AddCell(noCell);
-                    headertable.AddCell(new Phrase(orderNo, bodyFont));
-                    PdfPCell dateCell = new PdfPCell(new Phrase("Date :", bodyFont));
+                    headertable.AddCell(new Phrase(_orderNo, _bodyFont));
+                    PdfPCell dateCell = new PdfPCell(new Phrase("Date :", _bodyFont));
                     dateCell.HorizontalAlignment = 2;
                     dateCell.Border = Rectangle.NO_BORDER;
                     headertable.AddCell(dateCell);
-                    headertable.AddCell(new Phrase(orderDate, bodyFont));
-                    PdfPCell billCell = new PdfPCell(new Phrase("Bill To :", bodyFont));
+                    headertable.AddCell(new Phrase(_orderDate, _bodyFont));
+                    PdfPCell billCell = new PdfPCell(new Phrase("Billing To :", _bodyFont));
                     billCell.HorizontalAlignment = 2;
                     billCell.Border = Rectangle.NO_BORDER;
                     headertable.AddCell(billCell);
-                    headertable.AddCell(new Phrase(_custName + "\n" + _custAddress, bodyFont));
+                    headertable.AddCell(new Phrase(_custName + "\n" + _custAddress, _bodyFont));
                     document.Add(headertable);
                     #endregion
 
                     #region Items Table
                     //Create body table
-                    PdfPTable itemTable = new PdfPTable(4);
+                    PdfPTable itemTable = new PdfPTable(5);
                     itemTable.HorizontalAlignment = 0;
                     itemTable.WidthPercentage = 100;
-                    itemTable.SetWidths(new float[] { 10, 40, 20, 30 });  // then set the column's __relative__ widths
+                    itemTable.SetWidths(new float[] { 10, 40, 15, 15, 20 });  // then set the column's __relative__ widths
                     itemTable.SpacingAfter = 40;
                     itemTable.DefaultCell.Border = Rectangle.BOX;
                     PdfPCell cell1 = new PdfPCell(new Phrase("NO", boldTableFont));
@@ -147,72 +158,76 @@ namespace ElectronicZone.Wpf.Utility
                     PdfPCell cell2 = new PdfPCell(new Phrase("ITEM", boldTableFont));
                     cell2.HorizontalAlignment = 1;
                     itemTable.AddCell(cell2);
-                    PdfPCell cell3 = new PdfPCell(new Phrase("QUANTITY", boldTableFont));
+                    PdfPCell cell3 = new PdfPCell(new Phrase("PRICE", boldTableFont));
                     cell3.HorizontalAlignment = 1;
                     itemTable.AddCell(cell3);
-                    PdfPCell cell4 = new PdfPCell(new Phrase("AMOUNT(USD)", boldTableFont));
+                    PdfPCell cell4 = new PdfPCell(new Phrase("QUANTITY", boldTableFont));
                     cell4.HorizontalAlignment = 1;
                     itemTable.AddCell(cell4);
+                    PdfPCell cell5 = new PdfPCell(new Phrase("TOTAL", boldTableFont));
+                    cell5.HorizontalAlignment = 1;
+                    itemTable.AddCell(cell5);
 
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        PdfPCell numberCell = new PdfPCell(new Phrase(row["NO"].ToString(), bodyFont));
+                    // foreach (DataRow row in dt.Rows) //invoiceList
+                    foreach (Invoice invoice in invoiceList) {
+                        PdfPCell numberCell = new PdfPCell(new Phrase(invoice.SrNo, _bodyFont));
                         numberCell.HorizontalAlignment = 0;
                         numberCell.PaddingLeft = 10f;
                         numberCell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
                         itemTable.AddCell(numberCell);
 
-                        PdfPCell descCell = new PdfPCell(new Phrase(row["ITEM"].ToString(), bodyFont));
+                        PdfPCell descCell = new PdfPCell(new Phrase(invoice.Item, _bodyFont));
                         descCell.HorizontalAlignment = 0;
                         descCell.PaddingLeft = 10f;
                         descCell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
                         itemTable.AddCell(descCell);
 
-                        PdfPCell qtyCell = new PdfPCell(new Phrase(row["QUANTITY"].ToString(), bodyFont));
+                        PdfPCell PriceCell = new PdfPCell(new Phrase(invoice.Price, _bodyFont));
+                        PriceCell.HorizontalAlignment = 1;
+                        PriceCell.PaddingLeft = 10f;
+                        PriceCell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
+                        itemTable.AddCell(PriceCell);
+
+                        PdfPCell qtyCell = new PdfPCell(new Phrase(invoice.Quantity, _bodyFont));
                         qtyCell.HorizontalAlignment = 0;
                         qtyCell.PaddingLeft = 10f;
                         qtyCell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
                         itemTable.AddCell(qtyCell);
 
-                        PdfPCell amtCell = new PdfPCell(new Phrase(row["AMOUNT"].ToString(), bodyFont));
+                        PdfPCell amtCell = new PdfPCell(new Phrase(invoice.Total, _bodyFont));
                         amtCell.HorizontalAlignment = 1;
                         amtCell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
                         itemTable.AddCell(amtCell);
 
                     }
+
                     // Table footer
                     PdfPCell totalAmtCell1 = new PdfPCell(new Phrase(""));
                     totalAmtCell1.Border = Rectangle.LEFT_BORDER | Rectangle.TOP_BORDER;
                     itemTable.AddCell(totalAmtCell1);
                     PdfPCell totalAmtCell2 = new PdfPCell(new Phrase(""));
-                    totalAmtCell2.Border = Rectangle.TOP_BORDER; //Rectangle.NO_BORDER; //Rectangle.TOP_BORDER;
+                    totalAmtCell2.Border = Rectangle.TOP_BORDER; //Rectangle.NO_BORDER;
                     itemTable.AddCell(totalAmtCell2);
-                    PdfPCell totalAmtStrCell = new PdfPCell(new Phrase("Total Amount", boldTableFont));
-                    totalAmtStrCell.Border = Rectangle.TOP_BORDER;   //Rectangle.NO_BORDER; //Rectangle.TOP_BORDER;
+                    itemTable.AddCell(totalAmtCell2);
+
+                    PdfPCell totalAmtStrCell = new PdfPCell(new Phrase("Gross", boldTableFont));
+                    totalAmtStrCell.Border = Rectangle.TOP_BORDER;   //Rectangle.NO_BORDER;
                     totalAmtStrCell.HorizontalAlignment = 1;
                     itemTable.AddCell(totalAmtStrCell);
-                    PdfPCell totalAmtCell = new PdfPCell(new Phrase(totalAmtStr.ToString("#,###.00"), boldTableFont));
+
+                    PdfPCell totalAmtCell = new PdfPCell(new Phrase(totalAmtStr.ToString(ConfigurationManager.AppSettings["AmountDisplayPattern"]), boldTableFont));
                     totalAmtCell.HorizontalAlignment = 1;
                     itemTable.AddCell(totalAmtCell);
 
-                    PdfPCell cell = new PdfPCell(new Phrase("*** Please note that ABC Co., Ltd’s bank account is USD Bank Account ***", bodyFont));
-                    cell.Colspan = 4;
+                    PdfPCell cell = new PdfPCell(new Phrase(_itemTableFooterText, _bodyFont));
+                    cell.Colspan = 5;
                     cell.HorizontalAlignment = 1;
                     itemTable.AddCell(cell);
                     document.Add(itemTable);
                     #endregion
 
-                    ////Approved by
-                    //PdfContentByte cb = new PdfContentByte(docWriter);
-                    //BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-                    //cb = docWriter.DirectContent;
-                    //cb.BeginText();
-                    //cb.SetFontAndSize(bf, 10);
-                    //cb.SetTextMatrix(pageSize.GetLeft(300), 200);
-                    //cb.ShowText("Approved by,");
-                    //cb.EndText();
-                    ////Image Singature
-                    //iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(logoPath);// Server.MapPath("~/Images/Bill_Gates2.png"));
+                    //Image Singature
+                    //iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(_logoPath);// Server.MapPath("~/Images/Bill_Gates2.png"));
                     //logo.SetAbsolutePosition(pageSize.GetLeft(300), 140);
                     //document.Add(logo);
 
@@ -222,12 +237,13 @@ namespace ElectronicZone.Wpf.Utility
                     cb.BeginText();
                     cb.SetFontAndSize(bf, 10);
                     cb.SetTextMatrix(pageSize.GetLeft(70), 100);
-                    cb.ShowText("Thank you for your business! If you have any questions about your order, please contact us at 800-555-NORTH.");
+                    cb.ShowText(_invoiceFooterNote);
                     cb.EndText();
-                    // document.Close();
-                }
 
+                    document.Close();
+                }
             }
+            MessageBox.Show($"Invoice Exported to {System.Environment.SpecialFolder.Desktop.ToString()} Successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.None);
         }
     }
 

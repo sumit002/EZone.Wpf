@@ -53,8 +53,8 @@ namespace ElectronicZone.Wpf.Utility
                         saleMaster.Add("SaleDate", _sale.SaleDate.ToString(ConfigurationManager.AppSettings["DateOnly"]));
                         saleMaster.Add("CreatedDate", DateTime.Now.ToString(ConfigurationManager.AppSettings["DateTimeFormat"])); 
                         #endregion
-                        _sale.Id = salesOrderId = da.InsertOrUpdateSaleMaster(saleMaster, "tblSaleMaster");
-                        if (_sale.Id > 0) {
+                        salesOrderId = da.InsertOrUpdateSaleMaster(saleMaster, "tblSaleMaster");
+                        if (salesOrderId > 0 && _sale.Id == 0) {
                             #region Add Sales Invoice
                             // Adding Sales Invoice
                             Dictionary<string, string> invoice = new Dictionary<string, string>();
@@ -77,7 +77,7 @@ namespace ElectronicZone.Wpf.Utility
                             #region Add Payment Transaction
                             // add payment transaction
                             PaymentTransaction paymentTransaction = new PaymentTransaction();
-                            bool paymentStatus = paymentTransaction.AddPaymentTransaction(Global.UserId, _sale.AmountPaid, CommonEnum.PaymentStatus.SALE_PAYMENT, _sale.Id, da);
+                            bool paymentStatus = paymentTransaction.AddPaymentTransaction(Global.UserId, _sale.AmountPaid, CommonEnum.PaymentStatus.SALE_PAYMENT, salesOrderId, da);
                             if (paymentStatus)
                             {
                                 #region Update Stock Quantity
