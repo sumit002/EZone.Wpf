@@ -1,4 +1,4 @@
-﻿using ElectronicZone.Wpf.FireBaseModel;
+﻿//using ElectronicZone.Wpf.FireBaseModel;
 using ElectronicZone.Wpf.Helper;
 using ElectronicZone.Wpf.Model;
 using ElectronicZone.Wpf.Utility;
@@ -21,8 +21,8 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             this.FirebaseProductList = new ObservableCollection<FirebaseProduct>();
             //this._app = new FirebaseApp(new Uri("https://productstore-2fdc7.firebaseio.com") /*, <auth token> */);
-            this._app = new FirebaseApp(new Uri("https://productstore-2fdc7.firebaseio.com")
-                , "AIzaSyBumXHPSSMKY8lV2XBh--luHYI9V1DM0cc");
+            //this._app = new FirebaseApp(new Uri("https://productstore-2fdc7.firebaseio.com")
+            //    , "AIzaSyBumXHPSSMKY8lV2XBh--luHYI9V1DM0cc");
             
             GetData();
         }
