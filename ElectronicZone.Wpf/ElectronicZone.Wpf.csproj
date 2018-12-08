@@ -113,7 +113,6 @@
     <Compile Include="Helper\SimpleCommand.cs" />
     <Compile Include="Model\Brand.cs" />
     <Compile Include="Model\Contact.cs" />
-    <Compile Include="Model\CustomDialogExampleContent.cs" />
     <Compile Include="Model\FirebaseProduct.cs" />
     <Compile Include="Model\Invoice.cs" />
     <Compile Include="Model\PendingPayment.cs" />

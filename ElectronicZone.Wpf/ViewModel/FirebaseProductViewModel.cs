@@ -14,7 +14,7 @@ namespace ElectronicZone.Wpf.ViewModel
         ILogger logger = new Logger(typeof(FirebaseProductViewModel));
         //private IDialogCoordinator dialogCoordinator;
         public ObservableCollection<FirebaseProduct> FirebaseProductList { get; set; }
-        private readonly FirebaseApp _app;
+        //private readonly FirebaseApp _app;
         #endregion
 
         public FirebaseProductViewModel()
@@ -29,18 +29,18 @@ namespace ElectronicZone.Wpf.ViewModel
 
         private void GetData()
         {
-            var productsRef = _app.Child("products");
+            //var productsRef = _app.Child("products");
 
-            productsRef.OrderByValue().LimitToLast(3)
-            .On("value", (snapshot, child, context) => {
-                foreach (var data in snapshot.Children) {
-                    this.FirebaseProductList.Add(new FirebaseProduct() {
-                        Name = data.Value<string>()
-                    });
-                    Console.WriteLine("The {0} products\'s score is {1}",
-                                        data.Key, data.Value<int>());
-                }
-            });
+            //productsRef.OrderByValue().LimitToLast(3)
+            //.On("value", (snapshot, child, context) => {
+            //    foreach (var data in snapshot.Children) {
+            //        this.FirebaseProductList.Add(new FirebaseProduct() {
+            //            Name = data.Value<string>()
+            //        });
+            //        Console.WriteLine("The {0} products\'s score is {1}",
+            //                            data.Key, data.Value<int>());
+            //    }
+            //});
         }
     }
 }
