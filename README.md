@@ -40,9 +40,9 @@ To support this project you can: star the repository, report bugs/request featur
   The reports section includes as follows,
   
   **Reports:** 
-  1. Sales Report
-  2. Purchase Report
-  3. Contact Report
-  4. Payment Report
-    *   Support Payment Report
-    **  Pending Payment Report
+   * Sales Report.
+   * Purchase Report
+   * Contact Report
+   * Payment Report
+      *   Support Payment Report
+      **  Pending Payment Report
