@@ -3,9 +3,12 @@
 `ModifiedDate`	DATETIME,
 2. added New columns to tblSaleMaster
 `IsActive` BOOL DEFAULT 1
+3.New Columns added tblSalePerson 
+CreatedDate
+ModifiedDate
 
 
 CREATE VIEW "vw_StockMaster_New" AS SELECT sm.Id StockId, pm.Id ProductId,pm.Name Product, bm.Id BrandId, bm.Name Brand, sm.ProductCode, sm.StockCode, sm.ItemDesc, sm.Quantity, sm.AvlQuantity, sm.PurchasePrice, sm.SalePrice,(sm.SalePrice-sm.PurchasePrice) AS ProfitPrice, sm.Quantity*sm.PurchasePrice AS Total, sm.PurchaseDate, sm.IsActive, sm.CreatedDate, sm.ModifiedDate FROM tblStockMaster sm INNER JOIN tblProductMaster pm ON pm.Id = sm.ProductId INNER JOIN tblBrandMaster bm ON bm.Id = sm.BrandId WHERE sm.IsActive = 1
-CREATE VIEW "vw_SalePerson" AS SELECT sp.Id AS Id, sp.Title, sp.Name, sp.Contact, sp.AlternateContact, sp.Email, sp.Address, sp.IsActive FROM tblSalePerson sp Where sp.IsActive = 1
-CREATE VIEW "vw_SaleMaster" AS SELECT slm.Id AS SalesId, stm.Id AS StockId,pm.Id AS ProductId, pm.Name Product,bm.Id AS BrandId, bm.Name Brand, stm.ProductCode, stm.StockCode, slm.Quantity,sp.Id AS SalesPersonId, sp.Name SaleTo, sp.Contact AS SaleContact, stm.PurchasePrice, stm.SalePrice, slm.Total, slm.AmountPaid, (slm.Total-slm.AmountPaid) AS Pending, slm.SaleDate, slm.CreatedDate, slm.ModifiedDate FROM tblSaleMaster slm INNER JOIN tblStockMaster stm ON stm.Id=slm.StockId INNER JOIN tblProductMaster pm ON pm.Id = stm.ProductId INNER JOIN tblBrandMaster bm ON bm.Id = stm.BrandId INNER JOIN tblSalePerson sp ON sp.Id=slm.salePersonId
+CREATE VIEW "vw_SalePerson" AS SELECT sp.Id AS Id, sp.Title, sp.Name, sp.Contact, sp.AlternateContact, sp.Email, sp.Address, sp.IsActive , (SELECT COUNT(sm.Id) from tblSaleMaster sm Where sm.SalePersonId = sp.id) AS UsedCount, (CASE WHEN(SELECT COUNT(sm.Id) from tblSaleMaster sm Where sm.SalePersonId = sp.id)> 0 THEN 1 ELSE 0 END) AS IsUsed FROM tblSalePerson sp WHERE sp.IsActive = 1 Order by sp.Name
+CREATE VIEW "vw_SaleMaster" AS SELECT slm.Id AS SalesId, stm.Id AS StockId,pm.Id AS ProductId, pm.Name Product,bm.Id AS BrandId, bm.Name Brand, stm.ProductCode, stm.StockCode, slm.Quantity,sp.Id AS SalesPersonId, sp.Name SaleTo, sp.Contact AS SaleContact, stm.PurchasePrice, stm.SalePrice, slm.Total, slm.AmountPaid, (slm.Total-slm.AmountPaid) AS Pending, slm.SaleDate, slm.IsActive, CASE WHEN Cast((JulianDay('now') - JulianDay(slm.CreatedDate)) As Integer) > 60 THEN 0 ELSE 1 END AS CanDelete, slm.CreatedDate, slm.ModifiedDate FROM tblSaleMaster slm INNER JOIN tblStockMaster stm ON stm.Id=slm.StockId INNER JOIN tblProductMaster pm ON pm.Id = stm.ProductId INNER JOIN tblBrandMaster bm ON bm.Id = stm.BrandId INNER JOIN tblSalePerson sp ON sp.Id=slm.salePersonId
 CREATE TABLE `tblInvoiceMaster` ( `Id` INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, `SaleId` INTEGER, `StockId` INTEGER, `InvoiceNumber` TEXT NOT NULL, `IsActive` BOOLEAN DEFAULT 1 )

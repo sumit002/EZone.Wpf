@@ -89,6 +89,9 @@ namespace ElectronicZone.Wpf.Utility
                                 #endregion
                                 if (isUpdated == 1)
                                 {
+                                    SendMailService ms = new SendMailService();
+                                    ms.SendSalesOrderCreateMail(_sale);
+
                                     MessageBoxResult result = MessageBox.Show("Sale Added Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                                 }
                                 else
@@ -101,8 +104,6 @@ namespace ElectronicZone.Wpf.Utility
                                 MessageBoxResult result = MessageBox.Show("Error While Adding Payment Transaction!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
                             #endregion
-                            SendMailService ms = new SendMailService();
-                            ms.SendSalesOrderCreateMail(_sale);
                         }
                         else
                         {
