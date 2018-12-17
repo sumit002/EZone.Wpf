@@ -59,7 +59,7 @@ namespace ElectronicZone.Wpf.View.Master
         //    else
         //    {
         //        dataGridPurchase.ItemsSource = null;
-        //        MessageBoxResult result = MessageBox.Show("No Data Found", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        //        MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         //    }
         //}
 

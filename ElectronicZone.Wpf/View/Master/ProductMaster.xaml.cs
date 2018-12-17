@@ -67,7 +67,7 @@ namespace ElectronicZone.Wpf.View.Master
         //        }
         //        else
         //        {
-        //            MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         //        }
         //    }
         //    catch (Exception ex)

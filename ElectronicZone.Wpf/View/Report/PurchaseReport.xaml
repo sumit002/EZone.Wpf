@@ -36,8 +36,8 @@
 
         <!--<Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Margin="430,10,0,0" Name="txtPriceFrom" ToolTip="Price From" VerticalAlignment="Top" Width="120" />
         <Controls:NumericUpDown Height="23" HorizontalAlignment="Left" Margin="430,42,0,0" Name="txtPriceTo" ToolTip="Price To" VerticalAlignment="Top" Width="120" />-->
-        <DatePicker Grid.Row="0" Grid.Column="3" Height="25" HorizontalAlignment="Left" Name="fromDate" VerticalAlignment="Top" Width="127" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged" />
-        <DatePicker Grid.Row="0" Grid.Column="4" Height="25" HorizontalAlignment="Left" Name="toDate" VerticalAlignment="Top" Width="120" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
+        <DatePicker Grid.Row="0" Grid.Column="3" Height="25" HorizontalAlignment="Left" Controls:TextBoxHelper.Watermark="Date From" Name="fromDate" VerticalAlignment="Top" Width="127" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged" />
+        <DatePicker Grid.Row="0" Grid.Column="4" Height="25" HorizontalAlignment="Left" Controls:TextBoxHelper.Watermark="Date To" Name="toDate" VerticalAlignment="Top" Width="120" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
         <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkBoxAvailableStock" Content="Available Stock" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
         <!--<Button Content="Export" Height="23" HorizontalAlignment="Left" Margin="338,74,0,0" Name="btnExport" VerticalAlignment="Top" Width="50" Click="btnExport_Click" Visibility="Hidden" />-->

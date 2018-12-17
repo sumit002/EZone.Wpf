@@ -39,8 +39,8 @@ namespace ElectronicZone.Wpf.View.Report
                 using (DataAccess da = new DataAccess())
                 {
                     dtPendingPayment = da.SearchPendingPayment((int?)this.txtPriceFrom.Value, (int?)this.txtPriceTo.Value,
-                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
-                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateOnly"])),
+                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateOnly"])),
                         (this.cbSalesPerson.SelectedValue == null ? string.Empty : this.cbSalesPerson.SelectedValue.ToString()),
                         (this.chkbPaid.IsChecked == null ? 0 : this.chkbPaid.IsChecked == true ? 1 : 0));
                 }
@@ -53,7 +53,7 @@ namespace ElectronicZone.Wpf.View.Report
                 {
                     btnExport.Visibility = System.Windows.Visibility.Hidden;
                     dataGridPendingPayment.ItemsSource = null;
-                    MessageBoxResult result = MessageBox.Show("No results found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)

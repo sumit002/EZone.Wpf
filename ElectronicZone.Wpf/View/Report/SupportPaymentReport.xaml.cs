@@ -42,8 +42,8 @@ namespace ElectronicZone.Wpf.View.Report
                 DataTable dtSupportPayment = new DataTable();
                 using (DataAccess da = new DataAccess()) {
                     dtSupportPayment = da.SearchSupportPayment((int?)null, (int?)null,
-                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
-                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])), this.txtDescription.Text);
+                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateOnly"])),
+                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateOnly"])), this.txtDescription.Text);
                 }
 
                 if (dtSupportPayment.Rows.Count > 0)
@@ -55,7 +55,7 @@ namespace ElectronicZone.Wpf.View.Report
                 {
                     btnExport.Visibility = System.Windows.Visibility.Hidden;
                     dataGridSupportPayment.ItemsSource = null;
-                    MessageBoxResult result = MessageBox.Show("No results found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)

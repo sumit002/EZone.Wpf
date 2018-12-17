@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Data.SQLite;
+using System.Linq;
 
 namespace ElectronicZone.Wpf.DataAccessLayer
 {
@@ -309,7 +309,23 @@ namespace ElectronicZone.Wpf.DataAccessLayer
             string queryToUse = string.Format("Delete FROM tblSaleMaster WHERE Id = @Id");
             return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
         }
-        
+
+        public int DeleteSalesInvoice(int Id)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            dbParameterList.Add(new SQLiteParameter("@Id", Id));
+            string queryToUse = string.Format("Delete FROM tblInvoiceMaster WHERE Id = @Id");
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+        }
+
+        public int DeletePendingPayment(int Id)
+        {
+            List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();
+            dbParameterList.Add(new SQLiteParameter("@Id", Id));
+            string queryToUse = string.Format("Delete FROM tblPendingPayment WHERE Id = @Id");
+            return sQLHelper.DeleteFromTable(queryToUse, dbParameterList);
+        }
+
         public DataTable GetSaleInvoices(string SalesIds)
         {
             List<SQLiteParameter> dbParameterList = new List<SQLiteParameter>();

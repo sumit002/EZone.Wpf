@@ -40,8 +40,8 @@
         <UniformGrid Grid.Row="1" Grid.Column="0" Columns="5" Rows="1">
             <ComboBox DisplayMemberPath="Name"  HorizontalAlignment="Left" Name="cbBrandCompany" SelectedValuePath="Id" ToolTip="Choose Brand / Company" VerticalAlignment="Center" Width="145" />
             <TextBox HorizontalAlignment="left" Name="txtStockCode" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Type Stock Code" ToolTip="Stock Code" VerticalAlignment="Center" Width="145" />
-            <DatePicker HorizontalAlignment="Left" Name="fromDate" VerticalAlignment="Center" Width="145" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged"  />
-            <DatePicker HorizontalAlignment="Left" Name="toDate" VerticalAlignment="Center" Width="145" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
+            <DatePicker HorizontalAlignment="Left" Controls:TextBoxHelper.Watermark="Date From" Name="fromDate" VerticalAlignment="Center" Width="145" ToolTip="From Date" SelectedDateChanged="fromDate_SelectedDateChanged"  />
+            <DatePicker HorizontalAlignment="Left" Controls:TextBoxHelper.Watermark="Date To" Name="toDate" VerticalAlignment="Center" Width="145" ToolTip="To Date" SelectedDateChanged="toDate_SelectedDateChanged" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
                 <!--<Button Width="30" Height="30" Margin="4" Style="{StaticResource AccentCircleButtonStyle}">

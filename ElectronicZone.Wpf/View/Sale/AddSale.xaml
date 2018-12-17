@@ -87,10 +87,10 @@
         <Controls:ToggleSwitch Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" OnLabel="New Contact" OffLabel="Existing Contact" Name="chkbPersonType" 
                                IsCheckedChanged="chkbPersonType_IsCheckedChanged" VerticalAlignment="Center"
                                IsChecked="False" ToolTip="Sale Person Type" />
-        <ComboBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Name="cbSalesPerson"
+        <ComboBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Name="cbSalesPerson" DisplayMemberPath="Name"
                   SelectedValuePath="Id" SelectionChanged="cbSalesPerson_SelectionChanged"
                   VerticalAlignment="Center" Width="200" >
-            <ComboBox.ItemTemplate>
+            <!--<ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock>
                         <TextBlock.Text>
@@ -102,7 +102,7 @@
                     </TextBlock>
                 </DataTemplate>
 
-            </ComboBox.ItemTemplate>
+            </ComboBox.ItemTemplate>-->
         </ComboBox>
 
         <!--<ComboBox Width="200" Grid.Row="4" Grid.Column="1"

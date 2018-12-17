@@ -97,7 +97,7 @@ namespace ElectronicZone.Wpf.Utility
                         }
                     }
                     else {
-                        MessageBoxResult result = MessageBox.Show("Error While Adding Stock!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("StandardProcessingErrorMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)

@@ -3,7 +3,6 @@ using ElectronicZone.Wpf.Model;
 using ElectronicZone.Wpf.Utility;
 using MahApps.Metro.Controls;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -141,7 +140,7 @@ namespace ElectronicZone.Wpf.View.Sale
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show("Invalid Data !", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

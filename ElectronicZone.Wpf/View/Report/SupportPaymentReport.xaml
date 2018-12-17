@@ -47,8 +47,8 @@
                 </TextBox.Style>
             </TextBox>
 
-            <DatePicker Name="fromDate" ToolTip="From Date" VerticalAlignment="Center" SelectedDateChanged="fromDate_SelectedDateChanged" Width="120" />
-            <DatePicker Name="toDate" ToolTip="To Date" VerticalAlignment="Center" SelectedDateChanged="toDate_SelectedDateChanged" Width="120" />
+            <DatePicker Name="fromDate" Controls:TextBoxHelper.Watermark="Date From"  ToolTip="From Date" VerticalAlignment="Center" SelectedDateChanged="fromDate_SelectedDateChanged" Width="120" />
+            <DatePicker Name="toDate" Controls:TextBoxHelper.Watermark="Date To" ToolTip="To Date" VerticalAlignment="Center" SelectedDateChanged="toDate_SelectedDateChanged" Width="120" />
             <StackPanel Orientation="Horizontal">
                 <Button Width="40" Height="40" Content="{iconPacks:FontAwesome Kind=FileExcelSolid, Height=25, Width=25}" Style="{StaticResource AccentCircleButtonStyle}"
                     ToolTip="Download Result" x:Name="btnExport" HorizontalAlignment="Left" VerticalAlignment="Center"

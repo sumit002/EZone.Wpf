@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="Sales" BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1" WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="5,5,5,5">
+    <Grid Margin="5,5,5,5" FocusManager.FocusedElement="{Binding ElementName=txtProdCode}">
         <!--<Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>

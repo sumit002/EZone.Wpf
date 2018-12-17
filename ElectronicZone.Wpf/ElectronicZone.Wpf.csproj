@@ -255,6 +255,10 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\MessageResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Common\AboutUs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

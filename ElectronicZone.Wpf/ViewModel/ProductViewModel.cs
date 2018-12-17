@@ -141,12 +141,12 @@ namespace ElectronicZone.Wpf.ViewModel
                         }
                         else
                         {
-                            MessageBoxResult result = MessageBox.Show("Error While Adding Product!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("StandardProcessingErrorMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else
                     {
-                        MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)
@@ -182,7 +182,7 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private async void GetAllProducts()
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             DataTable dtProducts = new DataTable();

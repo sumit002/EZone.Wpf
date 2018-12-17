@@ -45,8 +45,8 @@ namespace ElectronicZone.Wpf.View.Report
                 DataTable dtPurchase = new DataTable();
                 using (DataAccess da = new DataAccess()) {
                     dtPurchase = da.SearchStocks((this.cbProduct.SelectedValue == null ? "" : this.cbProduct.SelectedValue.ToString()), (this.cbBrandCompany.SelectedValue == null ? "" : this.cbBrandCompany.SelectedValue.ToString()), this.txtProdCode.Text, this.txtStockCode.Text, null, null,
-                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
-                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateTimeFormat"])),
+                        string.IsNullOrEmpty(fromDate.Text) ? "" : (DateTime.Parse(fromDate.Text).ToString(ConfigurationManager.AppSettings["DateOnly"])),
+                        string.IsNullOrEmpty(toDate.Text) ? "" : (DateTime.Parse(toDate.Text).ToString(ConfigurationManager.AppSettings["DateOnly"])),
                         (this.chkBoxAvailableStock.IsChecked == null ? false : this.chkBoxAvailableStock.IsChecked == true ? true : false));
                 }
                 if (dtPurchase.Rows.Count > 0)
@@ -58,6 +58,7 @@ namespace ElectronicZone.Wpf.View.Report
                 {
                     btnExport.Visibility = System.Windows.Visibility.Hidden;
                     dataGridPurchase.ItemsSource = null;
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)

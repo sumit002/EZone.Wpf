@@ -130,12 +130,13 @@ namespace ElectronicZone.Wpf.Utility
                         }
                         else
                         {
-                            MessageBoxResult result = MessageBox.Show("Error While Adding Sale!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("StandardProcessingErrorMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show(ex.Message);
                     logger.LogException(ex);
                     da.RollbackTransaction();
                 }
@@ -172,8 +173,12 @@ namespace ElectronicZone.Wpf.Utility
         public bool ReverseSalesOrder(Sale Obj) {
             using (DataAccess da = new DataAccess()) {
                 try {
-                    // Remove Sale from SaleMaster
+                    // Remove Sale from SaleMaster, Invoice and PendingIf
                     int stockId = da.DeleteSalesOrder(Obj.Id);
+                    da.DeleteSalesInvoice(Obj.InvoiceId);
+                    if(Obj.Pending > 0 || Obj.IsDiscounted)
+                        da.DeletePendingPayment(Obj.PendingPaymentId);
+
                     // Reverse payment transaction
                     PaymentTransaction paymentTransaction = new PaymentTransaction();
                     bool isReversed = paymentTransaction.ReversePaymentTransaction(Global.UserId, Obj.AmountPaid, CommonEnum.PaymentStatus.SALEREVERSAL_PAYMENT, Obj.Id, da);
@@ -263,13 +268,13 @@ namespace ElectronicZone.Wpf.Utility
                     }
                     else
                     {
-                        MessageBoxResult result = MessageBox.Show("Error While Updating Payments!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("StandardProcessingErrorMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     #endregion
                 }
                 else
                 {
-                    MessageBoxResult result = MessageBox.Show("Error While Updating Pendings!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("StandardProcessingErrorMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 #endregion
             }

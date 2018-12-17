@@ -82,19 +82,18 @@ namespace ElectronicZone.Wpf.ViewModel
 
         public void MyAction(object parameter)
         {
-            MessageBox.Show("Command Fired with no code behind");
-            DataTable dt = new DataTable();
-            DataAccess dataAccess = new DataAccess();
-            try
-            {
-                //if (validateForm())
-                //{
-                    dt = dataAccess.ValidateUserLogin(_email.Trim(), _password.Trim());
-                    if (dt.Rows.Count == 1)
-                    {
+            //MessageBox.Show("Command Fired with no code behind");
+            using (DataAccess da = new DataAccess()) {
+                try
+                {
+                    //if (validateForm())
+                    //{
+                    DataTable dt = da.ValidateUserLogin(_email.Trim(), _password.Trim());
+                    if (dt.Rows.Count == 1) {
                         //LoginWindow loginWindow = new LoginWindow();
                         //loginWindow.Hide();
                         // this.Hide();
+                        // setting global variables ToDO
                         Application.Current.MainWindow.Close();
                         DashboardWindow dashboardWindow = new DashboardWindow();
                         dashboardWindow.ShowDialog();
@@ -104,16 +103,17 @@ namespace ElectronicZone.Wpf.ViewModel
                         MessageBox.Show("Invalid Username or Password!");
                         logger.LogError("Invalid Username or Password");
                     }
-                //}
-                //else
-                //{
-                //    MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                //}
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                logger.LogException(ex);
+                    //}
+                    //else
+                    //{
+                    //    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    logger.LogException(ex);
+                }
             }
         }
     }

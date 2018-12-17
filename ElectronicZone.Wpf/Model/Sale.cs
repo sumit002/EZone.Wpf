@@ -41,6 +41,8 @@ namespace ElectronicZone.Wpf.Model
         private string _saleContact;
         private double pending;
         private string _invoiceNumber;
+        private int _invoiceId;
+        private int _pendingPaymentId;
 
         public string Product { get => _product; set => _product = value; }
         public string Brand { get => _brand; set => _brand = value; }
@@ -50,6 +52,8 @@ namespace ElectronicZone.Wpf.Model
         public string SaleContact { get => _saleContact; set => _saleContact = value; }
         public double Pending { get => pending; set => pending = value; }
         public string InvoiceNumber { get => _invoiceNumber; set => _invoiceNumber = value; }
+        public int InvoiceId { get => _invoiceId; set => _invoiceId = value; }
+        public int PendingPaymentId { get => _pendingPaymentId; set => _pendingPaymentId = value; }
 
         public int SaleCount { get; set; }
 

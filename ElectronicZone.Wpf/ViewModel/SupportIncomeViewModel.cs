@@ -206,7 +206,7 @@ namespace ElectronicZone.Wpf.ViewModel
                 using (DataAccess da = new DataAccess()) {
                     try
                     {
-                        var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+                        var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
                         controller.SetIndeterminate();
 
                         Dictionary<string, string> folderFields = new Dictionary<string, string>();
@@ -233,7 +233,7 @@ namespace ElectronicZone.Wpf.ViewModel
                             else { MessageBoxResult result = MessageBox.Show("Support Income Updated Successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);  }
                         }
                         else {
-                            MessageBoxResult result = MessageBox.Show("Error While Adding Support Income!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("StandardProcessingErrorMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                         await controller.CloseAsync();
                     }
@@ -246,7 +246,7 @@ namespace ElectronicZone.Wpf.ViewModel
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -269,7 +269,7 @@ namespace ElectronicZone.Wpf.ViewModel
         {
             try
             {
-                var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+                var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
                 controller.SetIndeterminate();
 
                 DataTable dtSupportPayment = new DataTable();
@@ -278,21 +278,29 @@ namespace ElectronicZone.Wpf.ViewModel
                 }
 
                 this.SupportIncomeList.Clear();
-                Application.Current.Dispatcher.Invoke(() =>
+                if (dtSupportPayment.Rows.Count > 0)
                 {
-                    foreach (DataRow row in dtSupportPayment.Rows)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        this.SupportIncomeList.Add(new SupportIncome()
+                        foreach (DataRow row in dtSupportPayment.Rows)
                         {
-                            Id = int.Parse(row["Id"].ToString()),
-                            Description = Convert.ToString(row["Description"]),
-                            Amount = Convert.ToDouble(row["Amount"].ToString()),
-                            SupportDate = Convert.ToDateTime(row["SupportDate"]),
-                            Remarks = Convert.ToString(row["Remarks"])
-                            //IsActive = Convert.ToBoolean(row["IsActive"])
-                        });
-                    }
-                });
+                            this.SupportIncomeList.Add(new SupportIncome()
+                            {
+                                Id = int.Parse(row["Id"].ToString()),
+                                Description = Convert.ToString(row["Description"]),
+                                Amount = Convert.ToDouble(row["Amount"].ToString()),
+                                SupportDate = Convert.ToDateTime(row["SupportDate"]),
+                                Remarks = Convert.ToString(row["Remarks"])
+                                //IsActive = Convert.ToBoolean(row["IsActive"])
+                            });
+                        }
+                    });
+                }
+                else {
+                    //this._dialogCoordinator.ShowMessageAsync(this, "Oops!", (string)Application.Current.FindResource("NoDataFoundInfoMessage"));
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
                 await controller.CloseAsync();
             }
             catch (Exception ex)

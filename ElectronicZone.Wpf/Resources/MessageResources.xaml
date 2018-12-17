@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:local="clr-namespace:ElectronicZone.Wpf.Resources">
+    <!-- Dialog Messages -->
+    <system:String x:Key="LoginErrorMessage">Invalid Username or Password</system:String>
+    <system:String x:Key="StandardProcessingErrorMessage">Error While Processing! Please Contact Administrator.</system:String>
+    
+    
+    <system:String x:Key="InvalidFormDataWarningMessage">Invalid Data! Please check the fields entered.</system:String>
+    <system:String x:Key="NoDataFoundInfoMessage">No Search Results Found!</system:String>
+    <system:String x:Key="LoadingInfoMessage">Please wait for a while...</system:String>
+</ResourceDictionary>

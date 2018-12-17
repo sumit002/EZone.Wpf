@@ -78,21 +78,20 @@ namespace ElectronicZone.Wpf.Utility
         /// <param name="transId"></param>
         /// <param name="ps"></param>
         /// <returns></returns>
-        private string GetPaymentDescription(int transId, PaymentStatus ps)
+        private static string GetPaymentDescription(int transId, PaymentStatus ps)
         {
-            string desc = string.Empty;
-            string paymentType = string.Empty;
-            if(ps.ToString().Equals("PENDING_PAYMENT"))
-                paymentType = "Pending";
-            else if(ps.ToString().Equals("PURCHASE_PAYMENT"))
-                paymentType = "Purchase";
-            else if(ps.ToString().Equals("SALE_PAYMENT"))
-                paymentType = "Sale";
+            string _paymentType = string.Empty;
+            if(ps.Equals(PaymentStatus.PENDING_PAYMENT))
+                _paymentType = "Pending";
+            else if(ps.Equals(PaymentStatus.PURCHASE_PAYMENT) || ps.Equals(PaymentStatus.PURCHASEREVERSAL_PAYMENT))
+                _paymentType = "Purchase";
+            else if(ps.Equals(PaymentStatus.SALE_PAYMENT) || ps.Equals(PaymentStatus.SALEREVERSAL_PAYMENT))
+                _paymentType = "Sale";
+            else if (ps.Equals(PaymentStatus.SUPPORT_PAYMENT) || ps.Equals(PaymentStatus.SUPPORTREVERSAL_PAYMENT))
+                _paymentType = "Support";
             else
-                paymentType = "";
-            // construct the description string
-            desc = string.Format($"{paymentType} from transId : {transId.ToString()}");
-            return desc;
+                _paymentType = "";
+            return $"{_paymentType} from transId : {Convert.ToString(transId)}";
         }
     }
 }

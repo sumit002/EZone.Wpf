@@ -30,9 +30,9 @@
         </UniformGrid>
 
         <UniformGrid Grid.Row="1" Columns="4" Rows="1">
-            <DatePicker HorizontalAlignment="Left" Name="fromDate" ToolTip="From Date" 
+            <DatePicker HorizontalAlignment="Left" Name="fromDate" ToolTip="From Date" Controls:TextBoxHelper.Watermark="Date From"
                         VerticalAlignment="Center" Width="130" SelectedDateChanged="fromDate_SelectedDateChanged" />
-            <DatePicker HorizontalAlignment="left" Name="toDate" ToolTip="To Date" 
+            <DatePicker HorizontalAlignment="left" Name="toDate" ToolTip="To Date" Controls:TextBoxHelper.Watermark="Date To"
                         VerticalAlignment="Center" Width="130" SelectedDateChanged="toDate_SelectedDateChanged" />
             <StackPanel></StackPanel>
             <StackPanel Orientation="Horizontal">

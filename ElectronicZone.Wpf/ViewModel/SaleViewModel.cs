@@ -167,7 +167,7 @@ namespace ElectronicZone.Wpf.ViewModel
 
         private async void DownloadSaleInvoice(object obj)
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
             DownloadSaleInvoice((Sale)obj);
             await controller.CloseAsync();
@@ -175,7 +175,7 @@ namespace ElectronicZone.Wpf.ViewModel
 
         private async void GetAllSalesAsync()
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             //await System.Threading.Tasks.Task.Delay(1000);
@@ -185,30 +185,41 @@ namespace ElectronicZone.Wpf.ViewModel
         }
         private void GetAllSales()
         {
-            this.SaleList.Clear();
-            foreach (DataRow row in _sm.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty,null,null, string.Empty, string.Empty, string.Empty).Rows)
+            try
             {
-                this.SaleList.Add(new Sale()
+                this.SaleList.Clear();
+                foreach (DataRow row in _sm.SearchSales(string.Empty, string.Empty, string.Empty, string.Empty, null, null, string.Empty, string.Empty, string.Empty).Rows)
                 {
-                    Id = int.Parse(row["SalesId"].ToString()),
-                    StockId = int.Parse(row["StockId"].ToString()),
-                    Product = Convert.ToString(row["Product"]),
-                    Brand = Convert.ToString(row["Brand"]),
-                    ProductCode = Convert.ToString(row["ProductCode"]),
-                    StockCode = Convert.ToString(row["StockCode"]),
-                    SaleTo = Convert.ToString(row["SaleTo"]),
-                    SaleContact = Convert.ToString(row["SaleContact"]),
-                    AmountPaid = Convert.ToDouble(row["AmountPaid"]),
-                    Quantity = int.Parse(row["Quantity"].ToString()),
-                    Price = Convert.ToDouble(row["SalePrice"]),
-                    Total = Convert.ToDouble(row["Total"]),
-                    Pending = Convert.ToDouble(row["Pending"]),
-                    SaleDate = Convert.ToDateTime(row["SaleDate"]),
-                    //IsActive = Convert.ToBoolean(row["IsActive"]),
-                    CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
-                    CanCancel = Convert.ToBoolean(row["CanDelete"]),
-                    //ModifiedDate = Convert.ToDateTime(row["ModifiedDate"])
-                });
+                    this.SaleList.Add(new Sale()
+                    {
+                        Id = int.Parse(row["SalesId"].ToString()),
+                        StockId = int.Parse(row["StockId"].ToString()),
+                        Product = Convert.ToString(row["Product"]),
+                        Brand = Convert.ToString(row["Brand"]),
+                        ProductCode = Convert.ToString(row["ProductCode"]),
+                        StockCode = Convert.ToString(row["StockCode"]),
+                        SaleTo = Convert.ToString(row["SaleTo"]),
+                        SaleContact = Convert.ToString(row["SaleContact"]),
+                        AmountPaid = Convert.ToDouble(row["AmountPaid"]),
+                        Quantity = int.Parse(row["Quantity"].ToString()),
+                        Price = Convert.ToDouble(row["SalePrice"]),
+                        Total = Convert.ToDouble(row["Total"]),
+                        Pending = Convert.ToDouble(row["Pending"]),
+                        SaleDate = Convert.ToDateTime(row["SaleDate"]),
+                        //IsActive = Convert.ToBoolean(row["IsActive"]),
+                        CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
+                        CanCancel = Convert.ToBoolean(row["CanDelete"]),
+                        // Used for Cancel Order
+                        InvoiceId = String.IsNullOrEmpty(Convert.ToString(row["InvoiceId"])) ? 0 : int.Parse(Convert.ToString(row["InvoiceId"])),
+                        PendingPaymentId = String.IsNullOrEmpty(Convert.ToString(row["PendingPaymentId"])) ? 0 : int.Parse(row["PendingPaymentId"].ToString()),
+                        IsDiscounted = String.IsNullOrEmpty(Convert.ToString(row["IsDiscount"])) ? false : Convert.ToBoolean(row["IsDiscount"]),
+                        //ModifiedDate = Convert.ToDateTime(row["ModifiedDate"])
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
             }
         }
 
@@ -274,7 +285,7 @@ namespace ElectronicZone.Wpf.ViewModel
         //    }
         //    else
         //    {
-        //        MessageBoxResult result = MessageBox.Show("Invalid Data !", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         //    }
         //}
 
@@ -317,7 +328,7 @@ namespace ElectronicZone.Wpf.ViewModel
 
         private async void SearchPurchaseOrder(object obj)
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             //await System.Threading.Tasks.Task.Delay(1000);
@@ -350,7 +361,7 @@ namespace ElectronicZone.Wpf.ViewModel
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show("No Results Found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
             await controller.CloseAsync();
@@ -370,6 +381,7 @@ namespace ElectronicZone.Wpf.ViewModel
                 this.StockCode = null;
                 this.PriceFrom = 0;
                 this.PriceTo = 0;
+                this.PurchaseList.Clear();
             }
             catch (Exception ex) {
                 logger.LogException(ex);
@@ -442,7 +454,6 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private void LoadBrands()
         {
-            // DataTable dtBrand = new DataTable();
             using (DataAccess da = new DataAccess())
             {
                 Application.Current.Dispatcher.Invoke(() =>

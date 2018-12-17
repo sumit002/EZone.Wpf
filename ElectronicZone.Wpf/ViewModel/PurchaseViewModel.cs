@@ -216,7 +216,7 @@ namespace ElectronicZone.Wpf.ViewModel
             if (ValidatePurchaseForm()) {
                 using (DataAccess da = new DataAccess()) {
                     try {
-                        var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+                        var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
                         controller.SetIndeterminate();
 
                         Purchase order = new Purchase() {
@@ -249,7 +249,7 @@ namespace ElectronicZone.Wpf.ViewModel
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -381,7 +381,7 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private async void GetAllPurchases()
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             this.PurchaseList.Clear();
@@ -478,7 +478,7 @@ namespace ElectronicZone.Wpf.ViewModel
         private void ValidateSalesPrice() {
             if (this.SalePrice > 0 && this.SalePrice < this.PurchasePrice)
             {
-                MessageBoxResult result = MessageBox.Show("Sale Price should be grater than or equal to purchase price!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show("Sale Price should be grater than or equal to purchase price!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 this.SalePrice = this.PurchasePrice;
             }
         }

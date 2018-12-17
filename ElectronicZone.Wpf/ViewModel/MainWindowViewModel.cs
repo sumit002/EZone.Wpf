@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using static ElectronicZone.Wpf.Utility.CommonEnum;
 
@@ -136,10 +137,8 @@ namespace ElectronicZone.Wpf.ViewModel
             }
         }
 
-
-
-        private void ShowMessage(string val) {
-            this._dialogCoordinator.ShowMessageAsync(this, "Oops!", $"{val} will be available Soon"); 
+        private void ShowMessage(string message) {
+            this._dialogCoordinator.ShowMessageAsync(this, "Oops!", $"{message} will be available Soon"); 
         }
 
         private ICommand searchDashboardCmd;
@@ -385,7 +384,7 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private async void LoadDasboardAnalysis()
         {
-            ProgressDialogController controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            ProgressDialogController controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             SaleManager _sm = new SaleManager();
@@ -458,12 +457,14 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private async void LoadStockAnalysis()
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             PurchaseManager _pm = new PurchaseManager();
             this.PurchaseOUtofStockList.Clear();
-            foreach (DataRow row in _pm.GetAllOutOfStocks().Rows) {
+            DataTable dt = _pm.GetAllOutOfStocks();
+            dt = CommonMethods.SortTable(dt, "CreatedDate", true);
+            foreach (DataRow row in dt.Rows) {
                 PurchaseOUtofStockList.Add(new Model.Purchase()
                 {
                     Id = int.Parse(row["StockId"].ToString()),
@@ -490,7 +491,7 @@ namespace ElectronicZone.Wpf.ViewModel
         /// </summary>
         private async void LoadSaleAnalysis()
         {
-            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", "Please wait for a while...");
+            var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
             controller.SetIndeterminate();
 
             SaleManager _sm = new SaleManager();

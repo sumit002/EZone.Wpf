@@ -121,7 +121,7 @@ namespace ElectronicZone.Wpf.View.Payment
                 }
                 else
                 {
-                    MessageBoxResult result = MessageBox.Show("Invalid Data !", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

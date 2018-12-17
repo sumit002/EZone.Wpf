@@ -19,8 +19,6 @@ namespace ElectronicZone.Wpf
         public LoginWindow()
         {
             InitializeComponent();
-            //_logger.LogInfoMessage("Initialising Login Page ...");
-            //LoadUIControls();
             OnLoginLoad();
         }
 
@@ -54,14 +52,14 @@ namespace ElectronicZone.Wpf
         /// <param name="e"></param>
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            _logger.LogInfoMessage($"Login Button Clicked with username : {this.txtUsername.Text.Trim()}");
+            _logger.LogInfoMessage($"Login attempt with username : {this.txtUsername.Text.Trim()} and password : {this.txtPassword.Password.Trim()}");
             try
             {
                 if (ValidateForm()) {
                     ValidateUserLogin();
                 }
                 else {
-                    MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -92,7 +90,7 @@ namespace ElectronicZone.Wpf
             }
             else
             {
-                MessageBox.Show("Invalid Username or Password!");
+                MessageBox.Show((string)Application.Current.FindResource("LoginErrorMessage"));
                 _logger.LogError(string.Format("Invalid Username {0} or Password {1}", this.txtUsername.Text, this.txtPassword.Password));
             }
         }
@@ -107,7 +105,6 @@ namespace ElectronicZone.Wpf
             {
                 _logger.LogException(ex);
             }
-
         }
     }
 }

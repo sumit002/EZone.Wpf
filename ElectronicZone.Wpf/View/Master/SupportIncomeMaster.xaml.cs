@@ -92,7 +92,7 @@ namespace ElectronicZone.Wpf.View.Master
         //    DataTrigger dataTrigger = new DataTrigger() { Binding = new Binding("Date"), Value = holidayDate };
         //    dataTrigger.Setters.Add(new Setter(CalendarDayButton.BackgroundProperty, Brushes.LightCoral));
         //    //clear the triggers
-            
+
         //    calStyle.Triggers.Clear();
         //    calStyle.Triggers.Add(dataTrigger);
         //    //calStyle.Triggers.Add(dataTrigger);
@@ -172,7 +172,7 @@ namespace ElectronicZone.Wpf.View.Master
         //        }
         //        else
         //        {
-        //            MessageBoxResult result = MessageBox.Show("Invalid Data ! Please check the fields entered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("InvalidFormDataWarningMessage"), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         //        }
         //    }
         //    catch (Exception ex)

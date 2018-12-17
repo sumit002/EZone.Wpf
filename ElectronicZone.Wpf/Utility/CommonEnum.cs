@@ -62,9 +62,9 @@ namespace ElectronicZone.Wpf.Utility
             return new ObservableCollection<string>(Enum.GetNames(typeof(DownloadPath)));
         }
 
-        public static ObservableCollection<string> GetPaymentStatusObservableCollection()
-        {
-            return new ObservableCollection<string>(Enum.GetNames(typeof(PaymentStatus)));
-        }
+        //public static ObservableCollection<string> GetPaymentStatusObservableCollection()
+        //{
+        //    return new ObservableCollection<string>(Enum.GetNames(typeof(PaymentStatus)));
+        //}
     }
 }

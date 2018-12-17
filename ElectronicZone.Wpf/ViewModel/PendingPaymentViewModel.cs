@@ -128,10 +128,13 @@ namespace ElectronicZone.Wpf.ViewModel
         /// <summary>
         /// Load Pending Payment
         /// </summary>
-        private void LoadPendingPayments()
+        private async void LoadPendingPayments()
         {
             try
             {
+                var controller = await _dialogCoordinator.ShowProgressAsync(this, "Loading", (string)Application.Current.FindResource("LoadingInfoMessage"));
+                controller.SetIndeterminate();
+
                 DataTable dtPendingPayment = new DataTable();
                 using (DataAccess da = new DataAccess()) {
                     dtPendingPayment = da.SearchPendingPayment(null, null, string.Empty, string.Empty
@@ -166,8 +169,10 @@ namespace ElectronicZone.Wpf.ViewModel
                     });
                 }
                 else {
-                    MessageBoxResult result = MessageBox.Show("No Data Found!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //this._dialogCoordinator.ShowMessageAsync(this, "Oops!", (string)Application.Current.FindResource("NoDataFoundInfoMessage"));
+                    MessageBoxResult result = MessageBox.Show((string)Application.Current.FindResource("NoDataFoundInfoMessage"), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                await controller.CloseAsync();
             }
             catch (Exception ex)
             {

@@ -2,51 +2,61 @@
 using ElectronicZone.Wpf.Utility;
 using MahApps.Metro.Controls.Dialogs;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using static ElectronicZone.Wpf.Utility.CommonEnum;
 
 namespace ElectronicZone.Wpf.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
+        #region Properties
         public ObservableCollection<String> DownloadPathList { get; set; }
-        private IDialogCoordinator dialogCoordinator;
+        ILogger logger = new Logger(typeof(SettingsViewModel));
+        private IDialogCoordinator _dialogCoordinator;
         private bool showReportMenu;
-        public bool ShowReportMenu { get => showReportMenu; set => showReportMenu = value; }
+        public bool ShowReportMenu { get => showReportMenu; set => showReportMenu = value; } 
+        #endregion
 
         // Commands
-        private ICommand asdasdJKLKJNHBGV { get; set; }
+        //private ICommand SaveSettingsCommand { get; set; }
 
+        /// <summary>
+        /// Settings ViewModel Constructor
+        /// </summary>
+        /// <param name="instance"></param>
         public SettingsViewModel(IDialogCoordinator instance)
         {
-            this.dialogCoordinator = instance;
+            this._dialogCoordinator = instance;
             this.DownloadPathList = new ObservableCollection<string>();
             this.ShowReportMenu = false;
 
-            this.asdasdJKLKJNHBGV = new CommandHandler(AddSettings, CanExecuteAddSettingsCmd);
+            //this.SaveSettingsCommand = new CommandHandler(AddSettings, CanExecuteAddSettingsCmd);
 
-            LoadSalutation();
+            this.DownloadPathList = CommonEnum.GetDownloadPathObservableCollection();
         }
 
         private void AddSettings(object obj)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Implemet Save Settings
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
         }
 
         private bool CanExecuteAddSettingsCmd(object arg)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
-        private void LoadSalutation()
-        {
-            // ObservableCollection<string> downloadPathList = CommonEnum.GetEnumNamesObservableCollection<DownloadPath>;
-            DownloadPathList = CommonEnum.GetDownloadPathObservableCollection();
-        }
+        //private void LoadSalutation()
+        //{
+        //    // ObservableCollection<string> downloadPathList = CommonEnum.GetEnumNamesObservableCollection<DownloadPath>;
+        //    DownloadPathList = CommonEnum.GetDownloadPathObservableCollection();
+        //}
     }
 }

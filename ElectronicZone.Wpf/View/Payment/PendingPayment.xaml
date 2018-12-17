@@ -78,7 +78,7 @@
                 <DataGridTemplateColumn Width="5*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="{iconPacks:FontAwesome Kind=ShippingFastSolid}" Foreground="BlueViolet" ToolTip="Sale This Item"
+                            <Button Content="{iconPacks:FontAwesome Kind=HandPaperSolid}" Foreground="BlueViolet" ToolTip="Clear Payment"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.ClearPendingPaymentCmd}"
                                                 CommandParameter="{Binding}"/>
                         </DataTemplate>
