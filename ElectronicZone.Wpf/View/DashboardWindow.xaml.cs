@@ -44,7 +44,7 @@ namespace ElectronicZone.Wpf.View
             InitializeSettings();
             //set dates for dashboard result
             DateTimeUtility dtUtility = new DateTimeUtility();
-            dpDashboardFromDate.SelectedDate = dtUtility.GetMonthStartDate();
+            dpDashboardFromDate.SelectedDate = dtUtility.GetMonthStartDate(null);
             dpDashboardToDate.SelectedDate = DateTime.Now;
 
             SetDate();

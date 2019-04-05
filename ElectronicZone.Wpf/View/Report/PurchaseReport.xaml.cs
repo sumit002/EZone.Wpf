@@ -25,7 +25,7 @@ namespace ElectronicZone.Wpf.View.Report
             LoadBrands();
 
             DateTimeUtility dtUtility = new DateTimeUtility();
-            fromDate.SelectedDate = dtUtility.GetMonthStartDate();
+            fromDate.SelectedDate = dtUtility.GetMonthStartDate(null);
             toDate.SelectedDate = DateTime.Now;
 
             // on esc close
