@@ -443,12 +443,13 @@
     <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="eZone.db" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\Documents\EZone User Guide Document V1.docx" />
+    <None Include="Resources\Documents\EZone_SRS.docx" />
     <None Include="Resources\invoice_sample.pdf" />
     <None Include="Resources\invoice_sample2.pdf" />
   </ItemGroup>
